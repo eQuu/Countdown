@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dvpsj03q1c8ju"]
 
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="1_cvij4"]
+[ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="2_y3xmn"]
 
 [node name="BaroqueCorner" type="Node3D" unique_id=740356097]
 
@@ -9,3 +10,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.6)
 
 [node name="Baroque2" parent="." unique_id=1778241517 instance=ExtResource("1_cvij4")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.6, 0, 0)
+
+[node name="Pillar" parent="." unique_id=437430067 instance=ExtResource("2_y3xmn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0, -4.4)

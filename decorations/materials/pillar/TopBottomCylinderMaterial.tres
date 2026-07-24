@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://0kq25ajc4yhx"]
+
+[ext_resource type="Texture2D" uid="uid://cgo74edkyxutr" path="res://decorations/textures/Marble016_1K-JPG_Color.jpg" id="1_3ejwd"]
+[ext_resource type="Texture2D" uid="uid://cieokjdbxddde" path="res://decorations/textures/Marble016_1K-JPG_NormalDX.jpg" id="2_j6ivn"]
+[ext_resource type="Texture2D" uid="uid://ccr3jiqf08ldu" path="res://decorations/textures/Marble016_1K-JPG_Roughness.jpg" id="3_yd41h"]
+
+[resource]
+albedo_texture = ExtResource("1_3ejwd")
+roughness_texture = ExtResource("3_yd41h")
+normal_enabled = true
+normal_texture = ExtResource("2_j6ivn")
