@@ -1,3 +1,44 @@
-# Godot 4+ specific ignores
+# Godot 4 – generierte Dateien
 .godot/
-/android/
+.import/
+*.translation
+*.tmp
+~*.dll
+.nomedia
+
+# Godot C# / .NET
+.mono/
+**/bin/
+**/obj/
+data_*/
+mono_crash.*.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# JetBrains Rider
+.idea/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Exportierte Builds
+/build/
+/builds/
+/exports/
+
+# Export-Zugangsdaten
+export.cfg
+export_credentials.cfg
