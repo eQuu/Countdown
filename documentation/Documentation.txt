@@ -1,0 +1,948 @@
+# Entwicklungsplan – „ZERO ARENA“
+
+## Grundidee
+
+Ein kleines, von *Laser League* inspiriertes Voxel-Arenaspiel für zwei Personen an einem Bildschirm.
+
+Ich interpretiere „Couch-Coop“ hier als lokalen Couch-Multiplayer: **Spieler 1 gegen Spieler 2, jeweils mit eigenem Controller**.
+
+Eine Runde dauert genau **60 Sekunden**. Beide Spieler laufen durch die Arena und übernehmen neutrale Laserstationen. Aktivierte Laser erhalten die Farbe des Spielers. Eigene Laser sind ungefährlich, gegnerische Laser schalten den Spieler aus.
+
+Nach einem Treffer erscheint der Spieler nach kurzer Zeit wieder. Wer nach Ablauf des Countdowns mehr Punkte hat, gewinnt.
+
+## Festgelegter Umfang
+
+### Muss enthalten sein
+
+* lokales 1-gegen-1
+* zwei Controller
+* eine gemeinsame Kamera
+* eine kleine Arena
+* eine Spielfigur pro Spieler
+* Bewegung und Dash
+* neutrale Laserstationen
+* Übernahme der Laser durch Berührung
+* Treffererkennung
+* Respawn
+* Punktesystem
+* 60-Sekunden-Countdown
+* Startbildschirm
+* Ergebnisbildschirm
+* Voxelgrafik aus MagicaVoxel
+* Soundeffekte und einfache Musik
+* exportierbare Windows-Version
+
+### Wird nicht umgesetzt
+
+* Online-Multiplayer
+* Bots oder KI-Spieler
+* mehrere Arenen
+* Charakterauswahl
+* Fähigkeiten oder Klassen
+* komplexe Power-ups
+* zerstörbare Voxel
+* Kampagne
+* Fortschrittssystem
+* Einstellungen mit vielen Optionen
+* aufwendige Animationen
+
+Diese Punkte werden nur angefasst, wenn das vollständige Spiel vorher stabil fertig ist.
+
+---
+
+# Spielablauf
+
+## Rundenstart
+
+1. Beide Controller werden erkannt.
+2. Beide Spieler drücken eine Taste und treten dem Spiel bei.
+3. Ein Countdown erscheint:
+
+```text
+3
+2
+1
+GO
+```
+
+4. Die 60-Sekunden-Runde startet.
+
+## Während der Runde
+
+Die Spieler laufen durch die Arena und berühren Laserstationen.
+
+Eine neutrale Laserstation wird dadurch übernommen und erhält:
+
+* die Farbe des Spielers
+* einen aktiven Laser
+* eine kurze Aktivierungsanimation
+* einen Soundeffekt
+
+Berührt ein Spieler einen gegnerischen Laser:
+
+* wird die Spielfigur deaktiviert
+* der Gegner bekommt einen Punkt
+* der getroffene Spieler erscheint nach etwa 1,5 Sekunden wieder
+* der Spieler ist nach dem Respawn kurz unverwundbar
+
+## Rundenende
+
+Nach 60 Sekunden:
+
+* alle Spieler werden eingefroren
+* die Laser stoppen
+* der Gewinner wird angezeigt
+* beide können eine neue Runde starten
+
+Bei Gleichstand kann entweder ein Unentschieden angezeigt werden oder eine kurze Sudden-Death-Runde beginnen. Sudden Death sollte nur eingebaut werden, wenn genug Zeit übrig ist.
+
+---
+
+# Controller-Steuerung
+
+## Spieler 1
+
+* linker Stick: bewegen
+* A beziehungsweise Kreuz: Dash
+* Start: Spiel pausieren
+
+## Spieler 2
+
+* linker Stick: bewegen
+* A beziehungsweise Kreuz: Dash
+* Start: Spiel pausieren
+
+Die Controller werden beim Spielstart automatisch zugeordnet:
+
+* erster erkannter Controller: Spieler 1
+* zweiter erkannter Controller: Spieler 2
+
+Im Startbildschirm steht zunächst:
+
+```text
+Spieler 1 – Controller verbinden
+Spieler 2 – Controller verbinden
+```
+
+Sobald ein Spieler A drückt:
+
+```text
+Spieler 1 – Bereit
+```
+
+Die Runde darf erst starten, wenn beide Spieler bereit sind.
+
+## Technische Controller-Lösung
+
+In Godot sollte nicht ausschließlich mit allgemeinen Input-Actions gearbeitet werden, weil beide Controller sonst dieselben Aktionen auslösen könnten.
+
+Stattdessen erhält jeder Spieler eine eigene Controller-ID:
+
+```csharp
+PlayerOne.DeviceId = connectedJoypads[0];
+PlayerTwo.DeviceId = connectedJoypads[1];
+```
+
+Die Bewegung wird anhand der jeweiligen Geräte-ID gelesen:
+
+```csharp
+float x = Input.GetJoyAxis(DeviceId, JoyAxis.LeftX);
+float y = Input.GetJoyAxis(DeviceId, JoyAxis.LeftY);
+```
+
+Zusätzlich sollte eine Deadzone von ungefähr `0.2` verwendet werden.
+
+---
+
+# Countdown als zentrales Thema
+
+Der Countdown darf nicht nur oben im HUD stehen. Die Arena soll sich mit der verbleibenden Zeit verändern.
+
+## 60 bis 46 Sekunden
+
+* normale Beleuchtung
+* langsame Laser
+* ruhige Musik
+* neutrale Arena
+
+## 45 Sekunden
+
+* kurzer Bildschirmimpuls
+* Anzeige „45“
+* erste zusätzliche Laserstation wird aktiviert
+* Musik wird etwas schneller
+
+## 30 Sekunden
+
+* Arena-Beleuchtung verändert sich
+* Laser drehen sich etwas schneller
+* große Anzeige „30 SECONDS“
+* ein Teil des Bodens beginnt zu blinken
+
+## 15 Sekunden
+
+* Warnleuchten werden aktiviert
+* Musik wird hektischer
+* Laser werden schneller
+* Arena pulsiert im Takt des Countdowns
+
+## Letzte 10 Sekunden
+
+Die verbleibenden Sekunden erscheinen groß in der Bildschirmmitte:
+
+```text
+10
+9
+8
+7
+...
+```
+
+Jede Sekunde erhält:
+
+* einen kurzen Sound
+* einen Lichtimpuls
+* ein leichtes Kamerawackeln
+
+## Bei null Sekunden
+
+* Bildschirm friert kurz ein
+* alle Laser gehen gleichzeitig aus
+* große Anzeige „ZERO“
+* Gewinner wird eingeblendet
+
+Damit ist das Game-Jam-Thema jederzeit sichtbar und nicht nur über eine kleine Zeitanzeige umgesetzt.
+
+---
+
+# Technischer Aufbau in Godot
+
+## Szenenstruktur
+
+```text
+Main.tscn
+├── GameManager
+├── ControllerManager
+├── Arena
+├── Players
+│   ├── Player1
+│   └── Player2
+├── Camera3D
+├── WorldEnvironment
+├── AudioManager
+└── UI
+```
+
+## Einzelne Szenen
+
+```text
+Player.tscn
+├── CharacterBody3D
+├── CollisionShape3D
+├── VoxelCharacter
+├── DashTimer
+├── InvulnerabilityTimer
+└── RespawnParticles
+```
+
+```text
+LaserStation.tscn
+├── Node3D
+├── StationMesh
+├── ActivationArea
+├── LaserPivot
+│   └── LaserBeam
+├── LaserHitbox
+├── AnimationPlayer
+└── AudioStreamPlayer3D
+```
+
+```text
+UI.tscn
+├── StartScreen
+├── ReadyDisplay
+├── RoundCountdown
+├── GameTimer
+├── Player1Score
+├── Player2Score
+├── WarningDisplay
+└── ResultScreen
+```
+
+## Wichtige C#-Klassen
+
+### GameManager.cs
+
+Verantwortlich für:
+
+* Spielzustände
+* Rundencountdown
+* Punkte
+* Respawns
+* Spielende
+* Neustart
+
+Mögliche Zustände:
+
+```csharp
+public enum GameState
+{
+    WaitingForPlayers,
+    Starting,
+    Playing,
+    RoundEnded,
+    Paused
+}
+```
+
+### ControllerManager.cs
+
+Verantwortlich für:
+
+* angeschlossene Controller erkennen
+* Controller-ID zuweisen
+* Verbindungsabbruch erkennen
+* Bereitschaft der Spieler verwalten
+
+### PlayerController.cs
+
+Verantwortlich für:
+
+* Bewegung
+* Dash
+* Controller-Eingabe
+* Treffer
+* Unverwundbarkeit
+* Respawn
+
+### LaserStation.cs
+
+Verantwortlich für:
+
+* Besitzer speichern
+* Laserfarbe ändern
+* Laser aktivieren
+* gegnerische Spieler treffen
+* Rotation des Lasers
+* Geschwindigkeit abhängig vom Countdown
+
+### CountdownManager.cs
+
+Verantwortlich für:
+
+* verbleibende Zeit
+* Phasen bei 45, 30, 15 und 10 Sekunden
+* Lichtänderungen
+* Soundeffekte
+* Laserbeschleunigung
+* große Countdown-Anzeigen
+
+---
+
+# Kollisionsschichten
+
+Die Kollisionsschichten sollten früh festgelegt werden.
+
+```text
+Layer 1: Welt und Wände
+Layer 2: Spieler
+Layer 3: Aktivierungsbereiche
+Layer 4: Laser
+Layer 5: Spawn-Schutz
+```
+
+Ein Laser prüft beim Kontakt:
+
+```csharp
+if (body is PlayerController player &&
+    player.PlayerId != OwnerPlayerId &&
+    !player.IsInvulnerable)
+{
+    player.Die(OwnerPlayerId);
+}
+```
+
+Eigene Laser ignorieren den Besitzer.
+
+---
+
+# Voxelstil mit MagicaVoxel
+
+## Empfohlene Assets
+
+Für das vollständige Spiel werden nur wenige Modelle benötigt:
+
+* Spielerfigur
+* Bodenplatte
+* Wandsegment
+* Eckelement
+* Säule
+* Laserstation
+* Spawnplattform
+* Dekorationswürfel
+* Countdown-Anzeige
+* Arena-Rand
+
+## Größen
+
+Die Modelle sollten klein und einheitlich bleiben:
+
+* Spieler: ungefähr `12 × 20 × 12` Voxel
+* Laserstation: ungefähr `12 × 12 × 16` Voxel
+* Wandsegment: ungefähr `32 × 8 × 16` Voxel
+* Bodenplatten: `16 × 16 × 2` Voxel
+
+Keine extrem detaillierten Modelle bauen. Der Stil entsteht durch klare Formen, starke Silhouetten und wenige Farben.
+
+## Farbpalette
+
+Eine kleine gemeinsame Palette festlegen:
+
+* dunkler Arenaboden
+* hellere Wände
+* neutrale Laserfarbe
+* Spieler-1-Farbe
+* Spieler-2-Farbe
+* Warnfarbe für die letzten Sekunden
+* helle Emissionsfarbe für Laser
+
+Die Laser selbst sollten in Godot erstellt werden. Dafür eignen sich einfache Quader mit einem leuchtenden Material besser als exportierte Voxelstrahlen.
+
+## Export aus MagicaVoxel
+
+Empfohlener Ablauf:
+
+1. Modell in MagicaVoxel erstellen.
+2. Modell als OBJ exportieren.
+3. OBJ und Textur in den Godot-Asset-Ordner kopieren.
+4. Skalierung beim Import prüfen.
+5. Das Mesh in einer eigenen Godot-Szene speichern.
+6. CollisionShapes in Godot erstellen.
+7. Leuchtende Materialien direkt in Godot ersetzen.
+
+Alle Modelle sollten dieselbe Exporteinstellung und dieselbe Skalierung verwenden.
+
+---
+
+# Arena-Aufbau
+
+Die Arena sollte klein genug sein, damit beide Spieler ständig aufeinandertreffen.
+
+## Empfohlene Form
+
+* quadratische oder leicht rechteckige Arena
+* feste Kamera von schräg oben
+* vier äußere Wände
+* zwei bis vier größere Hindernisse
+* vier bis sechs Laserstationen
+* zwei gegenüberliegende Spawnpunkte
+
+Beispiel:
+
+```text
+┌───────────────────────────┐
+│ S1       L1        L2     │
+│                           │
+│      █          █         │
+│                           │
+│ L3       ███        L4    │
+│                           │
+│      █          █         │
+│                           │
+│     L5        L6       S2 │
+└───────────────────────────┘
+```
+
+* `S1` und `S2`: Spawnpunkte
+* `L1` bis `L6`: Laserstationen
+* `█`: Hindernisse
+
+Nicht mehr als sechs Laserstationen einbauen. Zu viele Laser machen das Spiel unlesbar und erschweren das Balancing.
+
+---
+
+# Zeitplan für 30 Stunden
+
+Der Plan geht von zwei Personen aus:
+
+* Person A: Godot und C#
+* Person B: MagicaVoxel, Arena, UI und Audio
+* gemeinsame Aufgaben: Game Design, Integration und Tests
+
+Es werden ungefähr **24 Stunden für die Entwicklung** und **6 Stunden als Puffer** eingeplant.
+
+## Stunde 0 bis 1 – Projekt festlegen
+
+### Gemeinsam
+
+* Spielumfang schriftlich festhalten
+* keine zusätzlichen Features erlauben
+* Git-Repository erstellen
+* Godot-.NET-Projekt erstellen
+* Projektauflösung festlegen
+* Spielerfarben festlegen
+* Arena grob auf Papier zeichnen
+
+### Ergebnis
+
+* Godot-Projekt startet
+* Repository funktioniert
+* alle kennen den festen Umfang
+
+---
+
+## Stunde 1 bis 4 – Controller und Bewegung
+
+### Person A
+
+* zwei Controller erkennen
+* Controller-IDs zuweisen
+* Player-Szene erstellen
+* Bewegung mit linkem Stick
+* Kamera einrichten
+* Wände und Kollisionen
+* Dash mit kurzer Abklingzeit
+
+### Person B
+
+* grobe Spielerfigur in MagicaVoxel
+* einfacher Boden
+* einfaches Wandsegment
+* erste Laserstation
+* Farbpalette festlegen
+
+### Abnahme nach Stunde 4
+
+* zwei Spieler erscheinen
+* jeder Controller steuert nur seinen Spieler
+* beide können sich gleichzeitig bewegen
+* niemand kann die Arena verlassen
+* Dash funktioniert
+
+Falls dies nach vier Stunden nicht funktioniert, werden alle anderen Arbeiten gestoppt, bis die Controller-Steuerung stabil ist.
+
+---
+
+## Stunde 4 bis 8 – Laser-Grundmechanik
+
+### Person A
+
+* LaserStation-Szene erstellen
+* neutralen Besitzerzustand umsetzen
+* Übernahme durch Spieler
+* Laserstrahl aktivieren
+* Laser rotieren lassen
+* eigene und gegnerische Laser unterscheiden
+* Treffererkennung
+* Spieler deaktivieren
+
+### Person B
+
+* Laserstation fertigstellen
+* Spawnplattform modellieren
+* Arena-Hindernisse erstellen
+* erste Arena in Godot zusammensetzen
+* einfache Materialien anlegen
+
+### Abnahme nach Stunde 8
+
+* ein Spieler kann eine Laserstation übernehmen
+* der Laser erhält die Spielerfarbe
+* der Laser dreht sich
+* gegnerischer Laser trifft einen Spieler
+* eigener Laser ist ungefährlich
+
+Damit existiert der erste spielbare Prototyp.
+
+---
+
+## Stunde 8 bis 12 – Vollständige Spielrunde
+
+### Person A
+
+* GameManager erstellen
+* Punkte vergeben
+* Respawn-System
+* Spawn-Schutz
+* Rundenstart
+* 60-Sekunden-Timer
+* Rundenende
+* Neustart
+
+### Person B
+
+* HUD entwerfen
+* Timer-Anzeige
+* Punktestände
+* Startbildschirm
+* Ergebnisbildschirm
+* Controller-Bereitschaftsanzeige
+
+### Abnahme nach Stunde 12
+
+Das Spiel muss vollständig spielbar sein:
+
+1. Beide Controller verbinden.
+2. Beide Spieler treten bei.
+3. Runde startet.
+4. Laser können übernommen werden.
+5. Treffer geben Punkte.
+6. Spieler respawnen.
+7. Nach 60 Sekunden endet das Spiel.
+8. Gewinner wird angezeigt.
+9. Eine neue Runde kann gestartet werden.
+
+Ab diesem Zeitpunkt darf kein neues großes System mehr begonnen werden.
+
+---
+
+## Stunde 12 bis 16 – Voxelgrafik und Arena
+
+### Person A
+
+* MagicaVoxel-Assets integrieren
+* Materialien vereinheitlichen
+* Laser-Material mit Emission
+* Schatten und Licht einstellen
+* Kamera begrenzen
+* Animationen für Aktivierung und Treffer
+
+### Person B
+
+* Spielerfigur verbessern
+* Wände und Säulen fertigstellen
+* Arenarand bauen
+* Countdown-Elemente modellieren
+* Dekoration einbauen
+* Modelle sauber exportieren
+
+### Gemeinsam
+
+* Lesbarkeit der Spieler prüfen
+* Farben der Teams deutlich trennen
+* Laser müssen jederzeit sichtbar sein
+* Hindernisse dürfen die Kamera nicht verdecken
+
+### Abnahme nach Stunde 16
+
+* alle Platzhalter sind weitgehend ersetzt
+* Arena sieht nach einem zusammenhängenden Voxelspiel aus
+* beide Spieler sind jederzeit erkennbar
+* Laser heben sich klar von der Umgebung ab
+
+---
+
+## Stunde 16 bis 19 – Countdown-Inszenierung
+
+### Person A
+
+* Countdown-Phasen programmieren
+* Laser bei 30 und 15 Sekunden beschleunigen
+* große Anzeige während der letzten 10 Sekunden
+* Arena-Lichter verändern
+* Kameraimpuls bei wichtigen Zeitpunkten
+* Spiel bei null sauber stoppen
+
+### Person B
+
+* Warnsymbole und Zahlen gestalten
+* Countdown-Sounds suchen oder erstellen
+* Musik vorbereiten
+* Warnlichter und Partikel platzieren
+* „ZERO“-Anzeige erstellen
+
+### Abnahme nach Stunde 19
+
+Der Countdown ist dauerhaft spürbar:
+
+* sichtbarer Timer
+* Veränderungen bei 45, 30 und 15 Sekunden
+* große letzte 10 Sekunden
+* klarer Moment bei null
+
+---
+
+## Stunde 19 bis 22 – Audio und Spielgefühl
+
+### Person A
+
+* Soundeffekte auslösen
+* kleine Kamerabewegung beim Treffer
+* kurze Trefferpause
+* Dash verbessern
+* Laserrotation glätten
+* Controller-Vibration einbauen, sofern unkompliziert
+
+### Person B
+
+Benötigte Sounds:
+
+* Menübestätigung
+* Rundenstart
+* Laserübernahme
+* Laseraktivierung
+* Treffer
+* Respawn
+* Dash
+* Countdown-Tick
+* Rundenende
+
+### Gemeinsam
+
+* Bewegungsgefühl testen
+* Geschwindigkeit der Spieler anpassen
+* Dash-Reichweite anpassen
+* Respawnzeit prüfen
+* Lautstärken angleichen
+
+### Abnahme nach Stunde 22
+
+* Treffer fühlen sich eindeutig an
+* das Spiel reagiert direkt
+* Sounds überlagern sich nicht unangenehm
+* beide Spieler verstehen ohne Erklärung, was passiert
+
+---
+
+## Stunde 22 bis 24 – Inhalt fertigstellen
+
+### Gemeinsam
+
+* gesamte Runde mehrfach spielen
+* Punktesystem prüfen
+* Spawnpunkte kontrollieren
+* Laserpositionen anpassen
+* unfaire Stellen entfernen
+* Benutzeroberfläche prüfen
+* Controller-Trennung testen
+* letzte fehlende Pflichtinhalte ergänzen
+
+### Content Freeze nach Stunde 24
+
+Ab Stunde 24 werden keine neuen Features mehr gebaut.
+
+Erlaubt sind nur noch:
+
+* Fehlerbehebungen
+* Balancing
+* Performance
+* Export
+* Präsentation
+
+---
+
+# Stunde 24 bis 30 – Puffer und Fertigstellung
+
+## Stunde 24 bis 26 – Fehlerbehebung
+
+Gezielt testen:
+
+* Controller werden in falscher Reihenfolge erkannt
+* ein Controller trennt sich
+* beide Controller steuern denselben Spieler
+* Spieler bleibt nach Treffer unsichtbar
+* Respawn erfolgt innerhalb eines Lasers
+* Punkt wird doppelt vergeben
+* Timer läuft nach Rundenende weiter
+* Laser trifft den eigenen Besitzer
+* Neustart erzeugt doppelte Spieler
+* Pause stoppt den Timer nicht
+* Ergebnisbildschirm reagiert nicht
+
+Jeder gefundene Fehler wird sofort priorisiert:
+
+1. Spielabbruch
+2. Controller-Probleme
+3. falsche Punkte
+4. falscher Spielablauf
+5. Grafikfehler
+6. kleine Schönheitsfehler
+
+---
+
+## Stunde 26 bis 28 – Balancing
+
+Zielwerte als Ausgangspunkt:
+
+```text
+Rundendauer: 60 Sekunden
+Spielergeschwindigkeit: 7 bis 9 Einheiten
+Dash-Dauer: 0,15 bis 0,25 Sekunden
+Dash-Cooldown: 1,5 Sekunden
+Respawnzeit: 1,5 Sekunden
+Spawn-Schutz: 1 Sekunde
+Laserrotation: langsam am Anfang
+Laserrotation ab 30 Sekunden: ungefähr 20 % schneller
+Laserrotation ab 15 Sekunden: ungefähr 40 % schneller
+```
+
+Mindestens fünf vollständige Runden spielen.
+
+Nach jeder Runde nur eine oder zwei Einstellungen verändern. Sonst ist nicht mehr nachvollziehbar, welche Änderung das Spiel verbessert hat.
+
+---
+
+## Stunde 28 bis 29 – Export
+
+* Windows-Build erstellen
+* .NET-Abhängigkeiten prüfen
+* Build auf einem zweiten Rechner testen
+* zwei Controller anschließen
+* Vollbild testen
+* Auflösung testen
+* Neustart testen
+* Spiel aus dem exportierten Build heraus spielen
+* Spielordner als ZIP vorbereiten
+
+Nicht nur im Godot-Editor testen.
+
+---
+
+## Stunde 29 bis 30 – Präsentation
+
+Vorbereiten:
+
+* Spieltitel
+* kurze Beschreibung
+* Steuerung
+* ein Screenshot
+* ein kurzes Gameplay-Video
+* Namen der Teammitglieder
+* verwendete Tools
+* Credits für Musik und Sounds
+
+Kurze Beschreibung:
+
+> ZERO ARENA ist ein lokales Voxel-Arenaspiel für zwei Spieler. Übernehmt Laserstationen, weicht gegnerischen Strahlen aus und sammelt innerhalb von 60 Sekunden mehr Punkte als euer Gegner. Je näher der Countdown an null kommt, desto schneller und gefährlicher wird die Arena.
+
+---
+
+# Aufgabenverteilung
+
+## Person A – Godot und C#
+
+* ControllerManager
+* Spielerbewegung
+* Dash
+* Laserlogik
+* Treffer
+* Respawn
+* Punkte
+* Timer
+* Spielzustände
+* Countdown-Phasen
+* Export
+
+## Person B – Grafik und Präsentation
+
+* MagicaVoxel-Modelle
+* Farbpalette
+* Arena
+* UI
+* Countdown-Grafiken
+* Soundeffekte
+* Musik
+* Partikel
+* Präsentationsmaterial
+
+## Gemeinsam
+
+* Spielumfang kontrollieren
+* Arena-Layout
+* Integration
+* Balancing
+* Testen
+* Fehler priorisieren
+
+Wenn Person B früher mit den Modellen fertig ist, übernimmt sie das Leveldesign, die UI-Integration und das Testen. Person A sollte währenddessen möglichst nicht durch kleine Grafikänderungen vom Kerncode abgehalten werden.
+
+---
+
+# Git-Arbeitsweise
+
+Empfohlene Branches:
+
+```text
+main
+develop
+feature/player-controller
+feature/laser-system
+feature/ui
+feature/voxel-assets
+```
+
+Alle zwei bis drei Stunden Änderungen zusammenführen.
+
+Kleine Commits verwenden:
+
+```text
+Add two-controller assignment
+Add player dash
+Add laser ownership
+Add round timer
+Add player respawn
+Add voxel arena assets
+```
+
+MagicaVoxel-Dateien ebenfalls speichern:
+
+```text
+Assets/Voxels/Source
+```
+
+Exportierte Modelle:
+
+```text
+Assets/Voxels/Export
+```
+
+Keine großen Umbauten kurz vor Ende. Ab Stunde 24 sollte nur noch auf `develop` beziehungsweise direkt auf dem stabilen Build gearbeitet werden.
+
+---
+
+# Reihenfolge beim Kürzen
+
+Wenn die Zeit knapp wird, werden Features in dieser Reihenfolge entfernt:
+
+1. Controller-Vibration
+2. Kamerawackeln
+3. aufwendige Partikel
+4. wechselnde Beleuchtung
+5. zusätzliche Countdown-Phasen
+6. Dash
+7. Musikwechsel
+8. Dekoration
+9. Sudden Death
+
+Nicht entfernt werden dürfen:
+
+* zwei Controller
+* Spielerbewegung
+* Laserübernahme
+* Treffer
+* Respawn
+* Punkte
+* Countdown
+* Spielende
+* Neustart
+
+---
+
+# Definition of Done
+
+Das Spiel ist fertig, wenn folgende Punkte erfüllt sind:
+
+* Zwei Controller können gleichzeitig verwendet werden.
+* Jeder Controller steuert nur einen Spieler.
+* Eine vollständige Runde kann ohne Tastatur gespielt werden.
+* Laserstationen lassen sich übernehmen.
+* Gegnerische Laser schalten Spieler aus.
+* Punkte werden korrekt vergeben.
+* Spieler erscheinen zuverlässig wieder.
+* Die Runde endet nach 60 Sekunden.
+* Der Countdown verändert die Arena sichtbar.
+* Ein Gewinner wird angezeigt.
+* Eine neue Runde kann gestartet werden.
+* Die Voxelgrafik ist vollständig eingebaut.
+* Der exportierte Windows-Build funktioniert.
+* Mindestens drei vollständige Runden laufen ohne Fehler.
