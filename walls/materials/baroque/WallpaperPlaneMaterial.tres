@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://ejk5we8v8uol"]
+
+[ext_resource type="Texture2D" uid="uid://uegxmxi0b4w6" path="res://walls/textures/baroque_wallpaper1.jpg" id="1_ab24n"]
+[ext_resource type="Texture2D" uid="uid://dm17p86f8ghjy" path="res://walls/textures/Wallpaper001B_1K-JPG_NormalDX.jpg" id="2_can2u"]
+[ext_resource type="Texture2D" uid="uid://bhth72mjt5ca6" path="res://walls/textures/Wallpaper001B_1K-JPG_Roughness.jpg" id="3_6xf34"]
+
+[resource]
+albedo_texture = ExtResource("1_ab24n")
+roughness_texture = ExtResource("3_6xf34")
+normal_enabled = true
+normal_texture = ExtResource("2_can2u")
+uv1_scale = Vector3(3, 3, 3)
