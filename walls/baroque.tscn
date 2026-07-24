@@ -1,8 +1,21 @@
 [gd_scene format=3 uid="uid://c506fn8j6w7pl"]
 
 [ext_resource type="Material" uid="uid://d4hb26vb8dwww" path="res://walls/materials/baroque/LowerPartWoodPlaneMaterial.tres" id="1_5k4hp"]
+[ext_resource type="Material" uid="uid://bf80f238hqoun" path="res://walls/materials/baroque/BacksideWoodPlaneMaterial.tres" id="1_ejn0v"]
+[ext_resource type="Material" uid="uid://baqub3i36gds4" path="res://walls/materials/baroque/TopPartWoodPlaneMaterial.tres" id="1_ftojr"]
 [ext_resource type="Material" uid="uid://c685sxy5ebj6h" path="res://walls/materials/baroque/UpperPartWoodPlaneMaterial.tres" id="1_hvra3"]
 [ext_resource type="Material" uid="uid://ejk5we8v8uol" path="res://walls/materials/baroque/WallpaperPlaneMaterial.tres" id="1_lvqrb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mqvok"]
+size = Vector3(8, 12, 1.2)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ftojr"]
+material = ExtResource("1_ejn0v")
+size = Vector2(40, 48)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0h62n"]
+material = ExtResource("1_ftojr")
+size = Vector2(40, 6)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_lvqrb"]
 material = ExtResource("1_hvra3")
@@ -18,20 +31,45 @@ size = Vector2(40, 12)
 
 [node name="Baroque" type="Node3D" unique_id=319781714]
 
-[node name="UpperPart" type="Node3D" parent="." unique_id=1357145416]
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=708808848]
 
-[node name="WoodPlane" type="MeshInstance3D" parent="UpperPart" unique_id=401120707]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1657707632]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("BoxShape3D_mqvok")
+
+[node name="Scale" type="Node3D" parent="." unique_id=676876507]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="Backside" type="Node3D" parent="Scale" unique_id=417133534]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="WoodPlane" type="MeshInstance3D" parent="Scale/Backside" unique_id=92313515]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 24, 0)
+mesh = SubResource("PlaneMesh_ftojr")
+
+[node name="TopPart" type="Node3D" parent="Scale" unique_id=1976652130]
+
+[node name="WoodPlane" type="MeshInstance3D" parent="Scale/TopPart" unique_id=1010413821]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48, 0)
+mesh = SubResource("PlaneMesh_0h62n")
+
+[node name="UpperPart" type="Node3D" parent="Scale" unique_id=1357145416]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+
+[node name="WoodPlane" type="MeshInstance3D" parent="Scale/UpperPart" unique_id=401120707]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 45, 0)
 mesh = SubResource("PlaneMesh_lvqrb")
 
-[node name="MiddlePart" type="Node3D" parent="." unique_id=869406486]
+[node name="MiddlePart" type="Node3D" parent="Scale" unique_id=869406486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
 
-[node name="WallpaperPlane" type="MeshInstance3D" parent="MiddlePart" unique_id=568040125]
+[node name="WallpaperPlane" type="MeshInstance3D" parent="Scale/MiddlePart" unique_id=568040125]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 27, 0)
 mesh = SubResource("PlaneMesh_mqvok")
 
-[node name="LowerPart" type="Node3D" parent="." unique_id=1557742873]
+[node name="LowerPart" type="Node3D" parent="Scale" unique_id=1557742873]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
 
-[node name="WoodPlane" type="MeshInstance3D" parent="LowerPart" unique_id=894713325]
+[node name="WoodPlane" type="MeshInstance3D" parent="Scale/LowerPart" unique_id=894713325]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 6, 0)
 mesh = SubResource("PlaneMesh_0egr7")

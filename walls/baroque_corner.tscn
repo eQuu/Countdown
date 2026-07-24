@@ -5,7 +5,7 @@
 [node name="BaroqueCorner" type="Node3D" unique_id=740356097]
 
 [node name="Baroque1" parent="." unique_id=319781714 instance=ExtResource("1_cvij4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.6)
 
 [node name="Baroque2" parent="." unique_id=1778241517 instance=ExtResource("1_cvij4")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -20, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.6, 0, 0)
