@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bxu3gvf1e5lfq"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_0bpjf"]
+sky_material = SubResource("ProceduralSkyMaterial_u1gpl")
+
+[sub_resource type="Environment" id="Environment_62bee"]
+background_mode = 2
+sky = SubResource("Sky_0bpjf")
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_tp80y"]
+
+[node name="Ingame" type="Node3D" unique_id=1277312797]
+
+[node name="Sonne" type="DirectionalLight3D" parent="." unique_id=731580982]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 3.4454608, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
+environment = SubResource("Environment_62bee")
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=1909032072]
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+mesh = SubResource("PlaneMesh_tp80y")
+
+[node name="MainCamera" type="Camera3D" parent="." unique_id=1182773711]
+transform = Transform3D(0.99999666, -0.0025011585, 0.0006399621, 0, 0.2478808, 0.96879053, -0.002581733, -0.9687873, 0.24787998, -0.10331911, 4.5924625, 1.6512189)
