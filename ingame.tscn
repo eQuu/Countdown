@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://bxu3gvf1e5lfq"]
 
+[ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://objects/Player.tscn" id="1_0bpjf"]
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
 ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -24,8 +26,15 @@ shadow_enabled = true
 environment = SubResource("Environment_62bee")
 
 [node name="Floor" type="MeshInstance3D" parent="." unique_id=1909032072]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+transform = Transform3D(30, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0)
 mesh = SubResource("PlaneMesh_tp80y")
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1182773711]
-transform = Transform3D(0.99999666, -0.0025011585, 0.0006399621, 0, 0.2478808, 0.96879053, -0.002581733, -0.9687873, 0.24787998, -0.10331911, 4.5924625, 1.6512189)
+transform = Transform3D(0.9999759, -0.0067925616, 0.0014494577, 0, 0.20869051, 0.97798175, -0.0069454894, -0.97795814, 0.20868547, 0.11678083, 13.604237, 3.5383928)
+
+[node name="Player1" parent="." unique_id=259441083 instance=ExtResource("1_0bpjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
+
+[node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
+_playerNumber = 2

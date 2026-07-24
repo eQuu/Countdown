@@ -42,3 +42,4 @@ desktop.ini
 # Export-Zugangsdaten
 export.cfg
 export_credentials.cfg
+*.mdc

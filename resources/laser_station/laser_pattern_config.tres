@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="LaserPatternConfig" format=3 uid="uid://c2kjwpq48xehb"]
+
+[ext_resource type="Script" uid="uid://dwv4ohie2hg11" path="res://scripts/laser_station/LaserPatternConfig.cs" id="1_config"]
+[ext_resource type="Script" uid="uid://dtb6m0kmfl437" path="res://scripts/laser_station/LaserPatternDefinition.cs" id="2_def"]
+
+[sub_resource type="Resource" id="Pattern_cross_four"]
+script = ExtResource("2_def")
+Id = "cross_four"
+DisplayName = "Cross (4x 90 deg)"
+ArmAnglesDegrees = PackedFloat32Array(0, 90, 180, 270)
+
+[sub_resource type="Resource" id="Pattern_single"]
+script = ExtResource("2_def")
+Id = "single"
+DisplayName = "Single"
+
+[sub_resource type="Resource" id="Pattern_triple"]
+script = ExtResource("2_def")
+Id = "triple"
+DisplayName = "Triple (120 deg)"
+ArmAnglesDegrees = PackedFloat32Array(0, 120, 240)
+
+[sub_resource type="Resource" id="Pattern_line_two"]
+script = ExtResource("2_def")
+Id = "line_two"
+DisplayName = "Line (2x)"
+ArmAnglesDegrees = PackedFloat32Array(0, 180)
+
+[resource]
+script = ExtResource("1_config")
+Patterns = Array[Resource]([SubResource("Pattern_cross_four"), SubResource("Pattern_single"), SubResource("Pattern_triple"), SubResource("Pattern_line_two")])

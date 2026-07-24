@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://csvrqxxmh6fgu"]
+
+[ext_resource type="Script" uid="uid://cooqqeghu54dq" path="res://objects/Player.cs" id="1_8ak8y"]
+
+[sub_resource type="Animation" id="Animation_8ak8y"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_gndvh"]
+resource_name = "walk"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
+_data = {
+&"idle": SubResource("Animation_8ak8y"),
+&"walk": SubResource("Animation_gndvh")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_gndvh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qkrsc"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tp80y"]
+material = SubResource("StandardMaterial3D_qkrsc")
+
+[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer")]
+script = ExtResource("1_8ak8y")
+_animationPlayer = NodePath("AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1844725914]
+libraries/ = SubResource("AnimationLibrary_gndvh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1686967469]
+shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=1183211253]
+mesh = SubResource("BoxMesh_gndvh")
+
+[node name="Eyes" type="MeshInstance3D" parent="." unique_id=1139176236]
+transform = Transform3D(-1.0927847e-08, 0, 0.75, 0, 0.252, 0, -0.25, 0, -3.278354e-08, 0, 0.4, 0.4)
+mesh = SubResource("BoxMesh_tp80y")

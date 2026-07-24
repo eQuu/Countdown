@@ -1,0 +1,640 @@
+# ZERO ARENA – Game Design Document
+
+## Elevator Pitch
+
+**ZERO ARENA** ist ein lokales 1-gegen-1-Arenaspiel in einer futuristischen Voxelwelt. Zwei Spieler treten mit Controllern gegeneinander an und kämpfen nicht direkt mit Waffen, sondern kontrollieren Laseranlagen innerhalb der Arena. Jede übernommene Laserstation erzeugt einen rotierenden Laserstrahl in der Farbe des jeweiligen Spielers. Ziel ist es, den Gegner mit den eigenen Lasern auszuschalten und gleichzeitig selbst den gegnerischen Strahlen auszuweichen.
+
+Das zentrale Thema des Game Jams ist **Countdown**. Dieser bestimmt das komplette Spiel:
+
+* Die Runde dauert exakt 60 Sekunden.
+* Jeder Spieler besitzt zusätzlich einen eigenen Countdown über seinem Kopf.
+* Je weiter die Runde fortschreitet, desto gefährlicher wird die Arena.
+
+Dadurch entsteht permanenter Zeitdruck.
+
+---
+
+# Spielprinzip
+
+Das Spiel orientiert sich am Grundprinzip von *Laser League*, besitzt aber eigene Mechaniken und einen deutlich stärkeren Fokus auf das Countdown-Thema.
+
+Jeder Spieler versucht:
+
+* Laserstationen zu übernehmen
+* möglichst viele Laser zu kontrollieren
+* den Gegner in die eigenen Laser zu treiben
+* seinen persönlichen Countdown rechtzeitig zurückzusetzen
+* bis zum Ende der Runde mehr Punkte als der Gegner zu sammeln
+
+---
+
+# Story
+
+Im Jahr 2148 wurde eine Trainingsarena entwickelt, in der autonome Energielaser getestet werden.
+
+Während eines letzten Tests gerät der Reaktorkern außer Kontrolle.
+
+Die komplette Arena befindet sich im Notfallmodus.
+
+Der Hauptreaktor startet einen unumkehrbaren Countdown.
+
+Die Sicherheitssysteme erlauben nur einem Team die Evakuierung.
+
+Beide Teilnehmer kämpfen daher um die Kontrolle der Energieversorgung.
+
+Mit jeder übernommenen Laserstation wird Energie gesammelt.
+
+Sobald der Countdown Null erreicht, öffnet sich genau eine Rettungskapsel.
+
+Der Spieler mit den meisten Energiepunkten darf die Arena verlassen.
+
+Der Verlierer bleibt zurück.
+
+---
+
+# Ziel
+
+Eine Runde dauert genau **60 Sekunden**.
+
+Nach Ablauf gewinnt der Spieler mit den meisten Punkten.
+
+Punkte erhält man durch:
+
+* Gegner mit eigenen Lasern treffen
+* Laserstationen kontrollieren
+
+---
+
+# Steuerung
+
+## Spieler 1
+
+* Linker Stick → Laufen
+* A → Dash
+* Start → Pause
+
+## Spieler 2
+
+* Linker Stick → Laufen
+* A → Dash
+* Start → Pause
+
+Es werden ausschließlich Controller verwendet.
+
+---
+
+# Arena
+
+Die Arena ist relativ klein.
+
+Der Spieler soll niemals länger als wenige Sekunden alleine sein.
+
+Eine Arena besteht aus:
+
+* Außenwänden
+* mehreren Hindernissen
+* sechs Laserstationen
+* zwei Spawnpunkten
+
+Beispiel:
+
+```text
+┌────────────────────────────┐
+│ Spawn1      L1       L2    │
+│                            │
+│      ███          ███      │
+│                            │
+│  L3        ███       L4    │
+│                            │
+│      ███          ███      │
+│                            │
+│  L5         L6      Spawn2 │
+└────────────────────────────┘
+```
+
+---
+
+# Spieler
+
+Jeder Spieler besitzt:
+
+* Bewegung
+* Dash
+* Respawn
+* persönliche Farbe
+* persönlichen Countdown
+
+Es gibt:
+
+* keine Waffen
+* keine Schüsse
+* keine Nahkampfangriffe
+
+Die komplette Offensive erfolgt über die Laser.
+
+---
+
+# Dash
+
+Der Dash dient ausschließlich zum Ausweichen.
+
+Eigenschaften:
+
+* kurze Geschwindigkeitserhöhung
+* ungefähr 0,2 Sekunden Dauer
+* ungefähr 1,5 Sekunden Cooldown
+
+Der Dash macht nicht unverwundbar.
+
+---
+
+# Laserstationen
+
+Die Laserstation ist das wichtigste Objekt der Arena.
+
+Jede Station besitzt drei Zustände.
+
+## Neutral
+
+* weiß
+* ungefährlich
+* gehört niemandem
+
+## Spieler 1
+
+* blau
+* Laser aktiv
+* gehört Spieler 1
+
+## Spieler 2
+
+* rot
+* Laser aktiv
+* gehört Spieler 2
+
+---
+
+# Übernahme
+
+Berührt ein Spieler eine Station:
+
+* Besitzer wechselt
+* Farbe ändert sich
+* Laser aktiviert sich
+* Sound wird abgespielt
+* persönlicher Countdown wird zurückgesetzt
+
+---
+
+# Laser
+
+Jede Station erzeugt einen rotierenden Laser.
+
+Eigenschaften:
+
+* 360° Rotation
+* konstante Geschwindigkeit
+* dauerhaft aktiv
+* Farbe entspricht Besitzer
+
+Eigene Laser:
+
+* ungefährlich
+
+Gegnerische Laser:
+
+* tödlich
+
+Neutrale Laser:
+
+* deaktiviert
+
+---
+
+# Treffer
+
+Berührt ein Spieler einen gegnerischen Laser:
+
+* Spieler stirbt
+* kurzer Effekt
+* Gegner erhält einen Punkt
+* Respawn nach ungefähr 1,5 Sekunden
+* Spawnschutz für etwa eine Sekunde
+
+---
+
+# Persönlicher Countdown
+
+Jeder Spieler besitzt zusätzlich einen eigenen Timer.
+
+Dieser schwebt ständig sichtbar über seinem Kopf.
+
+Der Timer startet beispielsweise bei:
+
+```text
+10
+```
+
+Er läuft permanent herunter.
+
+```text
+10
+9
+8
+7
+...
+```
+
+---
+
+# Timer zurücksetzen
+
+Der persönliche Timer wird zurückgesetzt, wenn der Spieler eine Laserstation übernimmt.
+
+Dadurch müssen die Spieler ständig aktiv bleiben.
+
+---
+
+# Stun
+
+Läuft der persönliche Countdown auf Null:
+
+Der Spieler wird nicht getötet.
+
+Stattdessen:
+
+* bleibt sofort stehen
+* kann sich zwei Sekunden lang nicht bewegen
+* Dash deaktiviert
+* Animation "System Error"
+
+Nach zwei Sekunden:
+
+* Countdown wieder auf Maximum
+* Spieler kann sich wieder bewegen
+
+Dadurch entstehen ständig Entscheidungen.
+
+Übernehme ich noch eine weitere Station?
+
+Oder rette ich erst meinen Countdown?
+
+---
+
+# Hauptcountdown
+
+Oben im HUD befindet sich zusätzlich der Rundencountdown.
+
+```text
+60
+59
+58
+...
+```
+
+---
+
+# Countdown-Phasen
+
+## 60 Sekunden
+
+Normale Arena.
+
+Normale Musik.
+
+Normale Laser.
+
+---
+
+## 45 Sekunden
+
+Warnsignal.
+
+Leichte Lichtänderung.
+
+---
+
+## 30 Sekunden
+
+Laser drehen schneller.
+
+Musik wird schneller.
+
+Arena pulsiert leicht.
+
+---
+
+## 15 Sekunden
+
+Sirenen.
+
+Warnlichter.
+
+Laser drehen nochmals schneller.
+
+Countdown wird groß eingeblendet.
+
+---
+
+## Letzte 10 Sekunden
+
+Jede Sekunde erscheint groß.
+
+```text
+10
+
+9
+
+8
+
+7
+```
+
+Mit jedem Tick:
+
+* Kamerawackeln
+* Sound
+* Lichtimpuls
+
+---
+
+## 0 Sekunden
+
+Alle Laser stoppen.
+
+Arena friert kurz ein.
+
+Große Anzeige:
+
+```text
+ZERO
+```
+
+Danach erscheint das Ergebnis.
+
+---
+
+# Punkte
+
+Punkte erhält man für:
+
+Treffer:
+
++1
+
+Optional:
+
+Kontrollierte Laserstation am Ende:
+
++1
+
+Dadurch lohnt sich dauerhaftes Erobern.
+
+---
+
+# Respawn
+
+Nach einem Treffer:
+
+Spieler verschwindet.
+
+Respawn nach ungefähr:
+
+1,5 Sekunden.
+
+Spawnschutz:
+
+1 Sekunde.
+
+---
+
+# Kamera
+
+Gemeinsame Kamera.
+
+Leicht schräg von oben.
+
+Die Kamera zoomt automatisch etwas heraus, wenn beide Spieler weit auseinanderlaufen.
+
+---
+
+# Grafikstil
+
+Komplette Voxelgrafik.
+
+Alle Modelle entstehen in MagicaVoxel.
+
+Stil:
+
+* futuristisch
+* sauber
+* wenige Farben
+* keine realistischen Details
+
+---
+
+# Modelle
+
+Spieler
+
+Laserstation
+
+Boden
+
+Wände
+
+Säulen
+
+Spawnplattform
+
+Countdown-Anzeige
+
+Arena-Dekoration
+
+---
+
+# Farben
+
+Spieler 1
+
+Blau
+
+Spieler 2
+
+Rot
+
+Neutral
+
+Weiß
+
+Arena
+
+Dunkelgrau
+
+Warnmodus
+
+Orange
+
+Countdown
+
+Rot
+
+---
+
+# Sound
+
+Benötigte Sounds:
+
+Menü
+
+Countdown
+
+Dash
+
+Laser aktivieren
+
+Laser übernehmen
+
+Treffer
+
+Respawn
+
+Gewonnen
+
+Verloren
+
+Warnsirene
+
+---
+
+# Musik
+
+Eine Musikdatei.
+
+Tempo verändert sich.
+
+Je näher Null kommt,
+
+desto schneller wirkt sie.
+
+---
+
+# Benutzeroberfläche
+
+Anzeige:
+
+Spieler 1 Punkte
+
+Spieler 2 Punkte
+
+Rundenzeit
+
+Persönlicher Countdown Spieler 1
+
+Persönlicher Countdown Spieler 2
+
+Große Countdown-Anzeigen
+
+Gewinnerbildschirm
+
+---
+
+# Technischer Aufbau
+
+Main
+
+GameManager
+
+Arena
+
+Camera
+
+UI
+
+AudioManager
+
+Players
+
+LaserStations
+
+CountdownManager
+
+---
+
+# Spielablauf
+
+Spiel starten
+
+↓
+
+Controller verbinden
+
+↓
+
+Beide drücken A
+
+↓
+
+3
+
+↓
+
+2
+
+↓
+
+1
+
+↓
+
+GO
+
+↓
+
+60 Sekunden spielen
+
+↓
+
+Laser übernehmen
+
+↓
+
+Persönlichen Countdown verwalten
+
+↓
+
+Gegner treffen
+
+↓
+
+Countdown erreicht Null
+
+↓
+
+ZERO
+
+↓
+
+Gewinner
+
+↓
+
+Neue Runde
+
+---
+
+# Besonderheit
+
+Der Countdown ist nicht einfach nur eine Uhr.
+
+Er beeinflusst ständig das komplette Spiel.
+
+Es existieren gleichzeitig drei Ebenen von Zeitdruck:
+
+1. Die gesamte Runde endet nach 60 Sekunden.
+
+2. Jeder Spieler besitzt zusätzlich seinen persönlichen Countdown und muss regelmäßig Laserstationen übernehmen, um nicht für zwei Sekunden bewegungsunfähig zu werden.
+
+3. Die Arena verändert sich kontinuierlich. Je näher der Hauptcountdown an Null kommt, desto schneller drehen sich die Laser, desto hektischer werden Licht, Musik und Effekte.
+
+Dadurch gibt es praktisch keine Phase, in der ein Spieler sicher ist. Jeder muss permanent Entscheidungen treffen: weitere Stationen erobern, den Gegner jagen oder rechtzeitig den eigenen Countdown zurücksetzen. Dieses Zusammenspiel macht den Countdown zur zentralen Spielmechanik und nicht nur zu einer Zeitanzeige.
