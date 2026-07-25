@@ -171,12 +171,10 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
 size = Vector3(0.5316162, 1.102396, 0.86826706)
 
-[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_countdownLabel")]
+[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer")]
 collision_layer = 2
 script = ExtResource("1_8ak8y")
 _animationPlayer = NodePath("AnimationPlayer")
-_countdownLabel = NodePath("PersonalCountdownLabel")
-CountdownLabelNorthOffset = 1.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
@@ -184,16 +182,6 @@ libraries/ = SubResource("AnimationLibrary_gndvh")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1686967469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
 shape = SubResource("BoxShape3D_8ak8y")
-
-[node name="PersonalCountdownLabel" type="Label3D" parent="." unique_id=1338396823]
-top_level = true
-pixel_size = 0.012
-billboard = 1
-no_depth_test = true
-render_priority = 10
-outline_modulate = Color(0, 0, 0, 0.85)
-text = "10"
-font_size = 72
 
 [node name="MeshRoot" type="Node3D" parent="." unique_id=1487964443]
 

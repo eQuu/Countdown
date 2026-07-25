@@ -4,5 +4,4 @@ public interface ILaserPlayer
 	bool IsInvulnerable { get; }
 	bool IsAlive { get; }
 	void HitByLaser(int attackingPlayerId);
-	void ResetPersonalCountdown();
 }
