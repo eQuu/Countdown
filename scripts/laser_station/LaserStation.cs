@@ -146,6 +146,10 @@ public partial class LaserStation : Node3D
 	[Export] public float PlayerExceptionRefreshSeconds { get; set; } = 0.5f;
 	[Export] public float OverlapPollIntervalSeconds { get; set; } = 0.05f;
 
+	[ExportCategory("Sounds")]
+	[Export] public AudioStreamPlayer ActivationAudioStreamPlayer { get; set; }
+	[Export] public Godot.Collections.Array<AudioStream> ActivationAudioStreams { get; set; }
+	
 	public LaserOwner CurrentOwner { get; private set; } = LaserOwner.Neutral;
 
 	public int OwnerPlayerId => (int)CurrentOwner;
@@ -361,6 +365,7 @@ public partial class LaserStation : Node3D
 		UpdateLaserLength();
 		StartLifetime();
 		CallDeferred(MethodName.EnsureActiveWallsReady);
+		PlayActivationAudioStream();
 	}
 
 	public void Deactivate()
@@ -2321,5 +2326,14 @@ public partial class LaserStation : Node3D
 	private void OnLifetimeTimeout()
 	{
 		BeginRetract();
+	}
+	
+	private void PlayActivationAudioStream()
+	{
+		if (ActivationAudioStreamPlayer == null || ActivationAudioStreams == null) return;
+		
+		ActivationAudioStreamPlayer.Stop();
+		ActivationAudioStreamPlayer.Stream = ActivationAudioStreams.PickRandom();
+		ActivationAudioStreamPlayer.Play();
 	}
 }

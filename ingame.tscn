@@ -12,8 +12,9 @@
 [ext_resource type="AudioStream" uid="uid://d1n8ab8h47eyr" path="res://sfx/countdownwarn.wav" id="4_ox1sw"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
 [ext_resource type="AudioStream" uid="uid://breqf31ynofi4" path="res://sfx/kill.wav" id="4_pyieu"]
-[ext_resource type="PackedScene" uid="uid://b2rssp7v0lpu2" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
+[ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
 [ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
+[ext_resource type="AudioStream" uid="uid://ct0imp1ula3kp" path="res://sfx/lights_off.wav" id="6_l3vfh"]
 [ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
 [ext_resource type="Texture2D" uid="uid://0mnlsshnieen" path="res://paintings/the_rejected_poet.jpg" id="7_snqyf"]
@@ -59,7 +60,7 @@ _player2AudioStreamPlayer = NodePath("Player2AudioStreamPlayer")
 _countdownActiveAudioStream = ExtResource("3_apxp4")
 _countdownWarningAudioStream = ExtResource("4_ox1sw")
 _lightsOnAudioStream = ExtResource("3_pyieu")
-_lightsOffAudioStream = ExtResource("4_pyieu")
+_lightsOffAudioStream = ExtResource("6_l3vfh")
 _player1DeathAudioStream = ExtResource("4_pyieu")
 _player2DeathAudioStream = ExtResource("4_pyieu")
 
