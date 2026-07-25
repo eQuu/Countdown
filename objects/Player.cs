@@ -5,13 +5,15 @@ using static Godot.TextServer;
 
 public partial class Player : CharacterBody3D
 {
-    public const float SPEED = 8f;
     public const float FRICTION = 20f;
 
     [Export] private AnimationPlayer _animationPlayer;
     [Export] private int _playerNumber = 1;
+    [Export] private Timer _timer;
 
     private Vector3 _VelocityPlayer = Vector3.Zero;
+    private float _speed = 8f;
+    private bool canDash = true;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -32,9 +34,19 @@ public partial class Player : CharacterBody3D
 
     private void HandleMovement(double delta)
     {
+        // TODO: Bei Kollision die Velocity entfernen. Sonst klebt man an Dingen
         Vector2 direction = Vector2.Zero;
 
         direction = Input.GetVector("MoveLeftPlayer" + _playerNumber, "MoveRightPlayer" + _playerNumber, "MoveUpPlayer" + _playerNumber, "MoveDownPlayer" + _playerNumber);
+
+        if (canDash && Input.IsActionJustReleased("ActionPlayer" + _playerNumber))
+        {
+            canDash = false;
+            _timer.Start();
+            Vector3 forward = GlobalTransform.Basis.Z;
+            _VelocityPlayer.X = forward.Normalized().X * _speed * 3;
+            _VelocityPlayer.Z = forward.Normalized().Z * _speed * 3;
+        }
 
         ApplySlippyness(direction, delta);
         AnimatePlayer(direction);
@@ -47,7 +59,7 @@ public partial class Player : CharacterBody3D
     {
         if (direction.X != 0)
         {
-            _VelocityPlayer.X = (float)Mathf.MoveToward(_VelocityPlayer.X, (direction.X * SPEED), FRICTION * delta);
+            _VelocityPlayer.X = (float)Mathf.MoveToward(_VelocityPlayer.X, (direction.X * _speed), FRICTION * delta);
         }
         else
         {
@@ -57,7 +69,7 @@ public partial class Player : CharacterBody3D
         if (direction.Y != 0)
         {
 
-            _VelocityPlayer.Z = (float)Mathf.MoveToward(_VelocityPlayer.Z, (direction.Y * SPEED), FRICTION * delta);
+            _VelocityPlayer.Z = (float)Mathf.MoveToward(_VelocityPlayer.Z, (direction.Y * _speed), FRICTION * delta);
         }
         else
         {
@@ -78,5 +90,10 @@ public partial class Player : CharacterBody3D
         {
             _animationPlayer.Play("idle");
         }
+    }
+
+    private void OnTimerTimeout()
+    {
+        canDash = true;
     }
 }
