@@ -18,9 +18,11 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	[Export] public float Gravity { get; set; } = 20.0f;
 	[Export] public float LockedTimeLabelHeight { get; set; } = 1.35f;
 	[Export] public float LockedTimeLabelNorthOffset { get; set; } = 0.45f;
+	[Export] public float DefaultStunSeconds { get; set; } = 2.5f;
 
 	public bool IsInvulnerable { get; private set; }
 	public bool IsAlive { get; private set; } = true;
+	public bool IsStunned => _stunTimeLeft > 0.0f;
 	public Label3D LockedTimeLabel => _lockedTimeLabel;
 
 	private float _dashTimeLeft;
@@ -32,6 +34,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private bool _dashGrantsInvulnerability;
 	private float _respawnTimeLeft;
 	private float _invulnTimeLeft;
+	private float _stunTimeLeft;
 	private Vector3 _spawnPosition;
 
 	public override void _Ready()
@@ -59,7 +62,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		float dt = (float)delta;
 		UpdateStatusTimers(dt);
 
-		if (!IsAlive)
+		if (!IsAlive || IsStunned)
 		{
 			ApplyGravity(dt);
 			Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
@@ -81,14 +84,35 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		IsAlive = false;
 		_dashTimeLeft = 0.0f;
 		_dashGrantsInvulnerability = false;
+		_stunTimeLeft = 0.0f;
 		_respawnTimeLeft = RespawnDelaySeconds;
 		Velocity = Vector3.Zero;
 		GD.Print($"Player {PlayerId} hit by laser of player {attackingPlayerId}");
 	}
 
-	public void StartVulnerableDash(Vector3 direction = default)
+	public void ApplyStun(float durationSeconds = -1.0f)
 	{
 		if (!IsAlive)
+		{
+			return;
+		}
+
+		float duration = durationSeconds > 0.0f ? durationSeconds : DefaultStunSeconds;
+		_stunTimeLeft = Mathf.Max(_stunTimeLeft, duration);
+		_dashTimeLeft = 0.0f;
+		_isDashing = false;
+		if (_dashGrantsInvulnerability && _invulnTimeLeft <= 0.0f)
+		{
+			IsInvulnerable = false;
+		}
+
+		_dashGrantsInvulnerability = false;
+		Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
+	}
+
+	public void StartVulnerableDash(Vector3 direction = default)
+	{
+		if (!IsAlive || IsStunned)
 		{
 			return;
 		}
@@ -98,7 +122,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 	public void StartInvulnerableDash(Vector3 direction = default)
 	{
-		if (!IsAlive)
+		if (!IsAlive || IsStunned)
 		{
 			return;
 		}
@@ -130,6 +154,11 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			}
 		}
 
+		if (_stunTimeLeft > 0.0f)
+		{
+			_stunTimeLeft = Mathf.Max(0.0f, _stunTimeLeft - delta);
+		}
+
 		if (!IsAlive)
 		{
 			_respawnTimeLeft -= delta;
@@ -149,6 +178,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_invulnTimeLeft = SpawnProtectionSeconds;
 		_dashTimeLeft = 0.0f;
 		_dashCooldownLeft = 0.0f;
+		_stunTimeLeft = 0.0f;
 	}
 
 	private void HandleMovement(float delta)

@@ -20,6 +20,10 @@ public partial class GameManager : Node3D
 	[ExportCategory("Managers")]
 	[Export] public LightingManager LightingManager { get; set; }
 
+	[ExportCategory("Timeout Punishment")]
+	[Export] public float CeilingLightsDelaySeconds { get; set; } = 2.0f;
+	[Export] public float TimeoutStunSeconds { get; set; } = 2.5f;
+
 	public CountdownChallengeManager Challenge => _countdownChallenge;
 
 	public override void _Ready()
@@ -27,7 +31,6 @@ public partial class GameManager : Node3D
 		ResolveChallengeManager();
 		ConnectChallengeSignals();
 		CallDeferred(MethodName.BeginChallengeAfterTreeReady);
-		LightingManager.DeactivateCeilingLights(); // Licht wird zum Spielstart ausgemacht
 	}
 
 	public override void _ExitTree()
@@ -49,7 +52,9 @@ public partial class GameManager : Node3D
 	{
 		ResolvePlayerLabelsFromScene();
 		ResolvePlayersFromScene();
+		ResolveLightingManagerFromScene();
 		WireChallengeLabels();
+		LightingManager?.DeactivateCeilingLights();
 
 		if (_countdownChallenge == null)
 		{
@@ -90,6 +95,11 @@ public partial class GameManager : Node3D
 	{
 		PlayerOne ??= GetNodeOrNull<Player>("../Player1");
 		PlayerTwo ??= GetNodeOrNull<Player>("../Player2");
+	}
+
+	private void ResolveLightingManagerFromScene()
+	{
+		LightingManager ??= GetNodeOrNull<LightingManager>("../LightingManager");
 	}
 
 	private void WireChallengeLabels()
@@ -176,7 +186,29 @@ public partial class GameManager : Node3D
 		GD.Print(
 			$"Both players allowed the countdown to reach {timeoutValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}."
 		);
+		ResolveLightingManagerFromScene();
+		LightingManager?.ActivateCeilingLights();
 
-		LightingManager.ActivateCeilingLights();
+		PlayerOne?.ApplyStun(TimeoutStunSeconds);
+		PlayerTwo?.ApplyStun(TimeoutStunSeconds);
+
+		ScheduleCeilingLightsDeactivation();
+	}
+
+	private async void ScheduleCeilingLightsDeactivation()
+	{
+		float delay = Mathf.Max(0.0f, CeilingLightsDelaySeconds);
+		if (delay > 0.0f)
+		{
+			await ToSignal(GetTree().CreateTimer(delay), SceneTreeTimer.SignalName.Timeout);
+		}
+
+		if (!IsInstanceValid(this))
+		{
+			return;
+		}
+
+		ResolveLightingManagerFromScene();
+		LightingManager?.DeactivateCeilingLights();
 	}
 }
