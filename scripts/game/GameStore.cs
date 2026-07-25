@@ -44,6 +44,10 @@ public partial class GameStore : Node
 	/// <summary>1 oder 2 = Gewinner, 0 = noch keiner / Remis / zurückgesetzt.</summary>
 	public int WinnerPlayerId { get; private set; }
 
+	public const string MainMenuScenePath = "res://main_menu.tscn";
+	public const string IngameScenePath = "res://ingame.tscn";
+	public const string GameOverScenePath = "res://game_over.tscn";
+
 	public override void _EnterTree()
 	{
 		Instance = this;
@@ -203,6 +207,31 @@ public partial class GameStore : Node
 	public void ClearWinner()
 	{
 		SetWinner(0);
+	}
+
+	public void GoToMainMenu() => ChangeToScene(MainMenuScenePath);
+
+	public void GoToIngame()
+	{
+		ClearWinner();
+		ChangeToScene(IngameScenePath);
+	}
+
+	public void GoToGameOver() => ChangeToScene(GameOverScenePath);
+
+	public void ChangeToScene(string scenePath)
+	{
+		if (string.IsNullOrEmpty(scenePath))
+		{
+			GD.PushError("GameStore.ChangeToScene: scene path is empty.");
+			return;
+		}
+
+		Error error = GetTree().ChangeSceneToFile(scenePath);
+		if (error != Error.Ok)
+		{
+			GD.PushError($"GameStore.ChangeToScene failed for '{scenePath}': {error}");
+		}
 	}
 
 	public bool Has(string key) => _values.ContainsKey(key);

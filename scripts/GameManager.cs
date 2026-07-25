@@ -37,7 +37,7 @@ public partial class GameManager : Node3D
 	[Export] public float TimeoutStunSeconds { get; set; } = 2.5f;
 
 	[ExportCategory("Score")]
-	[Export] public int MaxScore { get; set; } = 20;
+	[Export] public int MaxScore { get; set; } = 2;
 	[Export] public Color PlayerOneScoreColor { get; set; } = new Color(0.1f, 0.4f, 1.0f);
 	[Export] public Color PlayerTwoScoreColor { get; set; } = new Color(1.0f, 0.15f, 0.1f);
 
@@ -301,9 +301,16 @@ public partial class GameManager : Node3D
 
 		IsMatchFinished = true;
 		GameStore.Instance?.SetWinner(winnerPlayerId);
+		GameStore.Instance?.SetScores(PlayerOneScore, PlayerTwoScore);
 		GD.Print($"Match won by player {winnerPlayerId}. Final score P1={PlayerOneScore} P2={PlayerTwoScore}");
 		EmitSignal(SignalName.MatchWon, winnerPlayerId, PlayerOneScore, PlayerTwoScore);
 		EmitSignal(SignalName.ScoreLimitReached, winnerPlayerId, PlayerOneScore, PlayerTwoScore);
+		CallDeferred(MethodName.GoToGameOverScene);
+	}
+
+	private void GoToGameOverScene()
+	{
+		GameStore.Instance?.GoToGameOver();
 	}
 
 	private void OnScoreLimitReached(int winnerPlayerId, int playerOneScore, int playerTwoScore)

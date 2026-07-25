@@ -19,6 +19,7 @@ public partial class MainMenuColorSelect : Node3D
 	[Export] public Label PromptLabel { get; set; }
 	[Export] public string ChooseColorText { get; set; } = "choose your color";
 	[Export] public string StartText { get; set; } = "Press start or space..";
+	[Export] public string StartAction { get; set; } = "menu_start";
 
 	private static readonly string[] SwatchNames = ["Blue", "Red", "Yellow", "Green"];
 
@@ -108,8 +109,32 @@ public partial class MainMenuColorSelect : Node3D
 			return;
 		}
 
+		if (@event.IsActionPressed(StartAction, allowEcho: false, exactMatch: false))
+		{
+			TryStartMatch();
+			GetViewport()?.SetInputAsHandled();
+			return;
+		}
+
 		HandleInputEvent(_playerOne, @event, OpponentBlockedIndex(_playerOne));
 		HandleInputEvent(_playerTwo, @event, OpponentBlockedIndex(_playerTwo));
+	}
+
+	private void TryStartMatch()
+	{
+		if (!_playerOne.Confirmed || !_playerTwo.Confirmed)
+		{
+			return;
+		}
+
+		if (GameStore.Instance == null)
+		{
+			GD.PushError("MainMenuColorSelect: GameStore.Instance is missing.");
+			return;
+		}
+
+		GD.Print("Main menu start -> GameStore.GoToIngame()");
+		GameStore.Instance.GoToIngame();
 	}
 
 	public override void _Process(double delta)
