@@ -369,4 +369,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
 PlayerId = 2
-IndicatorColor = Color(1, 1, 1, 1)
+IndicatorColor = Color(1, 0.14901961, 0.101960786, 1)
