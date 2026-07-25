@@ -1,8 +1,5 @@
 using Godot;
 
-/// <summary>
-/// Pulsierender Game-Over-Prompt — Start/Space bringt zurück ins Main Menu.
-/// </summary>
 public partial class GameOverReturnPrompt : MainMenuPromptLabel
 {
 	[Export] public string StartAction { get; set; } = "menu_start";
