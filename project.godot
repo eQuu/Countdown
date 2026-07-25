@@ -24,13 +24,6 @@ window/stretch/aspect="expand"
 
 project/assembly_name="Countdown"
 
-[layer_names]
-
-3d_physics/layer_1="World"
-3d_physics/layer_2="Players"
-3d_physics/layer_3="CaptureAreas"
-3d_physics/layer_4="Lasers"
-
 [input]
 
 MoveUpPlayer1={
@@ -93,6 +86,13 @@ ActionPlayer2={
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":1,"button_index":0,"pressure":0.0,"pressed":true,"script":null)
 ]
 }
+
+[layer_names]
+
+3d_physics/layer_1="World"
+3d_physics/layer_2="Players"
+3d_physics/layer_3="CaptureAreas"
+3d_physics/layer_4="Lasers"
 
 [physics]
 
