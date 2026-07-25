@@ -47,6 +47,64 @@ tracks/4/keys = {
 "update": 0,
 "values": [Vector3(0, 0, 0)]
 }
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, 0, -0.6, 0)
+
+[sub_resource type="Animation" id="Animation_x8kxw"]
+resource_name = "dash"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootR")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, 0.7, 0.75, 1, -0.3, -0.6, 0.7)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, -0.3, 0.73333335, 1, 0.3, -0.6, -0.3)
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0.5235988, -1.5707964, 0.87266463), Vector3(0.5235988, -1.5707964, 0.87266463)]
+}
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBody")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.6, 0.3, 0.75, 1, 0, -0.6, 0.3)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarHandL")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.4, 0, -0.6, 0.75, 1, 0.4, 0, -0.6)
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarHandR")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, -0.6, 0, 0.4, 0.25, 1, -0.3, 0, 0.4, 0.75, 1, -0.3, 0, 0.4, 1, 1, -0.6, 0, 0.4)
 
 [sub_resource type="Animation" id="Animation_8ak8y"]
 resource_name = "idle"
@@ -105,6 +163,7 @@ tracks/5/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
 _data = {
 &"RESET": SubResource("Animation_83hs8"),
+&"dash": SubResource("Animation_x8kxw"),
 &"idle": SubResource("Animation_8ak8y"),
 &"walk": SubResource("Animation_gndvh")
 }
@@ -127,7 +186,7 @@ shape = SubResource("BoxShape3D_8ak8y")
 [node name="MeshRoot" type="Node3D" parent="." unique_id=1487964443]
 
 [node name="BurglarBody" type="MeshInstance3D" parent="MeshRoot" unique_id=1733556175]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.5839681, 0)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.6, 0)
 mesh = ExtResource("2_gndvh")
 
 [node name="BurglarHandL" type="MeshInstance3D" parent="MeshRoot" unique_id=1702706192]
