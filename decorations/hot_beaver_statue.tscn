@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://df6amywl3jie6"]
+
+[ext_resource type="Material" uid="uid://dq5ofs5rskedg" path="res://decorations/materials/hot_beaver_statue/PedestralMaterial.tres" id="1_4sx3h"]
+[ext_resource type="PackedScene" uid="uid://b6n1euq3amdpp" path="res://decorations/hot_beaver_statue_statue.tscn" id="2_jfrlk"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_2prtj"]
+material = ExtResource("1_4sx3h")
+size = Vector3(2, 1, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4sx3h"]
+material = ExtResource("1_4sx3h")
+size = Vector3(1.8, 1, 3.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bj4t2"]
+size = Vector3(5.5, 10, 12)
+
+[node name="HotBeaverStatue" type="Node3D" unique_id=1483454640]
+
+[node name="Scale" type="Node3D" parent="." unique_id=522384735]
+transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, 0, 0, 0)
+
+[node name="Pedestral1" type="MeshInstance3D" parent="Scale" unique_id=559294255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_2prtj")
+
+[node name="Pedestral2" type="MeshInstance3D" parent="Scale" unique_id=1960171938]
+transform = Transform3D(1, 0, 0, 0, 0.95105654, -0.309017, 0, 0.309017, 0.95105654, 0, 1, -0.8)
+mesh = SubResource("BoxMesh_4sx3h")
+
+[node name="HotBeaver" parent="Scale" unique_id=1651403394 instance=ExtResource("2_jfrlk")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.28501034, 1.0918676, 1.4044251)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1993998439]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1965991825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -1)
+shape = SubResource("BoxShape3D_bj4t2")

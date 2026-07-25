@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://c5aha0ysfslje" path="res://decorations/beaver_statue.tscn" id="12_vj2cp"]
 [ext_resource type="PackedScene" uid="uid://cwjyhdaplmmwx" path="res://camera/SurveillanceCamera.tscn" id="14_vj2cp"]
 [ext_resource type="PackedScene" uid="uid://c02rhkracheqr" path="res://decorations/door.tscn" id="19_ox1sw"]
+[ext_resource type="PackedScene" uid="uid://df6amywl3jie6" path="res://decorations/hot_beaver_statue.tscn" id="20_gj2at"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -40,15 +41,6 @@ size = Vector3(74, 0.2, 34)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(80, 0.2, 40)
-
-[sub_resource type="BoxMesh" id="BoxMesh_testwall"]
-size = Vector3(0.4, 3, 8)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_testwall"]
-albedo_color = Color(0.35, 0.38, 0.42, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_testwall"]
-size = Vector3(0.4, 3, 8)
 
 [node name="Ingame" type="Node3D" unique_id=1277312797]
 
@@ -248,6 +240,8 @@ _animationStartTime = 4.0
 transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, 29, 4.4, -13)
 _animationStartTime = 2.0
 
+[node name="HotBeaverStatue" parent="Decorations" unique_id=1483454640 instance=ExtResource("20_gj2at")]
+
 [node name="DarkLights" type="Node3D" parent="." unique_id=1812802562]
 
 [node name="OmniLight3DLeft" type="OmniLight3D" parent="DarkLights" unique_id=1885585873]
@@ -329,17 +323,6 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -14,
 light_energy = 40.0
 spot_range = 20.0
 spot_angle = 90.0
-
-[node name="TestWall" type="StaticBody3D" parent="." unique_id=1395480251]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 0)
-collision_mask = 0
-
-[node name="Mesh" type="MeshInstance3D" parent="TestWall" unique_id=2027786548]
-mesh = SubResource("BoxMesh_testwall")
-surface_material_override/0 = SubResource("StandardMaterial3D_testwall")
-
-[node name="Collision" type="CollisionShape3D" parent="TestWall" unique_id=829401290]
-shape = SubResource("BoxShape3D_testwall")
 
 [node name="LaserStationSpawns" type="Node3D" parent="." unique_id=1147025422]
 
