@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bye3bi2nhkdh"]
+
+[ext_resource type="Texture2D" uid="uid://dpje82vyytx3u" path="res://decorations/textures/Wallpaper001B_1K-JPG_Displacement.jpg" id="1_ntr71"]
+[ext_resource type="Texture2D" uid="uid://d1u0nxxsix02w" path="res://decorations/textures/Wallpaper001B_1K-JPG_NormalDX.jpg" id="2_ds5hs"]
+[ext_resource type="Texture2D" uid="uid://dypsb52am2i53" path="res://decorations/textures/Wallpaper001B_1K-JPG_Roughness.jpg" id="3_w7wcu"]
+
+[resource]
+roughness_texture = ExtResource("3_w7wcu")
+normal_enabled = true
+normal_texture = ExtResource("2_ds5hs")
+heightmap_enabled = true
+heightmap_texture = ExtResource("1_ntr71")
