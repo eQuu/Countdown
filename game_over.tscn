@@ -750,23 +750,23 @@ light_energy = 40.0
 spot_range = 20.0
 spot_angle = 90.0
 
-[node name="Player" type="CharacterBody3D" parent="." unique_id=845121509]
-transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -19.389156, 1, 13.66358)
+[node name="LoserPlayer" type="CharacterBody3D" parent="." unique_id=845121509]
+transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -18.285748, 1, 13.66358)
 collision_layer = 2
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Player" unique_id=1844725914]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="LoserPlayer" unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1686967469]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LoserPlayer" unique_id=1686967469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
 shape = SubResource("BoxShape3D_8ak8y")
 
-[node name="IndicatorRing" type="MeshInstance3D" parent="Player" unique_id=443270399]
+[node name="IndicatorRing" type="MeshInstance3D" parent="LoserPlayer" unique_id=443270399]
 transform = Transform3D(0.99556094, -0.033482634, -0.087958366, 0.08539014, -0.07165085, 0.9937679, -0.03957628, -0.9968675, -0.068473734, -0.03562498, -0.22069931, 0.43924212)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ring")
 
-[node name="LockedTimeLabel" type="Label3D" parent="Player" unique_id=2070574854]
+[node name="LockedTimeLabel" type="Label3D" parent="LoserPlayer" unique_id=2070574854]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
 top_level = true
 visible = false
@@ -778,47 +778,47 @@ outline_modulate = Color(0, 0, 0, 0.85)
 text = "0.00"
 font_size = 72
 
-[node name="MeshRoot" type="Node3D" parent="Player" unique_id=1487964443]
+[node name="MeshRoot" type="Node3D" parent="LoserPlayer" unique_id=1487964443]
 
-[node name="BurglarBody" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=1733556175]
+[node name="BurglarBody" type="MeshInstance3D" parent="LoserPlayer/MeshRoot" unique_id=1733556175]
 transform = Transform3D(5.9624403e-09, 0, -0.5, 0, 0.5, 0, 0.5, 0, 5.9624403e-09, 0, -0.6, 0)
 mesh = ExtResource("17_jhou3")
 
-[node name="BurglarHandL" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=1702706192]
+[node name="BurglarHandL" type="MeshInstance3D" parent="LoserPlayer/MeshRoot" unique_id=1702706192]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
 mesh = ExtResource("18_3xhsb")
 
-[node name="BurglarHandR" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=573512098]
+[node name="BurglarHandR" type="MeshInstance3D" parent="LoserPlayer/MeshRoot" unique_id=573512098]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.6, 0, 0)
 mesh = ExtResource("18_3xhsb")
 
-[node name="BurglarBootL" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=112262616]
+[node name="BurglarBootL" type="MeshInstance3D" parent="LoserPlayer/MeshRoot" unique_id=112262616]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="BurglarBootR" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=1879685013]
+[node name="BurglarBootR" type="MeshInstance3D" parent="LoserPlayer/MeshRoot" unique_id=1879685013]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="Player2" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_animationPlayer")]
+[node name="WinnerPlayer" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_animationPlayer")]
 transform = Transform3D(-1.5356864, 0, 1.2812756, 0, 2, 0, -1.2812756, 0, -1.5356864, -29.20708, 1.8480008, 6.924017)
 collision_layer = 2
 script = ExtResource("19_k7c8f")
 _animationPlayer = NodePath("AnimationPlayer")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Player2" unique_id=1463083189]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="WinnerPlayer" unique_id=1463083189]
 libraries/ = SubResource("AnimationLibrary_0o5rp")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player2" unique_id=599772486]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WinnerPlayer" unique_id=599772486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
 shape = SubResource("BoxShape3D_8ak8y")
 
-[node name="IndicatorRing" type="MeshInstance3D" parent="Player2" unique_id=1239172712]
+[node name="IndicatorRing" type="MeshInstance3D" parent="WinnerPlayer" unique_id=1239172712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ring")
 
-[node name="LockedTimeLabel" type="Label3D" parent="Player2" unique_id=166350129]
+[node name="LockedTimeLabel" type="Label3D" parent="WinnerPlayer" unique_id=166350129]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
 top_level = true
 visible = false
@@ -830,24 +830,31 @@ outline_modulate = Color(0, 0, 0, 0.85)
 text = "0.00"
 font_size = 72
 
-[node name="MeshRoot" type="Node3D" parent="Player2" unique_id=471171087]
+[node name="MeshRoot" type="Node3D" parent="WinnerPlayer" unique_id=471171087]
 
-[node name="BurglarBody" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1721999872]
+[node name="BurglarBody" type="MeshInstance3D" parent="WinnerPlayer/MeshRoot" unique_id=1721999872]
 transform = Transform3D(5.9624403e-09, 0, -0.5, 0, 0.5, 0, 0.5, 0, 5.9624403e-09, 0, -0.6, 0)
 mesh = ExtResource("17_jhou3")
 
-[node name="BurglarHandL" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1144193239]
+[node name="BurglarHandL" type="MeshInstance3D" parent="WinnerPlayer/MeshRoot" unique_id=1144193239]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
 mesh = ExtResource("18_3xhsb")
 
-[node name="BurglarHandR" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1250992777]
+[node name="BurglarHandR" type="MeshInstance3D" parent="WinnerPlayer/MeshRoot" unique_id=1250992777]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.6, 0, 0)
 mesh = ExtResource("18_3xhsb")
 
-[node name="BurglarBootL" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1122039960]
+[node name="BurglarBootL" type="MeshInstance3D" parent="WinnerPlayer/MeshRoot" unique_id=1122039960]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="BurglarBootR" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=94261413]
+[node name="BurglarBootR" type="MeshInstance3D" parent="WinnerPlayer/MeshRoot" unique_id=94261413]
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
+
+[node name="Button" type="Button" parent="." unique_id=683192253]
+offset_left = 573.0
+offset_top = 523.0
+offset_right = 700.0
+offset_bottom = 587.0
+text = "Main Menu"
