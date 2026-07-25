@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cooqqeghu54dq" path="res://player/Player.cs" id="1_8ak8y"]
 [ext_resource type="ArrayMesh" uid="uid://c7kwiukx1b3j3" path="res://player/burglar_body.vox" id="2_gndvh"]
+[ext_resource type="Material" uid="uid://36mj44wixb1f" path="res://player/Shoe_Particle_Color.tres" id="2_x8kxw"]
 [ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="3_83hs8"]
 [ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="4_x8kxw"]
 
@@ -171,11 +172,21 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
 size = Vector3(0.5316162, 1.102396, 0.86826706)
 
-[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_lockedTimeLabel")]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aqcbf"]
+albedo_color = Color(1, 0.8, 0.6, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tp80y"]
+material = SubResource("StandardMaterial3D_aqcbf")
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gskgj"]
+material = ExtResource("2_x8kxw")
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer")]
 collision_layer = 2
 script = ExtResource("1_8ak8y")
 _animationPlayer = NodePath("AnimationPlayer")
-_lockedTimeLabel = NodePath("LockedTimeLabel")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
@@ -184,21 +195,43 @@ libraries/ = SubResource("AnimationLibrary_gndvh")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
 shape = SubResource("BoxShape3D_8ak8y")
 
-[node name="LockedTimeLabel" type="Label3D" parent="."]
+[node name="LockedTimeLabel" type="Label3D" parent="." unique_id=2070574854]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
-visible = false
 top_level = true
+visible = false
 pixel_size = 0.012
 billboard = 1
 no_depth_test = true
 render_priority = 10
-outline_size = 12
 outline_modulate = Color(0, 0, 0, 0.85)
 text = "0.00"
 font_size = 72
-horizontal_alignment = 1
-vertical_alignment = 1
-cast_shadow = 0
+
+[node name="DeathEmitterSkin" type="CPUParticles3D" parent="." unique_id=1556009662]
+emitting = false
+amount = 75
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+mesh = SubResource("BoxMesh_tp80y")
+emission_shape = 3
+emission_box_extents = Vector3(0.2, 0.2, 0.2)
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 8.0
+
+[node name="DeathEmitterShoes" type="CPUParticles3D" parent="." unique_id=372876659]
+emitting = false
+amount = 25
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+mesh = SubResource("BoxMesh_gskgj")
+emission_shape = 3
+emission_box_extents = Vector3(0.2, 0.2, 0.2)
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 8.0
 
 [node name="MeshRoot" type="Node3D" parent="." unique_id=1487964443]
 
