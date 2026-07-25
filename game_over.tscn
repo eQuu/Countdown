@@ -20,6 +20,7 @@
 [ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="18_3xhsb"]
 [ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="19_7eg23"]
 [ext_resource type="Script" uid="uid://rxqc0io6tse7" path="res://PlayerCheerScript.cs" id="19_k7c8f"]
+[ext_resource type="Script" path="res://scripts/ui/MainMenuButton.cs" id="20_mainmenu_btn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -913,3 +914,4 @@ offset_top = 523.0
 offset_right = 700.0
 offset_bottom = 587.0
 text = "Main Menu"
+script = ExtResource("20_mainmenu_btn")

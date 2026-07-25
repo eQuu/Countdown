@@ -5,15 +5,17 @@ public partial class GameStore : Node
 {
 	public static GameStore Instance { get; private set; }
 
-	public const int ColorCount = 4;
+	public const int ColorCount = 6;
 
 	public static readonly Color Blue = new(0.1f, 0.4f, 1.0f);
 	public static readonly Color Red = new(1.0f, 0.15f, 0.1f);
 	public static readonly Color Yellow = new(1.0f, 0.82f, 0.12f);
 	public static readonly Color Green = new(0.18f, 0.85f, 0.28f);
+	public static readonly Color Orange = new(1.0f, 0.48f, 0.08f);
+	public static readonly Color Purple = new(0.62f, 0.22f, 0.95f);
 
-	private static readonly Color[] Palette = [Blue, Red, Yellow, Green];
-	private static readonly string[] PaletteNames = ["Blue", "Red", "Yellow", "Green"];
+	private static readonly Color[] Palette = [Blue, Red, Yellow, Green, Orange, Purple];
+	private static readonly string[] PaletteNames = ["Blue", "Red", "Yellow", "Green", "Orange", "Purple"];
 
 	[Signal]
 	public delegate void ValueChangedEventHandler(string key, Variant value);
@@ -41,7 +43,6 @@ public partial class GameStore : Node
 	public int PlayerOneScore { get; private set; }
 	public int PlayerTwoScore { get; private set; }
 
-	/// <summary>1 oder 2 = Gewinner, 0 = noch keiner / Remis / zurückgesetzt.</summary>
 	public int WinnerPlayerId { get; private set; }
 
 	public const string MainMenuScenePath = "res://main_menu.tscn";
@@ -209,7 +210,11 @@ public partial class GameStore : Node
 		SetWinner(0);
 	}
 
-	public void GoToMainMenu() => ChangeToScene(MainMenuScenePath);
+	public void GoToMainMenu()
+	{
+		ResetScores();
+		ChangeToScene(MainMenuScenePath);
+	}
 
 	public void GoToIngame()
 	{
