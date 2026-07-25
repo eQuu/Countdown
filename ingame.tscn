@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
 [ext_resource type="Texture2D" uid="uid://0mnlsshnieen" path="res://paintings/the_rejected_poet.jpg" id="7_snqyf"]
 [ext_resource type="Texture2D" uid="uid://b4f0jhca22hlp" path="res://paintings/die_katzenfamilie.jpg" id="8_phpej"]
+[ext_resource type="PackedScene" uid="uid://c5aha0ysfslje" path="res://decorations/beaver_statue.tscn" id="12_vj2cp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -189,6 +190,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
 
 [node name="Pillar1" parent="Decorations/BottomWall" unique_id=1382317377 instance=ExtResource("4_pu7co")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="LeftBeaverStatue" parent="Decorations" unique_id=1699961611 instance=ExtResource("12_vj2cp")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
+
+[node name="RightBeaverStatue" parent="Decorations" unique_id=1626673924 instance=ExtResource("12_vj2cp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
 
 [node name="DarkLights" type="Node3D" parent="." unique_id=1812802562]
 
