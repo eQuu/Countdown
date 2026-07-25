@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cnje7kb4o1oh2"]
+
+[ext_resource type="Texture2D" uid="uid://ojaxupme400u" path="res://decorations/textures/Metal048C_1K-JPG_Color.jpg" id="1_q0bcx"]
+[ext_resource type="Texture2D" uid="uid://bxcf82i6v0xay" path="res://decorations/textures/Metal048C_1K-JPG_Metalness.jpg" id="2_3ql3e"]
+[ext_resource type="Texture2D" uid="uid://vwj23groe6lc" path="res://decorations/textures/Metal048C_1K-JPG_NormalDX.jpg" id="3_ausvm"]
+
+[resource]
+albedo_texture = ExtResource("1_q0bcx")
+metallic = 1.0
+metallic_texture = ExtResource("2_3ql3e")
+normal_enabled = true
+normal_texture = ExtResource("3_ausvm")
+uv1_scale = Vector3(10, 1, 1)

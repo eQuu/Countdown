@@ -1,3 +1,98 @@
 [gd_scene format=3 uid="uid://dgiqoq372b7tc"]
 
-[node name="LargePainting" type="Node3D" unique_id=1708147758]
+[ext_resource type="Script" uid="uid://3jh4cqhs4vs0" path="res://scripts/decorations/Painting.cs" id="1_7d3lt"]
+[ext_resource type="Material" uid="uid://b3sgh1xkh1axv" path="res://decorations/materials/large_painting/LeftRightSideMaterial.tres" id="1_jb73d"]
+[ext_resource type="Material" uid="uid://cnje7kb4o1oh2" path="res://decorations/materials/large_painting/TopBottomSideMaterial.tres" id="1_njjb8"]
+[ext_resource type="Material" uid="uid://bye3bi2nhkdh" path="res://decorations/materials/large_painting/PaintingPlaneMaterial.tres" id="2_cvdkr"]
+[ext_resource type="Material" uid="uid://bnshseso23qfs" path="res://decorations/materials/large_painting/CylinderMaterial.tres" id="3_4bto8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_c7mx7"]
+material = ExtResource("1_jb73d")
+size = Vector3(1, 8, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_njjb8"]
+material = ExtResource("1_njjb8")
+size = Vector3(12, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jb73d"]
+material = ExtResource("3_4bto8")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 1.4
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_bj4t2"]
+size = Vector2(12.5, 8.5)
+
+[node name="LargePainting" type="Node3D" unique_id=1708147758 node_paths=PackedStringArray("_paintingPlane")]
+script = ExtResource("1_7d3lt")
+_defaultPaintingMaterial = ExtResource("2_cvdkr")
+_paintingPlane = NodePath("Scale/Picture/PaintingPlane")
+
+[node name="Scale" type="Node3D" parent="." unique_id=894334963]
+
+[node name="Frame" type="Node3D" parent="Scale" unique_id=1640809301]
+
+[node name="LeftSide" type="MeshInstance3D" parent="Scale/Frame" unique_id=1069695903]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 0)
+mesh = SubResource("BoxMesh_c7mx7")
+
+[node name="RightSide" type="MeshInstance3D" parent="Scale/Frame" unique_id=2012123869]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, 0)
+mesh = SubResource("BoxMesh_c7mx7")
+
+[node name="TopSide" type="MeshInstance3D" parent="Scale/Frame" unique_id=806771175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+mesh = SubResource("BoxMesh_njjb8")
+
+[node name="BottomSide" type="MeshInstance3D" parent="Scale/Frame" unique_id=571719705]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.5, 0)
+mesh = SubResource("BoxMesh_njjb8")
+
+[node name="CylinderTopLeft" type="MeshInstance3D" parent="Scale/Frame" unique_id=1281975519]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, -6.3, 4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopMiddle" type="MeshInstance3D" parent="Scale/Frame" unique_id=141252306]
+transform = Transform3D(1.2, 0, 0, 0, -3.4969112e-08, -1.2, 0, 0.8, -5.2453668e-08, 0, 5.4, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopMiddleLeft" type="MeshInstance3D" parent="Scale/Frame" unique_id=1201134973]
+transform = Transform3D(0.9, 0, 0, 0, -3.409488e-08, -0.9, 0, 0.78, -3.934025e-08, -1.4, 5.2, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopMiddleRight" type="MeshInstance3D" parent="Scale/Frame" unique_id=905613221]
+transform = Transform3D(0.9, 0, 0, 0, -3.409488e-08, -0.9, 0, 0.78, -3.934025e-08, 1.4, 5.2, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopRight" type="MeshInstance3D" parent="Scale/Frame" unique_id=213942047]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 6.3, 4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderBottomLeft" type="MeshInstance3D" parent="Scale/Frame" unique_id=50650180]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, -6.3, -4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderBottomRight" type="MeshInstance3D" parent="Scale/Frame" unique_id=1675012332]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 6.3, -4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="Picture" type="Node3D" parent="Scale" unique_id=607193405]
+
+[node name="PaintingPlane" type="MeshInstance3D" parent="Scale/Picture" unique_id=117944129]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 0, 0, 0)
+mesh = SubResource("PlaneMesh_bj4t2")
+
+[node name="LeftSpotLight3D" type="SpotLight3D" parent="." unique_id=764723395]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, -3.5, -3, 3.5)
+light_energy = 5.0
+spot_range = 10.0
+
+[node name="MiddleSpotLight3D" type="SpotLight3D" parent="." unique_id=386937994]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 0, -2, 3.5)
+light_energy = 5.0
+spot_range = 10.0
+
+[node name="RightSpotLight3D" type="SpotLight3D" parent="." unique_id=2089624015]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 3.5, -3, 3.5)
+light_energy = 5.0
+spot_range = 10.0
