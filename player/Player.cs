@@ -53,7 +53,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		CollisionMask = 1;
 		AddToGroup("laser_players");
 		_spawnPosition = GlobalPosition;
-		ApplyDefaultIndicatorColorFromPlayerId();
+		ApplyColorFromStoreOrDefault();
 		SetupIndicatorRing();
 
 		if (_lockedTimeLabel != null)
@@ -200,12 +200,30 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_stunTimeLeft = 0.0f;
 	}
 
-	private void ApplyDefaultIndicatorColorFromPlayerId()
+	public void SetIndicatorColor(Color color)
 	{
+		IndicatorColor = color;
+		ApplyIndicatorRingColor();
+	}
+
+	private void ApplyColorFromStoreOrDefault()
+	{
+		if (GameStore.Instance != null)
+		{
+			IndicatorColor = GameStore.Instance.GetPlayerColor(PlayerId);
+			return;
+		}
+
+		if (PlayerColorStore.Instance != null)
+		{
+			IndicatorColor = PlayerColorStore.Instance.GetColor(PlayerId);
+			return;
+		}
+
 		IndicatorColor = PlayerId switch
 		{
-			2 => new Color(1.0f, 0.15f, 0.1f),
-			_ => new Color(0.1f, 0.4f, 1.0f)
+			2 => GameStore.Red,
+			_ => GameStore.Blue
 		};
 	}
 

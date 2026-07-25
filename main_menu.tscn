@@ -1,0 +1,715 @@
+[gd_scene format=3 uid="uid://cjp4jtcm2kqrv"]
+
+[ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_j5v2v"]
+[ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="2_iotk1"]
+[ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="3_w44g7"]
+[ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_cm266"]
+[ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="5_g8g3n"]
+[ext_resource type="Texture2D" uid="uid://0mnlsshnieen" path="res://paintings/the_rejected_poet.jpg" id="6_8u0te"]
+[ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_iotk1"]
+[ext_resource type="Texture2D" uid="uid://b4f0jhca22hlp" path="res://paintings/die_katzenfamilie.jpg" id="7_oiatc"]
+[ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="8_mg3m2"]
+[ext_resource type="PackedScene" uid="uid://c5aha0ysfslje" path="res://decorations/beaver_statue.tscn" id="9_ojb7r"]
+[ext_resource type="PackedScene" uid="uid://cwjyhdaplmmwx" path="res://camera/SurveillanceCamera.tscn" id="11_w44g7"]
+[ext_resource type="Shader" uid="uid://diyjhqijywkiu" path="res://resources/player/indicator_ring.gdshader" id="12_g8g3n"]
+[ext_resource type="ArrayMesh" uid="uid://c7kwiukx1b3j3" path="res://player/burglar_body.vox" id="14_oiatc"]
+[ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="15_mg3m2"]
+[ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="16_ojb7r"]
+[ext_resource type="Script" uid="uid://bc28eeuxmlpbe" path="res://camera/CameraTourController.cs" id="17_camtour"]
+[ext_resource type="Script" uid="uid://br3ts7873swnd" path="res://camera/CameraTourWaypoint.cs" id="18_camwp"]
+[ext_resource type="Script" uid="uid://ckuhgdd0tck2" path="res://scripts/ui/MainMenuColorSelect.cs" id="19_colorselect"]
+[ext_resource type="Script" uid="uid://c8a1k3tnkbsv6" path="res://scripts/ui/MainMenuPromptLabel.cs" id="20_prompt"]
+
+[sub_resource type="Environment" id="Environment_vegko"]
+background_mode = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_oiatc"]
+material = ExtResource("1_j5v2v")
+size = Vector3(74, 0.2, 34)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mg3m2"]
+size = Vector3(80, 0.2, 40)
+
+[sub_resource type="Animation" id="Animation_83hs8"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0)
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 4.712389, 0)]
+}
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, 0, -0.6, 0)
+
+[sub_resource type="Animation" id="Animation_x8kxw"]
+resource_name = "dash"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootR")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, 0.7, 0.75, 1, -0.3, -0.6, 0.7)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, -0.3, 0.73333335, 1, 0.3, -0.6, -0.3)
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0.5235988, -1.5707964, 0.87266463), Vector3(0.5235988, -1.5707964, 0.87266463)]
+}
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBody")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.6, 0.3, 0.75, 1, 0, -0.6, 0.3)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarHandL")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.4, 0, -0.6, 0.75, 1, 0.4, 0, -0.6)
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarHandR")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, -0.6, 0, 0.4, 0.25, 1, -0.3, 0, 0.4, 0.75, 1, -0.3, 0, 0.4, 1, 1, -0.6, 0, 0.4)
+
+[sub_resource type="Animation" id="Animation_8ak8y"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBody")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 1, 1, 0, -0.5, 0, 2, 1, 0, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.6, -0.1, 0, 1, 1, 0.6, 0, 0, 2, 1, 0.6, -0.1, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandR")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, -0.6, -0.1, 0, 1, 1, -0.6, 0, 0, 2, 1, -0.6, -0.1, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBootL")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBootR")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, -0.3, -0.6, -0.01999998)
+
+[sub_resource type="Animation" id="Animation_aqcbf"]
+resource_name = "stun"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5969763, 0.87266463), Vector3(-0.2617994, -1.5969763, 0.6981317), Vector3(0, -1.5969763, 0.87266463), Vector3(0.2617994, -1.5969763, 0.6981317), Vector3(0, -1.5969763, 0.87266463)]
+}
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.6, 0, 0.076944, 0.5, 1, 0.6, -0.2, 0.077)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandR")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, -0.6, 0, -0.076944, 0.5, 1, -0.6, -0.2, -0.077)
+
+[sub_resource type="Animation" id="Animation_gndvh"]
+resource_name = "walk"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, 0.5, 0.5, 1, 0.3, -0.6, 0, 0.75, 1, 0.3, -0.6, -0.5, 1, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, -0.5, 0.5, 1, -0.3, -0.6, 0, 0.75, 1, -0.3, -0.6, 0.5, 1, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.6, 0, -0.5, 0.5, 1, 0.6, 0, 0, 0.75, 1, 0.6, 0, 0.5, 1, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0, 0.25, 1, -0.6, 0, 0.5, 0.5, 1, -0.6, 0, 0, 0.75, 1, -0.6, 0, -0.5, 1, 1, -0.6, 0, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.5, 0, 0.5, 1, 0, -0.6, 0, 0.75, 1, 0, -0.5, 0, 1, 1, 0, -0.6, 0)
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0, -1.3962634, 0), Vector3(0, -1.5707964, 0), Vector3(0, -1.7453293, 0), Vector3(0, -1.5707964, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
+_data = {
+&"RESET": SubResource("Animation_83hs8"),
+&"dash": SubResource("Animation_x8kxw"),
+&"idle": SubResource("Animation_8ak8y"),
+&"stun": SubResource("Animation_aqcbf"),
+&"walk": SubResource("Animation_gndvh")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
+size = Vector3(0.5316162, 1.102396, 0.86826706)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ring"]
+render_priority = 0
+shader = ExtResource("12_g8g3n")
+shader_parameter/ring_color = Color(0.1, 0.4, 1, 0.95)
+shader_parameter/inner_radius = 0.74
+shader_parameter/outer_softness = 0.1
+shader_parameter/inner_softness = 0.07
+shader_parameter/emission_boost = 2.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ring"]
+material = SubResource("ShaderMaterial_ring")
+size = Vector2(1.35, 1.35)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_swatch_blue"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.1, 0.4, 1, 0.95)
+
+[sub_resource type="SphereMesh" id="SphereMesh_swatch"]
+radius = 0.14
+height = 0.28
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_swatch_red"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.15, 0.1, 0.95)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_swatch_yellow"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.82, 0.12, 0.95)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_swatch_green"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.18, 0.85, 0.28, 0.95)
+
+[sub_resource type="SystemFont" id="SystemFont_prompt"]
+font_names = PackedStringArray("Georgia", "Times New Roman", "serif")
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font = SubResource("SystemFont_prompt")
+font_size = 48
+font_color = Color(0.95, 0.96, 0.98, 1)
+outline_size = 12
+outline_color = Color(0, 0, 0, 0.9)
+
+[node name="MainMenu" type="Node3D" unique_id=2032108568]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=238303840]
+environment = SubResource("Environment_vegko")
+
+[node name="ColorSelect" type="Node3D" parent="." unique_id=1888223344]
+script = ExtResource("19_colorselect")
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=91688150]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=1209358751]
+mesh = SubResource("BoxMesh_oiatc")
+
+[node name="Collision" type="CollisionShape3D" parent="Floor" unique_id=976277209]
+shape = SubResource("BoxShape3D_mg3m2")
+
+[node name="Walls" type="Node3D" parent="." unique_id=446060277]
+
+[node name="Top" type="Node3D" parent="Walls" unique_id=739332237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.6)
+
+[node name="BaroqueCornerLeft" parent="Walls/Top" unique_id=740356097 instance=ExtResource("2_iotk1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0, 4.6)
+
+[node name="Baroque-3" parent="Walls/Top" unique_id=319781714 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
+
+[node name="Baroque-2" parent="Walls/Top" unique_id=769783060 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
+
+[node name="Baroque-1" parent="Walls/Top" unique_id=633172032 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
+
+[node name="Baroque0" parent="Walls/Top" unique_id=1645083441 instance=ExtResource("3_w44g7")]
+
+[node name="Baroque1" parent="Walls/Top" unique_id=901739524 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="Baroque2" parent="Walls/Top" unique_id=777459395 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
+
+[node name="Baroque3" parent="Walls/Top" unique_id=672480094 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
+
+[node name="BaroqueCornerRight" parent="Walls/Top" unique_id=5202747 instance=ExtResource("2_iotk1")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 32, 0, 4.6)
+
+[node name="Bottom" type="Node3D" parent="Walls" unique_id=1252842790]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 16.6)
+
+[node name="BaroqueCornerLeft" parent="Walls/Bottom" unique_id=1009833999 instance=ExtResource("2_iotk1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0, 4.6)
+
+[node name="Baroque-3" parent="Walls/Bottom" unique_id=434380085 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
+
+[node name="Baroque-2" parent="Walls/Bottom" unique_id=1870477097 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
+
+[node name="Baroque-1" parent="Walls/Bottom" unique_id=403411927 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
+
+[node name="Baroque0" parent="Walls/Bottom" unique_id=628472499 instance=ExtResource("3_w44g7")]
+
+[node name="Baroque1" parent="Walls/Bottom" unique_id=1270579455 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="Baroque2" parent="Walls/Bottom" unique_id=375989507 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
+
+[node name="Baroque3" parent="Walls/Bottom" unique_id=1821887806 instance=ExtResource("3_w44g7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
+
+[node name="BaroqueCornerRight" parent="Walls/Bottom" unique_id=622318049 instance=ExtResource("2_iotk1")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 32, 0, 4.6)
+
+[node name="Left" type="Node3D" parent="Walls" unique_id=421373799]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.6, 0, 0)
+
+[node name="Baroque-1" parent="Walls/Left" unique_id=193015909 instance=ExtResource("3_w44g7")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 4)
+
+[node name="Baroque1" parent="Walls/Left" unique_id=1448324467 instance=ExtResource("3_w44g7")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
+
+[node name="Right" type="Node3D" parent="Walls" unique_id=716676840]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 36.6, 0, 0)
+
+[node name="Baroque-1" parent="Walls/Right" unique_id=1660097050 instance=ExtResource("3_w44g7")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 4)
+
+[node name="Baroque1" parent="Walls/Right" unique_id=1865805414 instance=ExtResource("3_w44g7")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
+
+[node name="Decorations" type="Node3D" parent="." unique_id=486837453]
+
+[node name="LeftWall" type="Node3D" parent="Decorations" unique_id=4393868]
+
+[node name="RightWall" type="Node3D" parent="Decorations" unique_id=1969861741]
+
+[node name="TopWall" type="Node3D" parent="Decorations" unique_id=1865138525]
+
+[node name="Pillar-1" parent="Decorations/TopWall" unique_id=437430067 instance=ExtResource("4_cm266")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -16.4)
+
+[node name="Pillar0" parent="Decorations/TopWall" unique_id=1326111623 instance=ExtResource("4_cm266")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
+
+[node name="Pillar1" parent="Decorations/TopWall" unique_id=1817302392 instance=ExtResource("4_cm266")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="LargePainting-2" parent="Decorations/TopWall" unique_id=1708147758 node_paths=PackedStringArray("_spotLights") instance=ExtResource("5_g8g3n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 5.2, -15.8)
+_spotLights = []
+PaintingTexture = ExtResource("6_iotk1")
+
+[node name="LargePainting-1" parent="Decorations/TopWall" unique_id=183068266 node_paths=PackedStringArray("_spotLights") instance=ExtResource("5_g8g3n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 5.2, -15.8)
+_spotLights = []
+PaintingTexture = ExtResource("6_8u0te")
+
+[node name="LargePainting1" parent="Decorations/TopWall" unique_id=24197669 node_paths=PackedStringArray("_spotLights") instance=ExtResource("5_g8g3n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 5.2, -15.8)
+_spotLights = []
+PaintingTexture = ExtResource("7_oiatc")
+
+[node name="LargePainting2" parent="Decorations/TopWall" unique_id=221024127 node_paths=PackedStringArray("_spotLights") instance=ExtResource("5_g8g3n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 5.2, -15.8)
+_spotLights = []
+PaintingTexture = ExtResource("8_mg3m2")
+
+[node name="BottomWall" type="Node3D" parent="Decorations" unique_id=1730856124]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Pillar-1" parent="Decorations/BottomWall" unique_id=1654096340 instance=ExtResource("4_cm266")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -16.4)
+
+[node name="Pillar0" parent="Decorations/BottomWall" unique_id=896679632 instance=ExtResource("4_cm266")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
+
+[node name="Pillar1" parent="Decorations/BottomWall" unique_id=178681498 instance=ExtResource("4_cm266")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="LeftBeaverStatue" parent="Decorations" unique_id=1699961611 instance=ExtResource("9_ojb7r")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
+visible = false
+
+[node name="RightBeaverStatue" parent="Decorations" unique_id=1672811237 instance=ExtResource("9_ojb7r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
+visible = false
+
+[node name="SurveillanceCameraLeft" parent="Decorations" unique_id=1531644149 instance=ExtResource("11_w44g7")]
+transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, -29, 4.4, -13)
+_animationStartTime = 4.0
+
+[node name="SurveillanceCameraRight" parent="Decorations" unique_id=1132519001 instance=ExtResource("11_w44g7")]
+transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, 29, 4.4, -13)
+_animationStartTime = 2.0
+
+[node name="DarkLights" type="Node3D" parent="." unique_id=788314285]
+
+[node name="OmniLight3DLeft" type="OmniLight3D" parent="DarkLights" unique_id=335443535]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 12, 0)
+light_color = Color(0.5, 0.5, 0.5, 1)
+light_energy = 10.0
+omni_range = 50.0
+
+[node name="OmniLight3DMiddle" type="OmniLight3D" parent="DarkLights" unique_id=362982370]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 0)
+light_color = Color(0.5, 0.5, 0.5, 1)
+light_energy = 10.0
+omni_range = 50.0
+
+[node name="OmniLight3DRight" type="OmniLight3D" parent="DarkLights" unique_id=858791666]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 12, 0)
+light_color = Color(0.5, 0.5, 0.5, 1)
+light_energy = 10.0
+omni_range = 50.0
+
+[node name="CeilingLights" type="Node3D" parent="." unique_id=1902900792]
+
+[node name="SpotLight3D-2" type="SpotLight3D" parent="CeilingLights" unique_id=102383705]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -6.3049154, 10.298147, -15.073753)
+light_energy = 0.579
+light_specular = 8.898
+spot_range = 17.334621
+spot_angle = 41.003185
+
+[node name="SpotLight3D-4" type="SpotLight3D" parent="CeilingLights" unique_id=752054955]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 6.5539618, 10.298147, -15.073753)
+light_energy = 0.579
+light_specular = 8.898
+spot_range = 17.334621
+spot_angle = 41.003185
+
+[node name="SpotLight3D-5" type="SpotLight3D" parent="CeilingLights" unique_id=1975362472]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 15.51229, 10.298147, -15.073753)
+light_energy = 0.579
+light_specular = 8.898
+spot_range = 17.334621
+spot_angle = 41.003185
+
+[node name="SpotLight3D-3" type="SpotLight3D" parent="CeilingLights" unique_id=1486294882]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -15.550647, 10.298147, -15.073753)
+light_energy = 0.579
+light_specular = 8.898
+spot_range = 17.334621
+spot_angle = 41.003185
+
+[node name="MainCamera" type="Camera3D" parent="." unique_id=352920882]
+transform = Transform3D(0.85849357, 0.18501374, -0.47828698, 0, 0.9326529, 0.36077425, 0.51282406, -0.30972242, 0.8006768, -26.421158, 5.1458874, -4.8404884)
+
+[node name="CameraTour" type="Node3D" parent="." unique_id=901311290 node_paths=PackedStringArray("Camera", "WaypointRoot", "DefaultLookAt")]
+script = ExtResource("17_camtour")
+Camera = NodePath("../MainCamera")
+WaypointRoot = NodePath("Waypoints")
+DefaultLookAt = NodePath("LookTargets/Players")
+
+[node name="LookTargets" type="Node3D" parent="CameraTour" unique_id=1751470955]
+
+[node name="Players" type="Marker3D" parent="CameraTour/LookTargets" unique_id=638822277]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.76358, 1.637717, -13.260045)
+
+[node name="Waypoints" type="Node3D" parent="CameraTour" unique_id=1523997850]
+
+[node name="WP0" type="Marker3D" parent="CameraTour/Waypoints" unique_id=263336298 node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.9967759, 0.033460986, -0.07292447, 0, 0.90888876, 0.4170385, 0.08023476, -0.415694, 0.9059584, -20.527473, 7.8023844, -2.585369)
+script = ExtResource("18_camwp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="WP1" type="Marker3D" parent="CameraTour/Waypoints" unique_id=223661897 node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.7782662, -0.19818354, 0.5958396, 0, 0.9488882, 0.31561184, -0.6279344, -0.24563003, 0.7384877, -11.084287, 5.3456235, -3.2095003)
+script = ExtResource("18_camwp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="WP2" type="Marker3D" parent="CameraTour/Waypoints" unique_id=894347587 node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.9967759, 0.033460986, -0.07292447, 0, 0.90888876, 0.4170385, 0.08023476, -0.415694, 0.9059584, -20.527473, 7.8023844, -2.585369)
+script = ExtResource("18_camwp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="WP3" type="Marker3D" parent="CameraTour/Waypoints" unique_id=1730328946 node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.8584935, 0.18501373, -0.47828698, 0, 0.93265283, 0.3607743, 0.512824, -0.3097224, 0.80067676, -26.421158, 5.1458874, -4.8404884)
+script = ExtResource("18_camwp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="Player1" type="CharacterBody3D" parent="." unique_id=845121509]
+transform = Transform3D(2.7380939, 0, 1.2259051, 0, 3, 0, -1.2259051, 0, 2.7380939, -24.986351, 1.9209852, -12.632856)
+collision_layer = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player1" unique_id=1844725914]
+libraries/ = SubResource("AnimationLibrary_gndvh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player1" unique_id=1686967469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="IndicatorRing" type="MeshInstance3D" parent="Player1" unique_id=443270399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ring")
+
+[node name="ColorSwatches" type="Node3D" parent="Player1" unique_id=5100100]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
+
+[node name="Blue" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.813173, 0.08, 0.813173)
+material_override = SubResource("StandardMaterial3D_swatch_blue")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Red" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100102]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.297642, 0.08, 1.110815)
+material_override = SubResource("StandardMaterial3D_swatch_red")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Yellow" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100103]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.297642, 0.08, 1.110815)
+material_override = SubResource("StandardMaterial3D_swatch_yellow")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Green" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100104]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.813173, 0.08, 0.813173)
+material_override = SubResource("StandardMaterial3D_swatch_green")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="MeshRoot" type="Node3D" parent="Player1" unique_id=1487964443]
+
+[node name="BurglarBody" type="MeshInstance3D" parent="Player1/MeshRoot" unique_id=1733556175]
+transform = Transform3D(5.9624403e-09, 0, -0.5, 0, 0.5, 0, 0.5, 0, 5.9624403e-09, 0, -0.6, 0)
+mesh = ExtResource("14_oiatc")
+
+[node name="BurglarHandL" type="MeshInstance3D" parent="Player1/MeshRoot" unique_id=1702706192]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
+mesh = ExtResource("15_mg3m2")
+
+[node name="BurglarHandR" type="MeshInstance3D" parent="Player1/MeshRoot" unique_id=573512098]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.6, 0, 0)
+mesh = ExtResource("15_mg3m2")
+
+[node name="BurglarBootL" type="MeshInstance3D" parent="Player1/MeshRoot" unique_id=112262616]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
+mesh = ExtResource("16_ojb7r")
+
+[node name="BurglarBootR" type="MeshInstance3D" parent="Player1/MeshRoot" unique_id=1879685013]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
+mesh = ExtResource("16_ojb7r")
+
+[node name="Player2" type="CharacterBody3D" parent="." unique_id=31432409]
+transform = Transform3D(2.383277, 0, -1.8220842, 0, 3, 0, 1.8220842, 0, 2.383277, -13.145921, 1.9163194, -10.886813)
+collision_layer = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player2" unique_id=1025826881]
+libraries/ = SubResource("AnimationLibrary_gndvh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player2" unique_id=1326386573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="IndicatorRing" type="MeshInstance3D" parent="Player2" unique_id=469363170]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ring")
+
+[node name="ColorSwatches" type="Node3D" parent="Player2" unique_id=5200200]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
+
+[node name="Blue" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.813173, 0.08, 0.813173)
+material_override = SubResource("StandardMaterial3D_swatch_blue")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Red" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.297642, 0.08, 1.110815)
+material_override = SubResource("StandardMaterial3D_swatch_red")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Yellow" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200203]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.297642, 0.08, 1.110815)
+material_override = SubResource("StandardMaterial3D_swatch_yellow")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Green" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.813173, 0.08, 0.813173)
+material_override = SubResource("StandardMaterial3D_swatch_green")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="MeshRoot" type="Node3D" parent="Player2" unique_id=1771558978]
+
+[node name="BurglarBody" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=7305823]
+transform = Transform3D(5.9624403e-09, 0, -0.5, 0, 0.5, 0, 0.5, 0, 5.9624403e-09, 0, -0.6, 0)
+mesh = ExtResource("14_oiatc")
+
+[node name="BurglarHandL" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=224257886]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
+mesh = ExtResource("15_mg3m2")
+
+[node name="BurglarHandR" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1185143046]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.6, 0, 0)
+mesh = ExtResource("15_mg3m2")
+
+[node name="BurglarBootL" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=970549772]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
+mesh = ExtResource("16_ojb7r")
+
+[node name="BurglarBootR" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1016152721]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
+mesh = ExtResource("16_ojb7r")
+
+[node name="MenuUI" type="CanvasLayer" parent="." unique_id=1888223401]
+layer = 100
+
+[node name="PromptLabel" type="Label" parent="MenuUI" unique_id=1888223402]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 40.0
+offset_top = 28.0
+offset_right = -40.0
+offset_bottom = 110.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = SubResource("SystemFont_prompt")
+theme_override_font_sizes/font_size = 48
+text = "choose your color"
+label_settings = SubResource("LabelSettings_prompt")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("20_prompt")

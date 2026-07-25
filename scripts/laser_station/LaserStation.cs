@@ -117,6 +117,7 @@ public partial class LaserStation : Node3D
 	[Export] public Color PlaceholderColor { get; set; } = Colors.White;
 	[Export] public Color PlayerOneColor { get; set; } = new Color(0.1f, 0.4f, 1.0f);
 	[Export] public Color PlayerTwoColor { get; set; } = new Color(1.0f, 0.15f, 0.1f);
+	[Export] public bool UsePlayerColorStore { get; set; } = true;
 	[Export] public float EmissionEnergy { get; set; } = 4.0f;
 
 	[ExportCategory("Combat")]
@@ -240,6 +241,7 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
+		ApplyColorsFromStore();
 		ConnectCoreSignals();
 		ConfigureCaptureTimer();
 		EnsureLifetimeTimer();
@@ -263,6 +265,29 @@ public partial class LaserStation : Node3D
 		{
 			Activate();
 		}
+	}
+
+	public void ApplyColorsFromStore()
+	{
+		if (!UsePlayerColorStore)
+		{
+			return;
+		}
+
+		if (GameStore.Instance != null)
+		{
+			PlayerOneColor = GameStore.Instance.PlayerOneColor;
+			PlayerTwoColor = GameStore.Instance.PlayerTwoColor;
+			return;
+		}
+
+		if (PlayerColorStore.Instance == null)
+		{
+			return;
+		}
+
+		PlayerOneColor = PlayerColorStore.Instance.PlayerOneColor;
+		PlayerTwoColor = PlayerColorStore.Instance.PlayerTwoColor;
 	}
 
 	public override void _PhysicsProcess(double delta)

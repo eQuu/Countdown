@@ -78,6 +78,7 @@ public partial class GameManager : Node3D
 		PlayerOneScore = 0;
 		PlayerTwoScore = 0;
 		IsMatchFinished = false;
+		GameStore.Instance?.SetScores(0, 0);
 		UpdateScoreLabels();
 		EmitSignal(SignalName.ScoreChanged, PlayerOneScore, PlayerTwoScore);
 	}
@@ -90,6 +91,8 @@ public partial class GameManager : Node3D
 		ResolveScoreLabelsFromScene();
 		WireChallengeLabels();
 		ConnectPlayerSignals();
+		ApplyPlayerColorsFromStore();
+		GameStore.Instance?.SetScores(PlayerOneScore, PlayerTwoScore);
 		UpdateScoreLabels();
 		LightingManager?.DeactivateCeilingLights();
 
@@ -275,6 +278,7 @@ public partial class GameManager : Node3D
 
 		UpdateScoreLabels();
 		EmitSignal(SignalName.ScoreChanged, PlayerOneScore, PlayerTwoScore);
+		GameStore.Instance?.SetScores(PlayerOneScore, PlayerTwoScore);
 		GD.Print($"Score P1={PlayerOneScore} P2={PlayerTwoScore}");
 
 		if (PlayerOneScore >= maxScore)
@@ -320,6 +324,27 @@ public partial class GameManager : Node3D
 			PlayerTwoScoreLabel.Text = PlayerTwoScore.ToString();
 			PlayerTwoScoreLabel.Modulate = PlayerTwoScoreColor;
 		}
+	}
+
+	private void ApplyPlayerColorsFromStore()
+	{
+		if (GameStore.Instance != null)
+		{
+			PlayerOneScoreColor = GameStore.Instance.PlayerOneColor;
+			PlayerTwoScoreColor = GameStore.Instance.PlayerTwoColor;
+		}
+		else if (PlayerColorStore.Instance != null)
+		{
+			PlayerOneScoreColor = PlayerColorStore.Instance.PlayerOneColor;
+			PlayerTwoScoreColor = PlayerColorStore.Instance.PlayerTwoColor;
+		}
+		else
+		{
+			return;
+		}
+
+		PlayerOne?.SetIndicatorColor(PlayerOneScoreColor);
+		PlayerTwo?.SetIndicatorColor(PlayerTwoScoreColor);
 	}
 
 	private void OnCountdownEvaluated(

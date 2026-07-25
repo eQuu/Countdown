@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://camera/CameraTourController.cs" id="1_tour"]
+[ext_resource type="Script" path="res://camera/CameraTourWaypoint.cs" id="2_wp"]
+
+[node name="CameraTour" type="Node3D" node_paths=PackedStringArray("WaypointRoot", "DefaultLookAt")]
+script = ExtResource("1_tour")
+WaypointRoot = NodePath("Waypoints")
+DefaultLookAt = NodePath("LookTargets/Players")
+
+[node name="LookTargets" type="Node3D" parent="."]
+
+[node name="Players" type="Marker3D" parent="LookTargets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.76358, 1.637717, -13.260045)
+
+[node name="Waypoints" type="Node3D" parent="."]
+
+[node name="WP0" type="Marker3D" parent="Waypoints" node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.9967759, 0.033460986, -0.07292447, 0, 0.90888876, 0.4170385, 0.08023476, -0.415694, 0.9059584, -20.527473, 7.8023844, -2.585369)
+script = ExtResource("2_wp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="WP1" type="Marker3D" parent="Waypoints" node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.7782662, -0.19818354, 0.5958396, 0, 0.9488882, 0.31561184, -0.6279344, -0.24563003, 0.7384877, -11.084287, 5.3456235, -3.2095003)
+script = ExtResource("2_wp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="WP2" type="Marker3D" parent="Waypoints" node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.9967759, 0.033460986, -0.07292447, 0, 0.90888876, 0.4170385, 0.08023476, -0.415694, 0.9059584, -20.527473, 7.8023844, -2.585369)
+script = ExtResource("2_wp")
+LookAtTarget = NodePath("../../LookTargets/Players")
+
+[node name="WP3" type="Marker3D" parent="Waypoints" node_paths=PackedStringArray("LookAtTarget")]
+transform = Transform3D(0.8584935, 0.18501373, -0.47828698, 0, 0.93265283, 0.3607743, 0.512824, -0.3097224, 0.80067676, -26.421158, 5.1458874, -4.8404884)
+script = ExtResource("2_wp")
+LookAtTarget = NodePath("../../LookTargets/Players")
