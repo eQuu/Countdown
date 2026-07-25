@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://d1n8ab8h47eyr" path="res://sfx/countdownwarn.wav" id="4_ox1sw"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
 [ext_resource type="AudioStream" uid="uid://breqf31ynofi4" path="res://sfx/kill.wav" id="4_pyieu"]
-[ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
+[ext_resource type="PackedScene" uid="uid://b2rssp7v0lpu2" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
 [ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
 [ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
@@ -78,8 +78,10 @@ _player2DeathAudioStream = ExtResource("4_pyieu")
 
 [node name="CountdownAudioStreamPlayer" type="AudioStreamPlayer" parent="SoundManager" unique_id=1620146701]
 
-[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("LightingManager", "SoundManager") instance=ExtResource("5_gamemanager")]
+[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("PlayerOne", "PlayerTwo", "LightingManager", "SoundManager") instance=ExtResource("5_gamemanager")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.08274126, 9.596172, -19.327)
+PlayerOne = NodePath("../Player1")
+PlayerTwo = NodePath("../Player2")
 LightingManager = NodePath("../LightingManager")
 SoundManager = NodePath("../SoundManager")
 
@@ -367,3 +369,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
 PlayerId = 2
+IndicatorColor = Color(1, 1, 1, 1)
