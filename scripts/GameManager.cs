@@ -30,6 +30,7 @@ public partial class GameManager : Node3D
 
 	[ExportCategory("Managers")]
 	[Export] public LightingManager LightingManager { get; set; }
+	[Export] public SoundManager SoundManager { get; set; }
 
 	[ExportCategory("Timeout Punishment")]
 	[Export] public float CeilingLightsDelaySeconds { get; set; } = 2.0f;
@@ -231,6 +232,12 @@ public partial class GameManager : Node3D
 
 	private void OnPlayerDied(int victimPlayerId, int attackingPlayerId)
 	{
+		switch (victimPlayerId)
+		{
+			case 1: SoundManager?.PlayPlayer1DeathAudioStream(); break;
+			case 2: SoundManager?.PlayPlayer2DeathAudioStream(); break;
+		}
+		
 		if (IsMatchFinished)
 		{
 			return;
@@ -322,6 +329,8 @@ public partial class GameManager : Node3D
 		bool isTie
 	)
 	{
+		SoundManager?.PlayCountdownWarningAudioStream();
+		
 		if (isTie || winnerPlayerId is not (1 or 2))
 		{
 			GD.Print(
@@ -356,6 +365,7 @@ public partial class GameManager : Node3D
 		);
 		ResolveLightingManagerFromScene();
 		LightingManager?.ActivateCeilingLights();
+		SoundManager?.PlayLightsOnAudioStream();
 
 		PlayerOne?.ApplyStun(TimeoutStunSeconds);
 		PlayerTwo?.ApplyStun(TimeoutStunSeconds);
@@ -378,5 +388,6 @@ public partial class GameManager : Node3D
 
 		ResolveLightingManagerFromScene();
 		LightingManager?.DeactivateCeilingLights();
+		SoundManager?.PlayLightsOffAudioStream();
 	}
 }

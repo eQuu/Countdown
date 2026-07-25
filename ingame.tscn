@@ -3,10 +3,15 @@
 [ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://player/Player.tscn" id="1_0bpjf"]
 [ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_phpej"]
 [ext_resource type="Script" uid="uid://bcqyiprjd0iph" path="res://scripts/LightingManager.cs" id="1_w4jj2"]
+[ext_resource type="Script" uid="uid://bumhtvc4bvisj" path="res://scripts/SoundManager.cs" id="2_8cstj"]
 [ext_resource type="PackedScene" uid="uid://crygc3hghlciq" path="res://scenes/laser_station/laser_station.tscn" id="2_station"]
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_wnhdf"]
+[ext_resource type="AudioStream" uid="uid://ch7vwpsmbacdl" path="res://sfx/countdownactive.wav" id="3_apxp4"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_kgmhh"]
+[ext_resource type="AudioStream" uid="uid://bnfejv4t33bsh" path="res://sfx/spotlight.mp3" id="3_pyieu"]
+[ext_resource type="AudioStream" uid="uid://d1n8ab8h47eyr" path="res://sfx/countdownwarn.wav" id="4_ox1sw"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
+[ext_resource type="AudioStream" uid="uid://breqf31ynofi4" path="res://sfx/kill.wav" id="4_pyieu"]
 [ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
 [ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
 [ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
@@ -52,9 +57,31 @@ _ceilingLights = NodePath("../CeilingLights")
 _darkLights = NodePath("../DarkLights")
 _paintings = [NodePath("../Decorations/TopWall/LargePainting-2"), NodePath("../Decorations/TopWall/LargePainting-1"), NodePath("../Decorations/TopWall/LargePainting1"), NodePath("../Decorations/TopWall/LargePainting2")]
 
-[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("LightingManager") instance=ExtResource("5_gamemanager")]
+[node name="SoundManager" type="Node" parent="." unique_id=1519796501 node_paths=PackedStringArray("_countdownAudioStreamPlayer", "_lightsAudioStreamPlayer", "_player1AudioStreamPlayer", "_player2AudioStreamPlayer")]
+script = ExtResource("2_8cstj")
+_countdownAudioStreamPlayer = NodePath("CountdownAudioStreamPlayer")
+_lightsAudioStreamPlayer = NodePath("LightsAudioStreamPlayer")
+_player1AudioStreamPlayer = NodePath("Player1AudioStreamPlayer")
+_player2AudioStreamPlayer = NodePath("Player2AudioStreamPlayer")
+_countdownActiveAudioStream = ExtResource("3_apxp4")
+_countdownWarningAudioStream = ExtResource("4_ox1sw")
+_lightsOnAudioStream = ExtResource("3_pyieu")
+_lightsOffAudioStream = ExtResource("4_pyieu")
+_player1DeathAudioStream = ExtResource("4_pyieu")
+_player2DeathAudioStream = ExtResource("4_pyieu")
+
+[node name="LightsAudioStreamPlayer" type="AudioStreamPlayer" parent="SoundManager" unique_id=1971863989]
+
+[node name="Player1AudioStreamPlayer" type="AudioStreamPlayer" parent="SoundManager" unique_id=51405954]
+
+[node name="Player2AudioStreamPlayer" type="AudioStreamPlayer" parent="SoundManager" unique_id=1608516230]
+
+[node name="CountdownAudioStreamPlayer" type="AudioStreamPlayer" parent="SoundManager" unique_id=1620146701]
+
+[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("LightingManager", "SoundManager") instance=ExtResource("5_gamemanager")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.08274126, 9.596172, -19.327)
 LightingManager = NodePath("../LightingManager")
+SoundManager = NodePath("../SoundManager")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
@@ -198,6 +225,14 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
 [node name="RightBeaverStatue" parent="Decorations" unique_id=1626673924 instance=ExtResource("12_vj2cp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
 
+[node name="SurveillanceCameraLeft" parent="Decorations" unique_id=1531644149 instance=ExtResource("14_vj2cp")]
+transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, -29, 4.4, -13)
+_animationStartTime = 4.0
+
+[node name="SurveillanceCameraRight" parent="Decorations" unique_id=1346111391 instance=ExtResource("14_vj2cp")]
+transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, 29, 4.4, -13)
+_animationStartTime = 2.0
+
 [node name="DarkLights" type="Node3D" parent="." unique_id=1812802562]
 
 [node name="OmniLight3DLeft" type="OmniLight3D" parent="DarkLights" unique_id=1885585873]
@@ -332,11 +367,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
 PlayerId = 2
-
-[node name="SurveillanceCameraLeft" parent="." unique_id=1531644149 instance=ExtResource("14_vj2cp")]
-transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, -29, 4.629, -13)
-_animationStartTime = 4.0
-
-[node name="SurveillanceCameraRight" parent="." unique_id=1346111391 instance=ExtResource("14_vj2cp")]
-transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, 29, 4.629, -13)
-_animationStartTime = 2.0

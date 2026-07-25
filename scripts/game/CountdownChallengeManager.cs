@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Countdown.scripts;
 using Godot;
 
 namespace Countdown.Scripts.Game;
@@ -57,6 +58,8 @@ public partial class CountdownChallengeManager : Node
 	[ExportCategory("Lifecycle")]
 	[Export] public bool AutoStart { get; set; } = true;
 
+	public SoundManager SoundManager { get; set; }
+
 	public CountdownChallengeState State { get; private set; } = CountdownChallengeState.Preparing;
 	public float CurrentCountdown { get; private set; }
 
@@ -73,6 +76,7 @@ public partial class CountdownChallengeManager : Node
 	public override void _Ready()
 	{
 		SetProcessUnhandledInput(true);
+		SoundManager = ((GameManager)GetParent()).SoundManager;
 
 		if (AutoStart)
 		{
@@ -146,6 +150,7 @@ public partial class CountdownChallengeManager : Node
 		HidePlayerLabels();
 		SetState(CountdownChallengeState.Running);
 		UpdateGlobalCountdownLabel();
+		StartCountdownSoundEffectsTimer();
 	}
 
 	public void ResetChallenge()
@@ -507,6 +512,16 @@ public partial class CountdownChallengeManager : Node
 	private static string FormatLockedValue(double value)
 	{
 		return value.ToString("0.00", CultureInfo.InvariantCulture);
+	}
+
+	private async void StartCountdownSoundEffectsTimer()
+	{
+		await ToSignal(GetTree().CreateTimer(CountdownStartValue - 3), "timeout");
+		SoundManager?.PlayCountdownActiveAudioStream();
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		SoundManager?.PlayCountdownActiveAudioStream();
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		SoundManager?.PlayCountdownActiveAudioStream();
 	}
 
 	private sealed class PlayerCountdownEntry
