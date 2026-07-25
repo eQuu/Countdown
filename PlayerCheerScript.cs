@@ -21,21 +21,34 @@ public partial class PlayerCheerScript : CharacterBody3D
         _winnerIndex = GameStore.Instance.WinnerPlayerId;
         _loserIndex = _winnerIndex == 1 ? 2 : 1;
 
-        if (_winnerIndex == 1)
+        if (IsWinner)
         {
-            _indicatorColor = GameStore.Instance.GetPlayerColor(1);
+            if (_winnerIndex == 1)
+            {
+                _indicatorColor = GameStore.Instance.GetPlayerColor(1);
+            }
+            else
+            {
+                _indicatorColor = GameStore.Instance.GetPlayerColor(2);
+            }
+            _winnerLabel.Text = GameStore.Instance.GetScore(_winnerIndex).ToString();
+            _winnerLabel.Modulate = _indicatorColor;
+            _animationPlayer.Play("cheer");
+            SetupIndicatorRing();
+            return;
         }
-        else
+
+        if (_winnerIndex == 1)
         {
             _indicatorColor = GameStore.Instance.GetPlayerColor(2);
         }
-
-        if (IsWinner)
+        else
         {
-            _winnerLabel.Text = GameStore.Instance.GetScore(_winnerIndex).ToString();
-            _loserLabel.Text = GameStore.Instance.GetScore(_loserIndex).ToString();
-            _animationPlayer.Play("cheer");
+            _indicatorColor = GameStore.Instance.GetPlayerColor(1);
         }
+        _loserLabel.Text = GameStore.Instance.GetScore(_loserIndex).ToString();
+        _loserLabel.Modulate = _indicatorColor;
+        SetupIndicatorRing();
     }
 
     private void SetupIndicatorRing()
