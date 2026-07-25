@@ -216,6 +216,16 @@ public partial class MainMenuColorSelect : Node3D
 			return;
 		}
 
+		int expectedDevice = picker.PlayerId == 1 ? 0 : 1;
+		if (@event is InputEventJoypadButton or InputEventJoypadMotion)
+		{
+			int device = @event.Device;
+			if (device != expectedDevice && !(picker.PlayerId == 1 && device < 0))
+			{
+				return;
+			}
+		}
+
 		string action = $"ActionPlayer{picker.PlayerId}";
 		string lockAction = picker.PlayerId == 1 ? "player_1_lock_time" : "player_2_lock_time";
 		bool pressedAction = @event.IsActionPressed(action, allowEcho: false, exactMatch: false);
