@@ -6,6 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_wnhdf"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_kgmhh"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
+[ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
+[ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
+[ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
+[ext_resource type="Texture2D" uid="uid://0mnlsshnieen" path="res://paintings/the_rejected_poet.jpg" id="7_snqyf"]
+[ext_resource type="Texture2D" uid="uid://b4f0jhca22hlp" path="res://paintings/die_katzenfamilie.jpg" id="8_phpej"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -144,6 +149,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
 
 [node name="Pillar1" parent="Decorations/TopWall" unique_id=1378456668 instance=ExtResource("4_pu7co")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="LargePainting-2" parent="Decorations/TopWall" unique_id=1708147758 instance=ExtResource("7_ic5ef")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 5.2, -15.8)
+PaintingTexture = ExtResource("6_8g0if")
+
+[node name="LargePainting-1" parent="Decorations/TopWall" unique_id=977915437 instance=ExtResource("7_ic5ef")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 5.2, -15.8)
+PaintingTexture = ExtResource("7_snqyf")
+
+[node name="LargePainting1" parent="Decorations/TopWall" unique_id=1329472020 node_paths=PackedStringArray("_spotLights") instance=ExtResource("7_ic5ef")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 5.2, -15.8)
+_spotLights = [NodePath("../LargePainting-1/Scale/LeftSpotLight3D"), NodePath("../LargePainting-1/Scale/MiddleSpotLight3D"), NodePath("../LargePainting-1/Scale/RightSpotLight3D")]
+PaintingTexture = ExtResource("8_phpej")
+
+[node name="LargePainting2" parent="Decorations/TopWall" unique_id=934946559 node_paths=PackedStringArray("_spotLights") instance=ExtResource("7_ic5ef")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 5.2, -15.8)
+_spotLights = [NodePath("../LargePainting-1/Scale/LeftSpotLight3D"), NodePath("../LargePainting-1/Scale/MiddleSpotLight3D"), NodePath("../LargePainting-1/Scale/RightSpotLight3D")]
+PaintingTexture = ExtResource("7_ooucj")
 
 [node name="BottomWall" type="Node3D" parent="Decorations" unique_id=1937086962]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)

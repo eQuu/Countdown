@@ -23,12 +23,14 @@ height = 1.4
 [sub_resource type="PlaneMesh" id="PlaneMesh_bj4t2"]
 size = Vector2(12.5, 8.5)
 
-[node name="LargePainting" type="Node3D" unique_id=1708147758 node_paths=PackedStringArray("_paintingPlane")]
+[node name="LargePainting" type="Node3D" unique_id=1708147758 node_paths=PackedStringArray("_spotLights", "_paintingPlane")]
 script = ExtResource("1_7d3lt")
 _defaultPaintingMaterial = ExtResource("2_cvdkr")
+_spotLights = [NodePath("Scale/LeftSpotLight3D"), NodePath("Scale/MiddleSpotLight3D"), NodePath("Scale/RightSpotLight3D")]
 _paintingPlane = NodePath("Scale/Picture/PaintingPlane")
 
 [node name="Scale" type="Node3D" parent="." unique_id=894334963]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="Frame" type="Node3D" parent="Scale" unique_id=1640809301]
 
@@ -82,17 +84,20 @@ mesh = SubResource("CylinderMesh_jb73d")
 transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 0, 0, 0)
 mesh = SubResource("PlaneMesh_bj4t2")
 
-[node name="LeftSpotLight3D" type="SpotLight3D" parent="." unique_id=764723395]
-transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, -3.5, -3, 3.5)
-light_energy = 5.0
+[node name="LeftSpotLight3D" type="SpotLight3D" parent="Scale" unique_id=764723395]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, -3.5, -4, 5)
+visible = false
+light_energy = 2.0
 spot_range = 10.0
 
-[node name="MiddleSpotLight3D" type="SpotLight3D" parent="." unique_id=386937994]
-transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 0, -2, 3.5)
-light_energy = 5.0
+[node name="MiddleSpotLight3D" type="SpotLight3D" parent="Scale" unique_id=386937994]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 0, -3, 5)
+visible = false
+light_energy = 2.0
 spot_range = 10.0
 
-[node name="RightSpotLight3D" type="SpotLight3D" parent="." unique_id=2089624015]
-transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 3.5, -3, 3.5)
-light_energy = 5.0
+[node name="RightSpotLight3D" type="SpotLight3D" parent="Scale" unique_id=2089624015]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 3.5, -4, 5)
+visible = false
+light_energy = 2.0
 spot_range = 10.0

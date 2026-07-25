@@ -6,6 +6,7 @@ namespace Countdown.scripts.decorations;
 public partial class Painting : Node3D
 {
     [Export] public StandardMaterial3D _defaultPaintingMaterial;
+    [Export] public SpotLight3D[] _spotLights = [];
     [Export] public MeshInstance3D _paintingPlane;
     private Texture2D _paintingTexture;
 
@@ -29,5 +30,24 @@ public partial class Painting : Node3D
         customStandardMaterial3D.AlbedoTexture = texture2D;
         
         _paintingPlane.SetSurfaceOverrideMaterial(0, customStandardMaterial3D);
+        _paintingTexture = texture2D;
+    }
+
+    public void ActivateLighting()
+    {
+        if (_spotLights == null) return;
+        foreach (var spotLight in _spotLights)
+        {
+            spotLight.Visible = true;
+        }
+    }
+
+    public void DeactivateLighting()
+    {
+        if (_spotLights == null) return;
+        foreach (var spotLight in _spotLights)
+        {
+            spotLight.Visible = false;
+        }
     }
 }
