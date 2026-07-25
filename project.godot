@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Countdown"
+config/name="Laser Heist"
+config/version="1.0"
 run/main_scene="uid://cjp4jtcm2kqrv"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="uid://bub5rjye4btdt"
