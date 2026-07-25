@@ -10,7 +10,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	[Export] public float Friction { get; set; } = 30.0f;
 	[Export] public float DashSpeed { get; set; } = 24.0f;
 	[Export] public float DashDuration { get; set; } = 0.2f;
-	[Export] public float DashCooldown { get; set; } = 1.5f;
+    [Export] public float DashAnimationDuration { get; set; } = 1f;
+    [Export] public float DashCooldown { get; set; } = 1.5f;
 	[Export] public float PersonalCountdownSeconds { get; set; } = 10.0f;
 	[Export] public float HoldStillSeconds { get; set; } = 1.25f;
 	[Export] public float CountdownStunSeconds { get; set; } = 2.0f;
@@ -23,13 +24,15 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 	private float _dashTimeLeft;
 	private float _dashCooldownLeft;
-	private Vector3 _dashDirection = Vector3.Forward;
+    private float _dashAnimationDurationLeft;
+    private Vector3 _dashDirection = Vector3.Forward;
 	private string _currentAnim = string.Empty;
 	private float _personalCountdown;
 	private float _stunTimeLeft;
 	private float _holdStillTimeLeft;
 	private bool _isHoldingStill;
-	private float _respawnTimeLeft;
+    private bool _isDashing;
+    private float _respawnTimeLeft;
 	private float _invulnTimeLeft;
 	private Vector3 _spawnPosition;
 
@@ -245,11 +248,22 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			{
 				_dashTimeLeft = 0.0f;
 				_dashCooldownLeft = DashCooldown;
+				_isDashing = false;
 			}
 		}
 		else if (_dashCooldownLeft > 0.0f)
 		{
 			_dashCooldownLeft = Mathf.Max(0.0f, _dashCooldownLeft - delta);
+		}
+
+		if (_dashAnimationDurationLeft > 0.0f)
+		{
+			_dashAnimationDurationLeft -= delta;
+			if (_dashAnimationDurationLeft <= 0.0f)
+			{
+				IsInvulnerable = false;
+				_dashAnimationDurationLeft = 0.0f;
+			}
 		}
 	}
 
@@ -279,6 +293,9 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 		_dashDirection = direction;
 		_dashTimeLeft = DashDuration;
+		_dashAnimationDurationLeft = DashAnimationDuration;
+		_isDashing = true;
+		IsInvulnerable = true;
 	}
 
 	private Vector3 ApplyWalkVelocity(Vector2 input, float delta)
@@ -311,7 +328,14 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			return;
 		}
 
-		string next = input != Vector2.Zero || _dashTimeLeft > 0.0f ? "walk" : "idle";
+		string next;
+		if (_dashAnimationDurationLeft > 0f)
+		{
+			next = "dash";
+		} else
+		{
+			next = input != Vector2.Zero ? "walk" : "idle";
+		}
 
 		if (next == _currentAnim)
 		{
