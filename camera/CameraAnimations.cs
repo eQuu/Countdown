@@ -8,6 +8,6 @@ namespace Countdown.camera
 {
     internal enum CameraAnimations
     {
-        scanning = 0, happy = 1, headbang = 2
+        scanning = 0, happy = 1, headbang = 2, sad = 3
     }
 }

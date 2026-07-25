@@ -1,0 +1,575 @@
+[gd_scene format=3 uid="uid://q7qccljjq5py"]
+
+[ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_745m4"]
+[ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_kjrwi"]
+[ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_olga5"]
+[ext_resource type="Script" uid="uid://3jh4cqhs4vs0" path="res://scripts/decorations/Painting.cs" id="4_13ri0"]
+[ext_resource type="Material" uid="uid://bye3bi2nhkdh" path="res://decorations/materials/large_painting/PaintingPlaneMaterial.tres" id="5_lmfuw"]
+[ext_resource type="Material" uid="uid://b3sgh1xkh1axv" path="res://decorations/materials/large_painting/LeftRightSideMaterial.tres" id="6_k7c8f"]
+[ext_resource type="Material" uid="uid://cnje7kb4o1oh2" path="res://decorations/materials/large_painting/TopBottomSideMaterial.tres" id="7_y0fv6"]
+[ext_resource type="Material" uid="uid://bnshseso23qfs" path="res://decorations/materials/large_painting/CylinderMaterial.tres" id="8_jhou3"]
+[ext_resource type="Texture2D" uid="uid://0mnlsshnieen" path="res://paintings/the_rejected_poet.jpg" id="9_3xhsb"]
+[ext_resource type="Texture2D" uid="uid://dpje82vyytx3u" path="res://decorations/textures/Wallpaper001B_1K-JPG_Displacement.jpg" id="10_7eg23"]
+[ext_resource type="Texture2D" uid="uid://d1u0nxxsix02w" path="res://decorations/textures/Wallpaper001B_1K-JPG_NormalDX.jpg" id="11_0o5rp"]
+[ext_resource type="Texture2D" uid="uid://dypsb52am2i53" path="res://decorations/textures/Wallpaper001B_1K-JPG_Roughness.jpg" id="12_didoo"]
+[ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="13_psfuu"]
+[ext_resource type="PackedScene" uid="uid://cwjyhdaplmmwx" path="res://camera/SurveillanceCamera.tscn" id="14_pi44w"]
+[ext_resource type="Shader" uid="uid://diyjhqijywkiu" path="res://resources/player/indicator_ring.gdshader" id="15_k7c8f"]
+[ext_resource type="ArrayMesh" uid="uid://c7kwiukx1b3j3" path="res://player/burglar_body.vox" id="17_jhou3"]
+[ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="18_3xhsb"]
+[ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="19_7eg23"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_0bpjf"]
+sky_material = SubResource("ProceduralSkyMaterial_u1gpl")
+
+[sub_resource type="Environment" id="Environment_62bee"]
+background_mode = 1
+sky = SubResource("Sky_0bpjf")
+glow_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+material = ExtResource("1_745m4")
+size = Vector3(74, 0.2, 34)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(80, 0.2, 40)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c7mx7"]
+material = ExtResource("6_k7c8f")
+size = Vector3(1, 8, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_njjb8"]
+material = ExtResource("7_y0fv6")
+size = Vector3(12, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jb73d"]
+material = ExtResource("8_jhou3")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 1.4
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_bj4t2"]
+size = Vector2(12.5, 8.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_extj1"]
+albedo_texture = ExtResource("9_3xhsb")
+roughness_texture = ExtResource("12_didoo")
+normal_enabled = true
+normal_texture = ExtResource("11_0o5rp")
+heightmap_enabled = true
+heightmap_texture = ExtResource("10_7eg23")
+
+[sub_resource type="Animation" id="Animation_83hs8"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0)
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 4.712389, 0)]
+}
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, 0, -0.6, 0)
+
+[sub_resource type="Animation" id="Animation_x8kxw"]
+resource_name = "dash"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootR")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, 0.7, 0.75, 1, -0.3, -0.6, 0.7)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, -0.3, 0.73333335, 1, 0.3, -0.6, -0.3)
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0.5235988, -1.5707964, 0.87266463), Vector3(0.5235988, -1.5707964, 0.87266463)]
+}
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBody")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.6, 0.3, 0.75, 1, 0, -0.6, 0.3)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarHandL")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.4, 0, -0.6, 0.75, 1, 0.4, 0, -0.6)
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarHandR")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, -0.6, 0, 0.4, 0.25, 1, -0.3, 0, 0.4, 0.75, 1, -0.3, 0, 0.4, 1, 1, -0.6, 0, 0.4)
+
+[sub_resource type="Animation" id="Animation_8ak8y"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBody")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 1, 1, 0, -0.5, 0, 2, 1, 0, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.6, -0.1, 0, 1, 1, 0.6, 0, 0, 2, 1, 0.6, -0.1, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandR")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, -0.6, -0.1, 0, 1, 1, -0.6, 0, 0, 2, 1, -0.6, -0.1, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBootL")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBootR")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, -0.3, -0.6, -0.01999998)
+
+[sub_resource type="Animation" id="Animation_aqcbf"]
+resource_name = "stun"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5969763, 0.87266463), Vector3(-0.2617994, -1.5969763, 0.6981317), Vector3(0, -1.5969763, 0.87266463), Vector3(0.2617994, -1.5969763, 0.6981317), Vector3(0, -1.5969763, 0.87266463)]
+}
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.6, 0, 0.076944, 0.5, 1, 0.6, -0.2, 0.077)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandR")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, -0.6, 0, -0.076944, 0.5, 1, -0.6, -0.2, -0.077)
+
+[sub_resource type="Animation" id="Animation_gndvh"]
+resource_name = "walk"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, 0.5, 0.5, 1, 0.3, -0.6, 0, 0.75, 1, 0.3, -0.6, -0.5, 1, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, -0.5, 0.5, 1, -0.3, -0.6, 0, 0.75, 1, -0.3, -0.6, 0.5, 1, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.6, 0, -0.5, 0.5, 1, 0.6, 0, 0, 0.75, 1, 0.6, 0, 0.5, 1, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0, 0.25, 1, -0.6, 0, 0.5, 0.5, 1, -0.6, 0, 0, 0.75, 1, -0.6, 0, -0.5, 1, 1, -0.6, 0, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.5, 0, 0.5, 1, 0, -0.6, 0, 0.75, 1, 0, -0.5, 0, 1, 1, 0, -0.6, 0)
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0, -1.3962634, 0), Vector3(0, -1.5707964, 0), Vector3(0, -1.7453293, 0), Vector3(0, -1.5707964, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
+_data = {
+&"RESET": SubResource("Animation_83hs8"),
+&"dash": SubResource("Animation_x8kxw"),
+&"idle": SubResource("Animation_8ak8y"),
+&"stun": SubResource("Animation_aqcbf"),
+&"walk": SubResource("Animation_gndvh")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
+size = Vector3(0.5316162, 1.102396, 0.86826706)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ring"]
+render_priority = 0
+shader = ExtResource("15_k7c8f")
+shader_parameter/ring_color = Color(0.1, 0.4, 1, 0.95)
+shader_parameter/inner_radius = 0.74
+shader_parameter/outer_softness = 0.1
+shader_parameter/inner_softness = 0.07
+shader_parameter/emission_boost = 2.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ring"]
+material = SubResource("ShaderMaterial_ring")
+size = Vector2(1.35, 1.35)
+
+[node name="GameOver" type="Node3D" unique_id=198145086]
+
+[node name="ObjectRoot" type="Node3D" parent="." unique_id=1277312797]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="ObjectRoot" unique_id=2087598196]
+environment = SubResource("Environment_62bee")
+
+[node name="Floor" type="StaticBody3D" parent="ObjectRoot" unique_id=1560599757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="ObjectRoot/Floor" unique_id=739351530]
+mesh = SubResource("BoxMesh_floor")
+
+[node name="Collision" type="CollisionShape3D" parent="ObjectRoot/Floor" unique_id=236958698]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Walls" type="Node3D" parent="ObjectRoot" unique_id=1149750170]
+
+[node name="Bottom" type="Node3D" parent="ObjectRoot/Walls" unique_id=699816547]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 16.6)
+
+[node name="Baroque1" parent="ObjectRoot/Walls/Bottom" unique_id=1948445847 instance=ExtResource("2_kjrwi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="Baroque2" parent="ObjectRoot/Walls/Bottom" unique_id=1240979761 instance=ExtResource("2_kjrwi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
+
+[node name="Baroque3" parent="ObjectRoot/Walls/Bottom" unique_id=1163989301 instance=ExtResource("2_kjrwi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
+
+[node name="BaroqueCornerRight" parent="ObjectRoot/Walls/Bottom" unique_id=1044144399 instance=ExtResource("3_olga5")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 32, 0, 4.6)
+
+[node name="Left" type="Node3D" parent="ObjectRoot/Walls" unique_id=520588830]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.6, 0, 0)
+
+[node name="Baroque-1" parent="ObjectRoot/Walls/Left" unique_id=374004759 instance=ExtResource("2_kjrwi")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 4)
+
+[node name="Baroque1" parent="ObjectRoot/Walls/Left" unique_id=152128537 instance=ExtResource("2_kjrwi")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
+
+[node name="Decorations" type="Node3D" parent="ObjectRoot" unique_id=2131842495]
+
+[node name="LeftWall" type="Node3D" parent="ObjectRoot/Decorations" unique_id=118141339]
+
+[node name="RightWall" type="Node3D" parent="ObjectRoot/Decorations" unique_id=2056478776]
+
+[node name="TopWall" type="Node3D" parent="ObjectRoot/Decorations" unique_id=1205001193]
+
+[node name="LargePainting-1" type="Node3D" parent="ObjectRoot/Decorations/TopWall" unique_id=977915437 node_paths=PackedStringArray("_paintingPlane")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -16.587902, 5.2, 15.3515625)
+script = ExtResource("4_13ri0")
+_defaultPaintingMaterial = ExtResource("5_lmfuw")
+_paintingPlane = NodePath("Scale/Picture/PaintingPlane")
+
+[node name="Scale" type="Node3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1" unique_id=1458398607]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Frame" type="Node3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale" unique_id=349838033]
+
+[node name="LeftSide" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=1097205085]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 0)
+mesh = SubResource("BoxMesh_c7mx7")
+
+[node name="RightSide" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=1470235354]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, 0)
+mesh = SubResource("BoxMesh_c7mx7")
+
+[node name="TopSide" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=256548216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+mesh = SubResource("BoxMesh_njjb8")
+
+[node name="BottomSide" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=959043021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.5, 0)
+mesh = SubResource("BoxMesh_njjb8")
+
+[node name="CylinderTopLeft" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=664195301]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, -6.3, 4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopMiddle" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=810628342]
+transform = Transform3D(1.2, 0, 0, 0, -3.4969112e-08, -1.2, 0, 0.8, -5.2453668e-08, 0, 5.4, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopMiddleLeft" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=445480027]
+transform = Transform3D(0.9, 0, 0, 0, -3.409488e-08, -0.9, 0, 0.78, -3.934025e-08, -1.4, 5.2, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopMiddleRight" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=626490934]
+transform = Transform3D(0.9, 0, 0, 0, -3.409488e-08, -0.9, 0, 0.78, -3.934025e-08, 1.4, 5.2, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderTopRight" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=324164187]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 6.3, 4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderBottomLeft" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=1656810625]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, -6.3, -4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="CylinderBottomRight" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Frame" unique_id=1754817728]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 6.3, -4.3, 0)
+mesh = SubResource("CylinderMesh_jb73d")
+
+[node name="Picture" type="Node3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale" unique_id=173381509]
+
+[node name="PaintingPlane" type="MeshInstance3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale/Picture" unique_id=1266182277]
+transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 0, 0, 0)
+mesh = SubResource("PlaneMesh_bj4t2")
+surface_material_override/0 = SubResource("StandardMaterial3D_extj1")
+
+[node name="LeftSpotLight3D" type="SpotLight3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale" unique_id=1995878688]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, -3.5, -4, 5)
+visible = false
+light_energy = 2.0
+spot_range = 10.0
+
+[node name="MiddleSpotLight3D" type="SpotLight3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale" unique_id=952913986]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 0, -3, 5)
+visible = false
+light_energy = 2.0
+spot_range = 10.0
+
+[node name="RightSpotLight3D" type="SpotLight3D" parent="ObjectRoot/Decorations/TopWall/LargePainting-1/Scale" unique_id=305886299]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, -0.40673664, 0, 0.40673664, 0.9135454, 3.5, -4, 5)
+visible = false
+light_energy = 2.0
+spot_range = 10.0
+
+[node name="BottomWall" type="Node3D" parent="ObjectRoot/Decorations" unique_id=1937086962]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Pillar1" parent="ObjectRoot/Decorations/BottomWall" unique_id=1382317377 instance=ExtResource("13_psfuu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="MainCamera" type="Camera3D" parent="ObjectRoot" unique_id=1182773711]
+transform = Transform3D(-0.949135, -0.10227433, 0.29779655, 0, 0.9457776, 0.32481498, -0.31486952, 0.30829325, -0.8976706, -20.86684, 6.686784, 2.5601597)
+
+[node name="SurveillanceCameraLeft" parent="ObjectRoot" unique_id=1531644149 instance=ExtResource("14_pi44w")]
+transform = Transform3D(-6.5567086e-08, 0, 1.5000001, 0, 1.5000002, 0, -1.5000001, 0, -6.5567086e-08, -24.334047, 4.629, 13.01235)
+_chosenAnimation = 3
+
+[node name="CeilingLights" type="Node3D" parent="." unique_id=1328534388]
+
+[node name="SpotLight3D-2" type="SpotLight3D" parent="CeilingLights" unique_id=1529515662]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -28, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-9" type="SpotLight3D" parent="CeilingLights" unique_id=1749127259]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-10" type="SpotLight3D" parent="CeilingLights" unique_id=1250714625]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -14, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=845121509]
+transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -18, 1, 12)
+collision_layer = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player" unique_id=1844725914]
+libraries/ = SubResource("AnimationLibrary_gndvh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1686967469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="IndicatorRing" type="MeshInstance3D" parent="Player" unique_id=443270399]
+transform = Transform3D(0.99556094, -0.033482634, -0.087958366, 0.08539014, -0.07165085, 0.9937679, -0.03957628, -0.9968675, -0.068473734, -0.03562498, -0.22069931, 0.43924212)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ring")
+
+[node name="LockedTimeLabel" type="Label3D" parent="Player" unique_id=2070574854]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+top_level = true
+visible = false
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+render_priority = 10
+outline_modulate = Color(0, 0, 0, 0.85)
+text = "0.00"
+font_size = 72
+
+[node name="MeshRoot" type="Node3D" parent="Player" unique_id=1487964443]
+
+[node name="BurglarBody" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=1733556175]
+transform = Transform3D(5.9624403e-09, 0, -0.5, 0, 0.5, 0, 0.5, 0, 5.9624403e-09, 0, -0.6, 0)
+mesh = ExtResource("17_jhou3")
+
+[node name="BurglarHandL" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=1702706192]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
+mesh = ExtResource("18_3xhsb")
+
+[node name="BurglarHandR" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=573512098]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.6, 0, 0)
+mesh = ExtResource("18_3xhsb")
+
+[node name="BurglarBootL" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=112262616]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
+mesh = ExtResource("19_7eg23")
+
+[node name="BurglarBootR" type="MeshInstance3D" parent="Player/MeshRoot" unique_id=1879685013]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
+mesh = ExtResource("19_7eg23")
+
+[node name="Player2" type="CharacterBody3D" parent="." unique_id=590010644]
+transform = Transform3D(-1.5356864, 0, 1.2812756, 0, 2, 0, -1.2812756, 0, -1.5356864, -29.20708, 1.8480008, 6.924017)
+collision_layer = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player2" unique_id=146763576]
+libraries/ = SubResource("AnimationLibrary_gndvh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player2" unique_id=599772486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="IndicatorRing" type="MeshInstance3D" parent="Player2" unique_id=1239172712]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ring")
+
+[node name="LockedTimeLabel" type="Label3D" parent="Player2" unique_id=166350129]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+top_level = true
+visible = false
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+render_priority = 10
+outline_modulate = Color(0, 0, 0, 0.85)
+text = "0.00"
+font_size = 72
+
+[node name="MeshRoot" type="Node3D" parent="Player2" unique_id=471171087]
+
+[node name="BurglarBody" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1721999872]
+transform = Transform3D(5.9624403e-09, 0, -0.5, 0, 0.5, 0, 0.5, 0, 5.9624403e-09, 0, -0.6, 0)
+mesh = ExtResource("17_jhou3")
+
+[node name="BurglarHandL" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1144193239]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
+mesh = ExtResource("18_3xhsb")
+
+[node name="BurglarHandR" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1250992777]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.6, 0, 0)
+mesh = ExtResource("18_3xhsb")
+
+[node name="BurglarBootL" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=1122039960]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
+mesh = ExtResource("19_7eg23")
+
+[node name="BurglarBootR" type="MeshInstance3D" parent="Player2/MeshRoot" unique_id=94261413]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
+mesh = ExtResource("19_7eg23")
