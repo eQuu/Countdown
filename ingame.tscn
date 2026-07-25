@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://crygc3hghlciq" path="res://scenes/laser_station/laser_station.tscn" id="2_station"]
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_wnhdf"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_kgmhh"]
+[ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -127,7 +128,36 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0
 [node name="Baroque1" parent="Walls/Right" unique_id=852394868 instance=ExtResource("2_wnhdf")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
 
-[node name="DimLighting" type="Node3D" parent="." unique_id=1812802562]
+[node name="Decorations" type="Node3D" parent="." unique_id=2131842495]
+
+[node name="LeftWall" type="Node3D" parent="Decorations" unique_id=118141339]
+
+[node name="RightWall" type="Node3D" parent="Decorations" unique_id=2056478776]
+
+[node name="TopWall" type="Node3D" parent="Decorations" unique_id=1205001193]
+
+[node name="Pillar-1" parent="Decorations/TopWall" unique_id=1932911329 instance=ExtResource("4_pu7co")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -16.4)
+
+[node name="Pillar0" parent="Decorations/TopWall" unique_id=164923488 instance=ExtResource("4_pu7co")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
+
+[node name="Pillar1" parent="Decorations/TopWall" unique_id=1378456668 instance=ExtResource("4_pu7co")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="BottomWall" type="Node3D" parent="Decorations" unique_id=1937086962]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Pillar-1" parent="Decorations/BottomWall" unique_id=273884925 instance=ExtResource("4_pu7co")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -16.4)
+
+[node name="Pillar0" parent="Decorations/BottomWall" unique_id=1752878829 instance=ExtResource("4_pu7co")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
+
+[node name="Pillar1" parent="Decorations/BottomWall" unique_id=1382317377 instance=ExtResource("4_pu7co")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
+
+[node name="DarkLights" type="Node3D" parent="." unique_id=1812802562]
 
 [node name="CeilingLights" type="Node3D" parent="." unique_id=868605658]
 
