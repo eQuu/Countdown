@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bxu3gvf1e5lfq"]
 
 [ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://player/Player.tscn" id="1_0bpjf"]
+[ext_resource type="AudioStream" uid="uid://bgk1w3k4bnn4e" path="res://music/IngameMusic.mp3" id="1_lgwd6"]
 [ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_phpej"]
 [ext_resource type="Script" uid="uid://bcqyiprjd0iph" path="res://scripts/LightingManager.cs" id="1_w4jj2"]
 [ext_resource type="Script" uid="uid://bumhtvc4bvisj" path="res://scripts/SoundManager.cs" id="2_8cstj"]
@@ -44,6 +45,12 @@ size = Vector3(74, 0.2, 34)
 size = Vector3(80, 0.2, 40)
 
 [node name="Ingame" type="Node3D" unique_id=1277312797]
+
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=29900865]
+stream = ExtResource("1_lgwd6")
+volume_db = -8.0
+autoplay = true
+parameters/looping = true
 
 [node name="LightingManager" type="Node" parent="." unique_id=250108206 node_paths=PackedStringArray("_ceilingLights", "_darkLights", "_paintings")]
 script = ExtResource("1_w4jj2")

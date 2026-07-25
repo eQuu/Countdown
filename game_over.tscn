@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://q7qccljjq5py"]
 
 [ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_745m4"]
+[ext_resource type="AudioStream" uid="uid://ckkf446qifo20" path="res://music/GameoverMusic.mp3" id="1_y0fv6"]
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_kjrwi"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_olga5"]
 [ext_resource type="Script" uid="uid://3jh4cqhs4vs0" path="res://scripts/decorations/Painting.cs" id="4_13ri0"]
@@ -609,6 +610,12 @@ material = SubResource("ShaderMaterial_y0fv6")
 size = Vector2(1.35, 1.35)
 
 [node name="GameOver" type="Node3D" unique_id=198145086]
+
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=316426250]
+stream = ExtResource("1_y0fv6")
+volume_db = -8.0
+autoplay = true
+parameters/looping = true
 
 [node name="LoserScoreLabel" type="Label3D" parent="." unique_id=1693886260]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 6, 15)
