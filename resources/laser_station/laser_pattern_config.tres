@@ -28,4 +28,4 @@ ArmAnglesDegrees = PackedFloat32Array(0, 180)
 
 [resource]
 script = ExtResource("1_config")
-Patterns = Array[Resource]([SubResource("Pattern_cross_four"), SubResource("Pattern_single"), SubResource("Pattern_triple"), SubResource("Pattern_line_two")])
+Patterns = Array[ExtResource("2_def")]([SubResource("Pattern_cross_four"), SubResource("Pattern_single"), SubResource("Pattern_triple"), SubResource("Pattern_line_two")])

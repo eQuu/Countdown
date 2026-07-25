@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bxu3gvf1e5lfq"]
 
 [ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://objects/Player.tscn" id="1_0bpjf"]
+[ext_resource type="PackedScene" uid="uid://crygc3hghlciq" path="res://scenes/laser_station/laser_station.tscn" id="2_station"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -14,7 +15,24 @@ background_mode = 2
 sky = SubResource("Sky_0bpjf")
 glow_enabled = true
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_tp80y"]
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(60, 0.2, 60)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.18, 0.2, 0.22, 1)
+roughness = 0.85
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(60, 0.2, 60)
+
+[sub_resource type="BoxMesh" id="BoxMesh_testwall"]
+size = Vector3(0.4, 3, 8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_testwall"]
+albedo_color = Color(0.35, 0.38, 0.42, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_testwall"]
+size = Vector3(0.4, 3, 8)
 
 [node name="Ingame" type="Node3D" unique_id=1277312797]
 
@@ -25,9 +43,59 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
 
-[node name="Floor" type="MeshInstance3D" parent="." unique_id=1909032072]
-transform = Transform3D(30, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0)
-mesh = SubResource("PlaneMesh_tp80y")
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1560599757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=739351530]
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Collision" type="CollisionShape3D" parent="Floor" unique_id=236958698]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="TestWall" type="StaticBody3D" parent="." unique_id=1395480251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 0)
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="TestWall" unique_id=2027786548]
+mesh = SubResource("BoxMesh_testwall")
+surface_material_override/0 = SubResource("StandardMaterial3D_testwall")
+
+[node name="Collision" type="CollisionShape3D" parent="TestWall" unique_id=829401290]
+shape = SubResource("BoxShape3D_testwall")
+
+[node name="LaserStationSpawns" type="Node3D" parent="." unique_id=1147025422]
+
+[node name="L1" type="Marker3D" parent="LaserStationSpawns" unique_id=1361181571]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.1, -8)
+
+[node name="LaserStation" parent="LaserStationSpawns/L1" unique_id=398507728 instance=ExtResource("2_station")]
+
+[node name="L2" type="Marker3D" parent="LaserStationSpawns" unique_id=2053571907]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -8)
+
+[node name="LaserStation" parent="LaserStationSpawns/L2" unique_id=1618191649 instance=ExtResource("2_station")]
+
+[node name="L3" type="Marker3D" parent="LaserStationSpawns" unique_id=120513418]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.1, 0)
+
+[node name="LaserStation" parent="LaserStationSpawns/L3" unique_id=15862273 instance=ExtResource("2_station")]
+
+[node name="L4" type="Marker3D" parent="LaserStationSpawns" unique_id=1436387019]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.1, 0)
+
+[node name="LaserStation" parent="LaserStationSpawns/L4" unique_id=2112653926 instance=ExtResource("2_station")]
+
+[node name="L5" type="Marker3D" parent="LaserStationSpawns" unique_id=1216592587]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.1, 8)
+
+[node name="LaserStation" parent="LaserStationSpawns/L5" unique_id=1075213743 instance=ExtResource("2_station")]
+
+[node name="L6" type="Marker3D" parent="LaserStationSpawns" unique_id=1085917734]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 8)
+
+[node name="LaserStation" parent="LaserStationSpawns/L6" unique_id=284287416 instance=ExtResource("2_station")]
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1182773711]
 transform = Transform3D(0.9999759, -0.0067925616, 0.0014494577, 0, 0.20869051, 0.97798175, -0.0069454894, -0.97795814, 0.20868547, 0.11678083, 13.604237, 3.5383928)
@@ -37,4 +105,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
 
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
-_playerNumber = 2
+PlayerId = 2

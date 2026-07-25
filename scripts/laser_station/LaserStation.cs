@@ -610,7 +610,8 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
-		if (player.PlayerId is not 1 and not 2)
+		if (player.PlayerId is not (int)LaserOwner.PlayerOne
+			and not (int)LaserOwner.PlayerTwo)
 		{
 			GD.PushWarning(
 				$"LaserStation received invalid PlayerId {player.PlayerId}."
@@ -623,9 +624,7 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
-		LaserOwner newOwner = player.PlayerId == 1
-			? LaserOwner.PlayerOne
-			: LaserOwner.PlayerTwo;
+		LaserOwner newOwner = (LaserOwner)player.PlayerId;
 
 		if (CurrentOwner == newOwner)
 		{

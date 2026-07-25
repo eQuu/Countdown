@@ -1,99 +1,263 @@
 using Godot;
-using System;
-using System.Diagnostics;
-using static Godot.TextServer;
 
-public partial class Player : CharacterBody3D
+public partial class Player : CharacterBody3D, ILaserPlayer
 {
-    public const float FRICTION = 20f;
+	[Export] private AnimationPlayer _animationPlayer;
+	[Export] public int PlayerId { get; set; } = 1;
 
-    [Export] private AnimationPlayer _animationPlayer;
-    [Export] private int _playerNumber = 1;
-    [Export] private Timer _timer;
+	[Export] public float WalkSpeed { get; set; } = 8.0f;
+	[Export] public float Acceleration { get; set; } = 40.0f;
+	[Export] public float Friction { get; set; } = 30.0f;
+	[Export] public float DashSpeed { get; set; } = 24.0f;
+	[Export] public float DashDuration { get; set; } = 0.2f;
+	[Export] public float DashCooldown { get; set; } = 1.5f;
+	[Export] public float PersonalCountdownSeconds { get; set; } = 10.0f;
+	[Export] public float CountdownStunSeconds { get; set; } = 2.0f;
+	[Export] public float RespawnDelaySeconds { get; set; } = 1.5f;
+	[Export] public float SpawnProtectionSeconds { get; set; } = 1.0f;
+	[Export] public float Gravity { get; set; } = 20.0f;
 
-    private Vector3 _VelocityPlayer = Vector3.Zero;
-    private float _speed = 8f;
-    private bool canDash = true;
+	public bool IsInvulnerable { get; private set; }
+	public bool IsAlive { get; private set; } = true;
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
+	private float _dashTimeLeft;
+	private float _dashCooldownLeft;
+	private Vector3 _dashDirection = Vector3.Forward;
+	private string _currentAnim = string.Empty;
+	private float _personalCountdown;
+	private float _stunTimeLeft;
+	private float _respawnTimeLeft;
+	private float _invulnTimeLeft;
+	private Vector3 _spawnPosition;
 
-    }
+	public override void _Ready()
+	{
+		CollisionLayer = 2;
+		CollisionMask = 1;
+		_spawnPosition = GlobalPosition;
+		_personalCountdown = PersonalCountdownSeconds;
+	}
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta)
-    {
+	public override void _PhysicsProcess(double delta)
+	{
+		float dt = (float)delta;
+		UpdateStatusTimers(dt);
 
-    }
+		if (!IsAlive || _stunTimeLeft > 0.0f)
+		{
+			ApplyGravity(dt);
+			Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
+			MoveAndSlide();
+			UpdateAnimation(Vector2.Zero);
+			return;
+		}
 
-    public override void _PhysicsProcess(double delta)
-    {
-        HandleMovement(delta);
-    }
+		HandleMovement(dt);
+	}
 
-    private void HandleMovement(double delta)
-    {
-        // TODO: Bei Kollision die Velocity entfernen. Sonst klebt man an Dingen
-        Vector2 direction = Vector2.Zero;
+	public void HitByLaser(int attackingPlayerId)
+	{
+		if (!IsAlive || IsInvulnerable)
+		{
+			return;
+		}
 
-        direction = Input.GetVector("MoveLeftPlayer" + _playerNumber, "MoveRightPlayer" + _playerNumber, "MoveUpPlayer" + _playerNumber, "MoveDownPlayer" + _playerNumber);
+		IsAlive = false;
+		_dashTimeLeft = 0.0f;
+		_respawnTimeLeft = RespawnDelaySeconds;
+		Velocity = Vector3.Zero;
+		GD.Print($"Player {PlayerId} hit by laser of player {attackingPlayerId}");
+	}
 
-        if (canDash && Input.IsActionJustReleased("ActionPlayer" + _playerNumber))
-        {
-            canDash = false;
-            _timer.Start();
-            Vector3 forward = GlobalTransform.Basis.Z;
-            _VelocityPlayer.X = forward.Normalized().X * _speed * 3;
-            _VelocityPlayer.Z = forward.Normalized().Z * _speed * 3;
-        }
+	public void ResetPersonalCountdown()
+	{
+		_personalCountdown = PersonalCountdownSeconds;
+	}
 
-        ApplySlippyness(direction, delta);
-        AnimatePlayer(direction);
+	private void UpdateStatusTimers(float delta)
+	{
+		if (_invulnTimeLeft > 0.0f)
+		{
+			_invulnTimeLeft -= delta;
+			if (_invulnTimeLeft <= 0.0f)
+			{
+				_invulnTimeLeft = 0.0f;
+				IsInvulnerable = false;
+			}
+		}
 
-        Velocity = _VelocityPlayer;
-        MoveAndSlide();
-    }
+		if (!IsAlive)
+		{
+			_respawnTimeLeft -= delta;
+			if (_respawnTimeLeft <= 0.0f)
+			{
+				Respawn();
+			}
+			return;
+		}
 
-    private void ApplySlippyness(Vector2 direction, double delta)
-    {
-        if (direction.X != 0)
-        {
-            _VelocityPlayer.X = (float)Mathf.MoveToward(_VelocityPlayer.X, (direction.X * _speed), FRICTION * delta);
-        }
-        else
-        {
-            _VelocityPlayer.X = (float)Mathf.MoveToward(_VelocityPlayer.X, 0, FRICTION * delta);
-        }
+		if (_stunTimeLeft > 0.0f)
+		{
+			_stunTimeLeft -= delta;
+			if (_stunTimeLeft <= 0.0f)
+			{
+				_stunTimeLeft = 0.0f;
+				_personalCountdown = PersonalCountdownSeconds;
+			}
+			return;
+		}
 
-        if (direction.Y != 0)
-        {
+		_personalCountdown -= delta;
+		if (_personalCountdown <= 0.0f)
+		{
+			_personalCountdown = 0.0f;
+			_stunTimeLeft = CountdownStunSeconds;
+			_dashTimeLeft = 0.0f;
+			Velocity = Vector3.Zero;
+		}
+	}
 
-            _VelocityPlayer.Z = (float)Mathf.MoveToward(_VelocityPlayer.Z, (direction.Y * _speed), FRICTION * delta);
-        }
-        else
-        {
-            _VelocityPlayer.Z = (float)Mathf.MoveToward(_VelocityPlayer.Z, 0, FRICTION * delta);
-        }
-    }
+	private void Respawn()
+	{
+		GlobalPosition = _spawnPosition;
+		Velocity = Vector3.Zero;
+		IsAlive = true;
+		IsInvulnerable = true;
+		_invulnTimeLeft = SpawnProtectionSeconds;
+		_dashTimeLeft = 0.0f;
+		_dashCooldownLeft = 0.0f;
+		_stunTimeLeft = 0.0f;
+		_personalCountdown = PersonalCountdownSeconds;
+	}
 
-    private void AnimatePlayer(Vector2 direction)
-    {
-        if (direction != Vector2.Zero)
-        {
-            _animationPlayer.Play("walk");
-            direction = direction.Normalized();
-            Vector3 direction3 = new Vector3(direction.X, 0, direction.Y);
-            LookAt(Transform.Origin - direction3);
-        }
-        else
-        {
-            _animationPlayer.Play("idle");
-        }
-    }
+	private void HandleMovement(float delta)
+	{
+		Vector2 input = Input.GetVector(
+			"MoveLeftPlayer" + PlayerId,
+			"MoveRightPlayer" + PlayerId,
+			"MoveUpPlayer" + PlayerId,
+			"MoveDownPlayer" + PlayerId
+		);
 
-    private void OnTimerTimeout()
-    {
-        canDash = true;
-    }
+		if (input != Vector2.Zero)
+		{
+			input = input.Normalized();
+		}
+
+		UpdateDashTimers(delta);
+		TryStartDash(input);
+		ApplyGravity(delta);
+
+		Vector3 horizontal;
+		if (_dashTimeLeft > 0.0f)
+		{
+			horizontal = _dashDirection * DashSpeed;
+		}
+		else
+		{
+			horizontal = ApplyWalkVelocity(input, delta);
+		}
+
+		Velocity = new Vector3(horizontal.X, Velocity.Y, horizontal.Z);
+		MoveAndSlide();
+
+		UpdateFacing(input);
+		UpdateAnimation(input);
+	}
+
+	private void ApplyGravity(float delta)
+	{
+		if (!IsOnFloor())
+		{
+			Velocity = new Vector3(Velocity.X, Velocity.Y - Gravity * delta, Velocity.Z);
+		}
+		else if (Velocity.Y < 0.0f)
+		{
+			Velocity = new Vector3(Velocity.X, 0.0f, Velocity.Z);
+		}
+	}
+
+	private void UpdateDashTimers(float delta)
+	{
+		if (_dashTimeLeft > 0.0f)
+		{
+			_dashTimeLeft -= delta;
+			if (_dashTimeLeft <= 0.0f)
+			{
+				_dashTimeLeft = 0.0f;
+				_dashCooldownLeft = DashCooldown;
+			}
+		}
+		else if (_dashCooldownLeft > 0.0f)
+		{
+			_dashCooldownLeft = Mathf.Max(0.0f, _dashCooldownLeft - delta);
+		}
+	}
+
+	private void TryStartDash(Vector2 input)
+	{
+		if (_dashCooldownLeft > 0.0f || _dashTimeLeft > 0.0f)
+		{
+			return;
+		}
+
+		if (!Input.IsActionJustPressed("ActionPlayer" + PlayerId))
+		{
+			return;
+		}
+
+		Vector3 direction;
+		if (input != Vector2.Zero)
+		{
+			direction = new Vector3(input.X, 0.0f, input.Y).Normalized();
+		}
+		else
+		{
+			direction = GlobalTransform.Basis.Z;
+			direction.Y = 0.0f;
+			direction = direction.Normalized();
+		}
+
+		_dashDirection = direction;
+		_dashTimeLeft = DashDuration;
+	}
+
+	private Vector3 ApplyWalkVelocity(Vector2 input, float delta)
+	{
+		Vector3 current = new Vector3(Velocity.X, 0.0f, Velocity.Z);
+		Vector3 target = input != Vector2.Zero ? new Vector3(input.X, 0.0f, input.Y) * WalkSpeed : Vector3.Zero;
+
+		float rate = input != Vector2.Zero ? Acceleration : Friction;
+		return current.MoveToward(target, rate * delta);
+	}
+
+	private void UpdateFacing(Vector2 input)
+	{
+		if (input == Vector2.Zero)
+		{
+			return;
+		}
+
+		Vector2 direction = input.Normalized();
+		Vector3 direction3 = new Vector3(direction.X, 0.0f, direction.Y);
+		LookAt(Transform.Origin - direction3);
+	}
+
+	private void UpdateAnimation(Vector2 input)
+	{
+		if (_animationPlayer == null)
+		{
+			return;
+		}
+
+		string next = input != Vector2.Zero || _dashTimeLeft > 0.0f ? "walk" : "idle";
+
+		if (next == _currentAnim)
+		{
+			return;
+		}
+
+		_currentAnim = next;
+		_animationPlayer.Play(next);
+	}
 }
