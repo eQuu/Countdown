@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
 [ext_resource type="Texture2D" uid="uid://0mnlsshnieen" path="res://paintings/the_rejected_poet.jpg" id="7_snqyf"]
 [ext_resource type="Texture2D" uid="uid://b4f0jhca22hlp" path="res://paintings/die_katzenfamilie.jpg" id="8_phpej"]
+[ext_resource type="PackedScene" uid="uid://cwjyhdaplmmwx" path="res://camera/SurveillanceCamera.tscn" id="14_vj2cp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -50,9 +51,8 @@ _ceilingLights = NodePath("../CeilingLights")
 _darkLights = NodePath("../DarkLights")
 _paintings = [NodePath("../Decorations/TopWall/LargePainting-2"), NodePath("../Decorations/TopWall/LargePainting-1"), NodePath("../Decorations/TopWall/LargePainting1"), NodePath("../Decorations/TopWall/LargePainting2")]
 
-[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("LightingManager") instance=ExtResource("5_gamemanager")]
+[node name="GameManager" parent="." unique_id=11230437 instance=ExtResource("5_gamemanager")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.08274126, 9.596172, -19.327)
-LightingManager = NodePath("../LightingManager")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
@@ -191,7 +191,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
 
 [node name="DarkLights" type="Node3D" parent="." unique_id=1812802562]
-visible = true
 
 [node name="OmniLight3DLeft" type="OmniLight3D" parent="DarkLights" unique_id=1885585873]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 12, 0)
@@ -326,3 +325,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
 PlayerId = 2
+
+[node name="SurveillanceCameraLeft" parent="." unique_id=1531644149 instance=ExtResource("14_vj2cp")]
+transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, -29, 4.629, -13)
+_animationStartTime = 4.0
+
+[node name="SurveillanceCameraRight" parent="." unique_id=1346111391 instance=ExtResource("14_vj2cp")]
+transform = Transform3D(-0.063574225, 0, -1.4986522, 0, 1.5, 0, 1.4986522, 0, -0.063574225, 29, 4.629, -13)
+_animationStartTime = 2.0
