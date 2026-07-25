@@ -329,8 +329,6 @@ public partial class GameManager : Node3D
 		bool isTie
 	)
 	{
-		SoundManager?.PlayCountdownWarningAudioStream();
-		
 		if (isTie || winnerPlayerId is not (1 or 2))
 		{
 			GD.Print(

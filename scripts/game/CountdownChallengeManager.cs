@@ -240,6 +240,7 @@ public partial class CountdownChallengeManager : Node
 
 	private void HandleZeroReached()
 	{
+		SoundManager?.PlayCountdownWarningAudioStream();
 		bool bothMissed = !_playerOne.HasLockedTime && !_playerTwo.HasLockedTime;
 		AssignMissingPlayersCurrentCountdown();
 		BeginCalculating(bothTimedOut: bothMissed);
