@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://d1n8ab8h47eyr" path="res://sfx/countdownwarn.wav" id="4_ox1sw"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
 [ext_resource type="AudioStream" uid="uid://breqf31ynofi4" path="res://sfx/kill.wav" id="4_pyieu"]
-[ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
+[ext_resource type="PackedScene" uid="uid://b2rssp7v0lpu2" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
 [ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
 [ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
@@ -327,7 +327,7 @@ spot_angle = 90.0
 [node name="LaserStationSpawns" type="Node3D" parent="." unique_id=1147025422]
 
 [node name="L1" type="Marker3D" parent="LaserStationSpawns" unique_id=1361181571]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.1, -8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -8)
 
 [node name="LaserStation" parent="LaserStationSpawns/L1" unique_id=398507728 instance=ExtResource("2_station")]
 
@@ -337,17 +337,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -8)
 [node name="LaserStation" parent="LaserStationSpawns/L2" unique_id=1618191649 instance=ExtResource("2_station")]
 
 [node name="L3" type="Marker3D" parent="LaserStationSpawns" unique_id=120513418]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.665651, 0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
 
 [node name="LaserStation" parent="LaserStationSpawns/L3" unique_id=15862273 instance=ExtResource("2_station")]
 
 [node name="L4" type="Marker3D" parent="LaserStationSpawns" unique_id=1436387019]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.869581, 0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
 
 [node name="LaserStation" parent="LaserStationSpawns/L4" unique_id=2112653926 instance=ExtResource("2_station")]
 
 [node name="L5" type="Marker3D" parent="LaserStationSpawns" unique_id=1216592587]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.1, 8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 8)
 
 [node name="LaserStation" parent="LaserStationSpawns/L5" unique_id=1075213743 instance=ExtResource("2_station")]
 
@@ -356,13 +356,33 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 8)
 
 [node name="LaserStation" parent="LaserStationSpawns/L6" unique_id=284287416 instance=ExtResource("2_station")]
 
+[node name="L7" type="Marker3D" parent="LaserStationSpawns" unique_id=1484368225]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.1, 10)
+
+[node name="LaserStation" parent="LaserStationSpawns/L7" unique_id=2130207240 instance=ExtResource("2_station")]
+
+[node name="L8" type="Marker3D" parent="LaserStationSpawns" unique_id=661338917]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.1, -10)
+
+[node name="LaserStation" parent="LaserStationSpawns/L8" unique_id=1391275919 instance=ExtResource("2_station")]
+
+[node name="L9" type="Marker3D" parent="LaserStationSpawns" unique_id=66455228]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.1, -10)
+
+[node name="LaserStation" parent="LaserStationSpawns/L9" unique_id=1373464949 instance=ExtResource("2_station")]
+
+[node name="L10" type="Marker3D" parent="LaserStationSpawns" unique_id=234212444]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.1, 10)
+
+[node name="LaserStation" parent="LaserStationSpawns/L10" unique_id=1682539332 instance=ExtResource("2_station")]
+
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1182773711]
 transform = Transform3D(1, 0, 0, 0, 0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 32, 12)
 
 [node name="Player1" parent="." unique_id=259441083 instance=ExtResource("1_0bpjf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
 
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 10)
 PlayerId = 2
 IndicatorColor = Color(1, 0.14901961, 0.101960786, 1)
