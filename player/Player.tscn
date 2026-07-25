@@ -183,10 +183,11 @@ size = Vector3(0.1, 0.1, 0.1)
 material = ExtResource("2_x8kxw")
 size = Vector3(0.1, 0.1, 0.1)
 
-[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer")]
+[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_lockedTimeLabel")]
 collision_layer = 2
 script = ExtResource("1_8ak8y")
 _animationPlayer = NodePath("AnimationPlayer")
+_lockedTimeLabel = NodePath("LockedTimeLabel")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
