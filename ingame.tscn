@@ -36,10 +36,6 @@ size = Vector3(0.4, 3, 8)
 
 [node name="Ingame" type="Node3D" unique_id=1277312797]
 
-[node name="Sonne" type="DirectionalLight3D" parent="." unique_id=731580982]
-transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 3.4454608, 0)
-shadow_enabled = true
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
 
@@ -131,6 +127,70 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0
 [node name="Baroque1" parent="Walls/Right" unique_id=852394868 instance=ExtResource("2_wnhdf")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
 
+[node name="DimLighting" type="Node3D" parent="." unique_id=1812802562]
+
+[node name="CeilingLights" type="Node3D" parent="." unique_id=868605658]
+
+[node name="SpotLight3D-1" type="SpotLight3D" parent="CeilingLights" unique_id=1035175167]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -28, 10, -8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-2" type="SpotLight3D" parent="CeilingLights" unique_id=1909905942]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -28, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-3" type="SpotLight3D" parent="CeilingLights" unique_id=962212439]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 28, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-4" type="SpotLight3D" parent="CeilingLights" unique_id=1664079633]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 28, 10, -8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-5" type="SpotLight3D" parent="CeilingLights" unique_id=1075533653]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 14, 10, -8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-6" type="SpotLight3D" parent="CeilingLights" unique_id=710605183]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 14, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-7" type="SpotLight3D" parent="CeilingLights" unique_id=1542755174]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -14, 10, -8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-8" type="SpotLight3D" parent="CeilingLights" unique_id=1105387883]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10, -8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-9" type="SpotLight3D" parent="CeilingLights" unique_id=1333064903]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
+[node name="SpotLight3D-10" type="SpotLight3D" parent="CeilingLights" unique_id=1271695136]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -14, 10, 8)
+light_energy = 40.0
+spot_range = 20.0
+spot_angle = 90.0
+
 [node name="TestWall" type="StaticBody3D" parent="." unique_id=1395480251]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 0)
 collision_mask = 0
@@ -175,7 +235,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 8)
 [node name="LaserStation" parent="LaserStationSpawns/L6" unique_id=284287416 instance=ExtResource("2_station")]
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1182773711]
-transform = Transform3D(0.9999759, -0.0067925616, 0.0014494577, 0, 0.20869051, 0.97798175, -0.0069454894, -0.97795814, 0.20868547, 0.11678083, 13.604237, 3.5383928)
+transform = Transform3D(1, 0, 0, 0, 0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 32, 12)
 
 [node name="Player1" parent="." unique_id=259441083 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
