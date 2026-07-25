@@ -18,6 +18,7 @@
 [ext_resource type="ArrayMesh" uid="uid://c7kwiukx1b3j3" path="res://player/burglar_body.vox" id="17_jhou3"]
 [ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="18_3xhsb"]
 [ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="19_7eg23"]
+[ext_resource type="Script" uid="uid://rxqc0io6tse7" path="res://PlayerCheerScript.cs" id="19_k7c8f"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -310,7 +311,282 @@ shader_parameter/emission_boost = 2.5
 material = SubResource("ShaderMaterial_ring")
 size = Vector2(1.35, 1.35)
 
+[sub_resource type="Animation" id="Animation_k7c8f"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0)
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 4.712389, 0)]
+}
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, 0, -0.6, 0)
+
+[sub_resource type="Animation" id="Animation_gskgj"]
+resource_name = "cheer"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarHandL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.2, 1, 0.6, 0.3, 0, 0.4, 1, 0.6, 0, 0, 0.6, 1, 0.6, 0.3, 0, 0.8, 1, 0.6, 0, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.6, -0.2, 0, 0.5, 1, -0.6, -0.25, 0, 1, 1, -0.6, -0.2, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarBody")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.5, 1, 0, -0.55, 0, 1, 1, 0, -0.6, 0)
+
+[sub_resource type="Animation" id="Animation_y0fv6"]
+resource_name = "dash"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootR")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, 0.7, 0.75, 1, -0.3, -0.6, 0.7)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, -0.3, 0.73333335, 1, 0.3, -0.6, -0.3)
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0.5235988, -1.5707964, 0.87266463), Vector3(0.5235988, -1.5707964, 0.87266463)]
+}
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBody")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.6, 0.3, 0.75, 1, 0, -0.6, 0.3)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarHandL")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.4, 0, -0.6, 0.75, 1, 0.4, 0, -0.6)
+tracks/5/type = "position_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarHandR")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, -0.6, 0, 0.4, 0.25, 1, -0.3, 0, 0.4, 0.75, 1, -0.3, 0, 0.4, 1, 1, -0.6, 0, 0.4)
+
+[sub_resource type="Animation" id="Animation_jhou3"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBody")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 1, 1, 0, -0.5, 0, 2, 1, 0, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.6, -0.1, 0, 1, 1, 0.6, 0, 0, 2, 1, 0.6, -0.1, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandR")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, -0.6, -0.1, 0, 1, 1, -0.6, 0, 0, 2, 1, -0.6, -0.1, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarBootL")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBootR")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, -0.3, -0.6, -0.01999998)
+
+[sub_resource type="Animation" id="Animation_3xhsb"]
+resource_name = "stun"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5969763, 0.87266463), Vector3(-0.2617994, -1.5969763, 0.6981317), Vector3(0, -1.5969763, 0.87266463), Vector3(0.2617994, -1.5969763, 0.6981317), Vector3(0, -1.5969763, 0.87266463)]
+}
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandL")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.6, 0, 0.076944, 0.5, 1, 0.6, -0.2, 0.077)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandR")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, -0.6, 0, -0.076944, 0.5, 1, -0.6, -0.2, -0.077)
+
+[sub_resource type="Animation" id="Animation_7eg23"]
+resource_name = "walk"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, 0.5, 0.5, 1, 0.3, -0.6, 0, 0.75, 1, 0.3, -0.6, -0.5, 1, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, -0.5, 0.5, 1, -0.3, -0.6, 0, 0.75, 1, -0.3, -0.6, 0.5, 1, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.6, 0, -0.5, 0.5, 1, 0.6, 0, 0, 0.75, 1, 0.6, 0, 0.5, 1, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0, 0.25, 1, -0.6, 0, 0.5, 0.5, 1, -0.6, 0, 0, 0.75, 1, -0.6, 0, -0.5, 1, 1, -0.6, 0, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.5, 0, 0.5, 1, 0, -0.6, 0, 0.75, 1, 0, -0.5, 0, 1, 1, 0, -0.6, 0)
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0, -1.3962634, 0), Vector3(0, -1.5707964, 0), Vector3(0, -1.7453293, 0), Vector3(0, -1.5707964, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0o5rp"]
+_data = {
+&"RESET": SubResource("Animation_k7c8f"),
+&"cheer": SubResource("Animation_gskgj"),
+&"dash": SubResource("Animation_y0fv6"),
+&"idle": SubResource("Animation_jhou3"),
+&"stun": SubResource("Animation_3xhsb"),
+&"walk": SubResource("Animation_7eg23")
+}
+
 [node name="GameOver" type="Node3D" unique_id=198145086]
+
+[node name="PlayerOneScoreLabel" type="Label3D" parent="." unique_id=1693886260]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 6, 15)
+pixel_size = 0.022
+modulate = Color(0.1, 0.4, 1, 1)
+outline_modulate = Color(0, 0, 0, 0.85)
+text = "0"
+font_size = 180
+outline_size = 20
+
+[node name="PlayerTwoScoreLabel" type="Label3D" parent="." unique_id=337182902]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -35, 6, 10.391)
+pixel_size = 0.022
+modulate = Color(0.1, 0.4, 1, 1)
+outline_modulate = Color(0, 0, 0, 0.85)
+text = "0"
+font_size = 180
+outline_size = 20
 
 [node name="ObjectRoot" type="Node3D" parent="." unique_id=1277312797]
 
@@ -475,7 +751,7 @@ spot_range = 20.0
 spot_angle = 90.0
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=845121509]
-transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -18, 1, 12)
+transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -19.389156, 1, 13.66358)
 collision_layer = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Player" unique_id=1844725914]
@@ -524,12 +800,14 @@ mesh = ExtResource("19_7eg23")
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="Player2" type="CharacterBody3D" parent="." unique_id=590010644]
+[node name="Player2" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_animationPlayer")]
 transform = Transform3D(-1.5356864, 0, 1.2812756, 0, 2, 0, -1.2812756, 0, -1.5356864, -29.20708, 1.8480008, 6.924017)
 collision_layer = 2
+script = ExtResource("19_k7c8f")
+_animationPlayer = NodePath("AnimationPlayer")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Player2" unique_id=146763576]
-libraries/ = SubResource("AnimationLibrary_gndvh")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player2" unique_id=1463083189]
+libraries/ = SubResource("AnimationLibrary_0o5rp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player2" unique_id=599772486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
