@@ -5,10 +5,13 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	[Export] private AnimationPlayer _animationPlayer;
 	[Export] private Label3D _lockedTimeLabel;
 	[Export] private CpuParticles3D _particlesSkin;
-    [Export] private CpuParticles3D _particlesShoes;
+	[Export] private CpuParticles3D _particlesShoes;
 	[Export] private Node3D _meshRoot;
-    [Export] public int PlayerId { get; set; } = 1;
+	[Export] private MeshInstance3D _indicatorRing;
+	[Export] public int PlayerId { get; set; } = 1;
 
+	[Export] public Color IndicatorColor { get; set; } = new Color(0.1f, 0.4f, 1.0f);
+	[Export] public float IndicatorRingSize { get; set; } = 1.35f;
 	[Export] public float WalkSpeed { get; set; } = 8.0f;
 	[Export] public float Acceleration { get; set; } = 40.0f;
 	[Export] public float Friction { get; set; } = 30.0f;
@@ -39,6 +42,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private float _invulnTimeLeft;
 	private float _stunTimeLeft;
 	private Vector3 _spawnPosition;
+	private ShaderMaterial _indicatorRingMaterial;
 
 	public override void _Ready()
 	{
@@ -46,6 +50,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		CollisionMask = 1;
 		AddToGroup("laser_players");
 		_spawnPosition = GlobalPosition;
+		ApplyDefaultIndicatorColorFromPlayerId();
+		SetupIndicatorRing();
 
 		if (_lockedTimeLabel != null)
 		{
@@ -87,6 +93,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_particlesSkin.Emitting = true;
 		_particlesShoes.Emitting = true;
 		_meshRoot.Visible = false;
+		SetIndicatorRingVisible(false);
 		IsAlive = false;
 		_dashTimeLeft = 0.0f;
 		_dashGrantsInvulnerability = false;
@@ -179,13 +186,68 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	{
 		GlobalPosition = _spawnPosition;
 		Velocity = Vector3.Zero;
-        _meshRoot.Visible = true;
-        IsAlive = true;
+		_meshRoot.Visible = true;
+		SetIndicatorRingVisible(true);
+		IsAlive = true;
 		IsInvulnerable = true;
 		_invulnTimeLeft = SpawnProtectionSeconds;
 		_dashTimeLeft = 0.0f;
 		_dashCooldownLeft = 0.0f;
 		_stunTimeLeft = 0.0f;
+	}
+
+	private void ApplyDefaultIndicatorColorFromPlayerId()
+	{
+		IndicatorColor = PlayerId switch
+		{
+			2 => new Color(1.0f, 0.15f, 0.1f),
+			_ => new Color(0.1f, 0.4f, 1.0f)
+		};
+	}
+
+	private void SetupIndicatorRing()
+	{
+		if (_indicatorRing == null)
+		{
+			return;
+		}
+
+		Shader shader = GD.Load<Shader>("res://resources/player/indicator_ring.gdshader");
+		_indicatorRingMaterial = new ShaderMaterial
+		{
+			Shader = shader
+		};
+		_indicatorRing.MaterialOverride = _indicatorRingMaterial;
+		_indicatorRing.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
+
+		if (_indicatorRing.Mesh is PlaneMesh planeMesh)
+		{
+			float size = Mathf.Max(0.4f, IndicatorRingSize);
+			planeMesh.Size = new Vector2(size, size);
+		}
+
+		ApplyIndicatorRingColor();
+		SetIndicatorRingVisible(true);
+	}
+
+	private void ApplyIndicatorRingColor()
+	{
+		if (_indicatorRingMaterial == null)
+		{
+			return;
+		}
+
+		_indicatorRingMaterial.SetShaderParameter("ring_color", IndicatorColor);
+	}
+
+	private void SetIndicatorRingVisible(bool visible)
+	{
+		if (_indicatorRing == null)
+		{
+			return;
+		}
+
+		_indicatorRing.Visible = visible;
 	}
 
 	private void HandleMovement(float delta)
