@@ -1,162 +1,175 @@
 using Godot;
+using Countdown.Scripts.Game;
 
 public partial class GameManager : Node3D
 {
-	[Signal]
-	public delegate void TimeChangedEventHandler(float timeRemaining);
+	[ExportCategory("Challenge")]
+	[Export] private CountdownChallengeManager _countdownChallenge;
+	[Export] public bool AutoStartChallenge { get; set; } = true;
 
-	[Signal]
-	public delegate void SecondTickedEventHandler(int secondsRemaining);
+	[ExportCategory("Labels")]
+	[Export] public Label3D GlobalCountdownLabel { get; set; }
+	[Export] public Label3D PlayerOneValueLabel { get; set; }
+	[Export] public Label3D PlayerTwoValueLabel { get; set; }
 
-	[Signal]
-	public delegate void PhaseReachedEventHandler(int phaseSeconds);
+	[ExportCategory("Players")]
+	[Export] public Player PlayerOne { get; set; }
+	[Export] public Player PlayerTwo { get; set; }
 
-	[Signal]
-	public delegate void RoundFinishedEventHandler();
-
-	[ExportCategory("Global Countdown")]
-	[Export] public float DurationSeconds { get; set; } = 60.0f;
-	[Export] public bool AutoStart { get; set; } = true;
-	[Export] public bool PauseOnFinish { get; set; } = true;
-
-	[ExportCategory("Phases")]
-	[Export] public int[] PhaseThresholds { get; set; } = { 45, 30, 15, 10 };
-
-	[ExportCategory("Display")]
-	[Export] private Label3D _countdownLabel;
-
-	public float TimeRemaining { get; private set; }
-	public bool IsRunning { get; private set; }
-	public bool IsFinished { get; private set; }
-
-	public int SecondsRemaining => Mathf.Max(0, Mathf.CeilToInt(TimeRemaining));
-
-	private int _lastDisplayedSecond = -1;
-	private readonly System.Collections.Generic.HashSet<int> _reachedPhases = new();
+	public CountdownChallengeManager Challenge => _countdownChallenge;
 
 	public override void _Ready()
 	{
-		ResetCountdown(start: AutoStart);
+		ResolveChallengeManager();
+		ConnectChallengeSignals();
+		CallDeferred(MethodName.BeginChallengeAfterTreeReady);
 	}
 
-	public override void _Process(double delta)
+	public override void _ExitTree()
 	{
-		if (!IsRunning || IsFinished)
+		DisconnectChallengeSignals();
+	}
+
+	public void StartChallenge()
+	{
+		_countdownChallenge?.StartChallenge();
+	}
+
+	public void ResetChallenge()
+	{
+		_countdownChallenge?.ResetChallenge();
+	}
+
+	private void BeginChallengeAfterTreeReady()
+	{
+		ResolvePlayerLabelsFromScene();
+		ResolvePlayersFromScene();
+		WireChallengeLabels();
+
+		if (_countdownChallenge == null)
+		{
+			GD.PushError("GameManager: CountdownChallengeManager is missing.");
+			return;
+		}
+
+		_countdownChallenge.AutoStart = false;
+
+		if (AutoStartChallenge)
+		{
+			_countdownChallenge.StartChallenge();
+		}
+		else
+		{
+			_countdownChallenge.ResetChallenge();
+		}
+	}
+
+	private void ResolveChallengeManager()
+	{
+		if (_countdownChallenge != null)
 		{
 			return;
 		}
 
-		TimeRemaining = Mathf.Max(0.0f, TimeRemaining - (float)delta);
-		EmitSignal(SignalName.TimeChanged, TimeRemaining);
-		UpdateDisplayedSecond();
-		CheckPhases();
-
-		if (TimeRemaining <= 0.0f)
-		{
-			FinishRound();
-		}
+		_countdownChallenge = GetNodeOrNull<CountdownChallengeManager>("CountdownChallengeManager");
 	}
 
-	public void StartRound()
+	private void ResolvePlayerLabelsFromScene()
 	{
-		if (IsFinished || TimeRemaining <= 0.0f)
-		{
-			ResetCountdown(start: true);
-			return;
-		}
-
-		IsRunning = true;
-		UpdateCountdownLabel();
+		PlayerOneValueLabel ??= GetNodeOrNull<Label3D>("../Player1/LockedTimeLabel");
+		PlayerTwoValueLabel ??= GetNodeOrNull<Label3D>("../Player2/LockedTimeLabel");
+		GlobalCountdownLabel ??= GetNodeOrNull<Label3D>("GlobalCountdownLabel");
 	}
 
-	public void PauseRound()
+	private void ResolvePlayersFromScene()
 	{
-		IsRunning = false;
+		PlayerOne ??= GetNodeOrNull<Player>("../Player1");
+		PlayerTwo ??= GetNodeOrNull<Player>("../Player2");
 	}
 
-	public void ResumeRound()
+	private void WireChallengeLabels()
 	{
-		if (IsFinished || TimeRemaining <= 0.0f)
+		if (_countdownChallenge == null)
 		{
 			return;
 		}
 
-		IsRunning = true;
-	}
-
-	public void StopRound()
-	{
-		IsRunning = false;
-		IsFinished = true;
-		TimeRemaining = 0.0f;
-		UpdateCountdownLabel();
-	}
-
-	public void ResetCountdown(bool start = false)
-	{
-		TimeRemaining = Mathf.Max(0.1f, DurationSeconds);
-		IsFinished = false;
-		IsRunning = start;
-		_lastDisplayedSecond = -1;
-		_reachedPhases.Clear();
-		UpdateDisplayedSecond();
-		UpdateCountdownLabel();
-	}
-
-	private void FinishRound()
-	{
-		TimeRemaining = 0.0f;
-		IsFinished = true;
-		if (PauseOnFinish)
+		if (GlobalCountdownLabel != null)
 		{
-			IsRunning = false;
+			_countdownChallenge.GlobalCountdownLabel = GlobalCountdownLabel;
 		}
 
-		UpdateDisplayedSecond();
-		UpdateCountdownLabel();
-		EmitSignal(SignalName.RoundFinished);
+		if (PlayerOneValueLabel != null)
+		{
+			_countdownChallenge.PlayerOneValueLabel = PlayerOneValueLabel;
+		}
+
+		if (PlayerTwoValueLabel != null)
+		{
+			_countdownChallenge.PlayerTwoValueLabel = PlayerTwoValueLabel;
+		}
 	}
 
-	private void UpdateDisplayedSecond()
+	private void ConnectChallengeSignals()
 	{
-		int seconds = SecondsRemaining;
-		if (seconds == _lastDisplayedSecond)
+		if (_countdownChallenge == null)
 		{
 			return;
 		}
 
-		_lastDisplayedSecond = seconds;
-		UpdateCountdownLabel();
-		EmitSignal(SignalName.SecondTicked, seconds);
+		_countdownChallenge.CountdownEvaluated += OnCountdownEvaluated;
+		_countdownChallenge.BothPlayersTimedOut += OnBothPlayersTimedOut;
 	}
 
-	private void CheckPhases()
+	private void DisconnectChallengeSignals()
 	{
-		if (PhaseThresholds == null)
+		if (_countdownChallenge == null)
 		{
 			return;
 		}
 
-		int seconds = SecondsRemaining;
-		foreach (int threshold in PhaseThresholds)
-		{
-			if (seconds > threshold || _reachedPhases.Contains(threshold))
-			{
-				continue;
-			}
-
-			_reachedPhases.Add(threshold);
-			EmitSignal(SignalName.PhaseReached, threshold);
-		}
+		_countdownChallenge.CountdownEvaluated -= OnCountdownEvaluated;
+		_countdownChallenge.BothPlayersTimedOut -= OnBothPlayersTimedOut;
 	}
 
-	private void UpdateCountdownLabel()
+	private void OnCountdownEvaluated(
+		int winnerPlayerId,
+		float playerOneTime,
+		float playerTwoTime,
+		bool isTie
+	)
 	{
-		if (_countdownLabel == null)
+		if (isTie || winnerPlayerId is not (1 or 2))
 		{
+			GD.Print(
+				$"Countdown challenge ended in a tie. P1={playerOneTime:0.00} P2={playerTwoTime:0.00}"
+			);
 			return;
 		}
 
-		_countdownLabel.Text = SecondsRemaining.ToString();
+		GD.Print(
+			$"Player {winnerPlayerId} won the countdown challenge. P1={playerOneTime:0.00} P2={playerTwoTime:0.00}"
+		);
+
+		ApplyLoserVulnerableDash(winnerPlayerId);
+	}
+
+	private void ApplyLoserVulnerableDash(int winnerPlayerId)
+	{
+		Player loser = winnerPlayerId == 1 ? PlayerTwo : PlayerOne;
+		if (loser == null)
+		{
+			GD.PushWarning("GameManager: Loser player reference missing for vulnerable dash.");
+			return;
+		}
+
+		loser.StartVulnerableDash();
+	}
+
+	private void OnBothPlayersTimedOut(float timeoutValue)
+	{
+		GD.Print(
+			$"Both players allowed the countdown to reach {timeoutValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}."
+		);
 	}
 }

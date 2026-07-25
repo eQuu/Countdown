@@ -3,6 +3,7 @@ using Godot;
 public partial class Player : CharacterBody3D, ILaserPlayer
 {
 	[Export] private AnimationPlayer _animationPlayer;
+	[Export] private Label3D _lockedTimeLabel;
 	[Export] public int PlayerId { get; set; } = 1;
 
 	[Export] public float WalkSpeed { get; set; } = 8.0f;
@@ -15,9 +16,12 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	[Export] public float RespawnDelaySeconds { get; set; } = 1.5f;
 	[Export] public float SpawnProtectionSeconds { get; set; } = 1.0f;
 	[Export] public float Gravity { get; set; } = 20.0f;
+	[Export] public float LockedTimeLabelHeight { get; set; } = 1.35f;
+	[Export] public float LockedTimeLabelNorthOffset { get; set; } = 0.45f;
 
 	public bool IsInvulnerable { get; private set; }
 	public bool IsAlive { get; private set; } = true;
+	public Label3D LockedTimeLabel => _lockedTimeLabel;
 
 	private float _dashTimeLeft;
 	private float _dashCooldownLeft;
@@ -25,6 +29,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private Vector3 _dashDirection = Vector3.Forward;
 	private string _currentAnim = string.Empty;
 	private bool _isDashing;
+	private bool _dashGrantsInvulnerability;
 	private float _respawnTimeLeft;
 	private float _invulnTimeLeft;
 	private Vector3 _spawnPosition;
@@ -35,6 +40,18 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		CollisionMask = 1;
 		AddToGroup("laser_players");
 		_spawnPosition = GlobalPosition;
+
+		if (_lockedTimeLabel != null)
+		{
+			_lockedTimeLabel.TopLevel = true;
+			_lockedTimeLabel.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+			_lockedTimeLabel.Visible = false;
+		}
+	}
+
+	public override void _Process(double delta)
+	{
+		UpdateLockedTimeLabelTransform();
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -63,9 +80,42 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 		IsAlive = false;
 		_dashTimeLeft = 0.0f;
+		_dashGrantsInvulnerability = false;
 		_respawnTimeLeft = RespawnDelaySeconds;
 		Velocity = Vector3.Zero;
 		GD.Print($"Player {PlayerId} hit by laser of player {attackingPlayerId}");
+	}
+
+	public void StartVulnerableDash(Vector3 direction = default)
+	{
+		if (!IsAlive)
+		{
+			return;
+		}
+
+		StartDash(ResolveDashDirection(direction), grantInvulnerability: false, ignoreCooldown: true);
+	}
+
+	public void StartInvulnerableDash(Vector3 direction = default)
+	{
+		if (!IsAlive)
+		{
+			return;
+		}
+
+		StartDash(ResolveDashDirection(direction), grantInvulnerability: true, ignoreCooldown: true);
+	}
+
+	private void UpdateLockedTimeLabelTransform()
+	{
+		if (_lockedTimeLabel == null)
+		{
+			return;
+		}
+
+		_lockedTimeLabel.GlobalPosition = GlobalPosition
+			+ Vector3.Up * LockedTimeLabelHeight
+			+ Vector3.Forward * LockedTimeLabelNorthOffset;
 	}
 
 	private void UpdateStatusTimers(float delta)
@@ -170,8 +220,15 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			_dashAnimationDurationLeft -= delta;
 			if (_dashAnimationDurationLeft <= 0.0f)
 			{
-				IsInvulnerable = false;
 				_dashAnimationDurationLeft = 0.0f;
+				if (_dashGrantsInvulnerability)
+				{
+					_dashGrantsInvulnerability = false;
+					if (_invulnTimeLeft <= 0.0f)
+					{
+						IsInvulnerable = false;
+					}
+				}
 			}
 		}
 	}
@@ -195,16 +252,76 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		}
 		else
 		{
-			direction = GlobalTransform.Basis.Z;
+			direction = ResolveFacingDirection();
+		}
+
+		StartDash(direction, grantInvulnerability: true, ignoreCooldown: false);
+	}
+
+	private void StartDash(Vector3 direction, bool grantInvulnerability, bool ignoreCooldown)
+	{
+		if (!ignoreCooldown && (_dashCooldownLeft > 0.0f || _dashTimeLeft > 0.0f))
+		{
+			return;
+		}
+
+		if (direction.LengthSquared() < 0.0001f)
+		{
+			direction = ResolveFacingDirection();
+		}
+		else
+		{
 			direction.Y = 0.0f;
-			direction = direction.Normalized();
+			if (direction.LengthSquared() < 0.0001f)
+			{
+				direction = ResolveFacingDirection();
+			}
+			else
+			{
+				direction = direction.Normalized();
+			}
+		}
+
+		if (_dashGrantsInvulnerability && !grantInvulnerability && _invulnTimeLeft <= 0.0f)
+		{
+			IsInvulnerable = false;
 		}
 
 		_dashDirection = direction;
 		_dashTimeLeft = DashDuration;
 		_dashAnimationDurationLeft = DashAnimationDuration;
 		_isDashing = true;
-		IsInvulnerable = true;
+		_dashGrantsInvulnerability = grantInvulnerability;
+
+		if (grantInvulnerability)
+		{
+			IsInvulnerable = true;
+		}
+	}
+
+	private Vector3 ResolveDashDirection(Vector3 direction)
+	{
+		if (direction == default || direction.LengthSquared() < 0.0001f)
+		{
+			return ResolveFacingDirection();
+		}
+
+		direction.Y = 0.0f;
+		return direction.LengthSquared() < 0.0001f
+			? ResolveFacingDirection()
+			: direction.Normalized();
+	}
+
+	private Vector3 ResolveFacingDirection()
+	{
+		Vector3 direction = GlobalTransform.Basis.Z;
+		direction.Y = 0.0f;
+		if (direction.LengthSquared() < 0.0001f)
+		{
+			return Vector3.Forward;
+		}
+
+		return direction.Normalized();
 	}
 
 	private Vector3 ApplyWalkVelocity(Vector2 input, float delta)

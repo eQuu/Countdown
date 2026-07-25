@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_wnhdf"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_kgmhh"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
+[ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
 [ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
 [ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
@@ -41,6 +42,13 @@ albedo_color = Color(0.35, 0.38, 0.42, 1)
 size = Vector3(0.4, 3, 8)
 
 [node name="Ingame" type="Node3D" unique_id=1277312797]
+
+[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("PlayerOneValueLabel", "PlayerTwoValueLabel", "PlayerOne", "PlayerTwo") instance=ExtResource("5_gamemanager")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.08274126, 9.596172, -19.327)
+PlayerOneValueLabel = NodePath("../Player1/LockedTimeLabel")
+PlayerTwoValueLabel = NodePath("../Player2/LockedTimeLabel")
+PlayerOne = NodePath("../Player1")
+PlayerTwo = NodePath("../Player2")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
