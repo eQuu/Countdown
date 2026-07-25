@@ -13,6 +13,8 @@ public partial class PlayerColorStore : Node
 	public static readonly Color Red = GameStore.Red;
 	public static readonly Color Yellow = GameStore.Yellow;
 	public static readonly Color Green = GameStore.Green;
+	public static readonly Color Orange = GameStore.Orange;
+	public static readonly Color Purple = GameStore.Purple;
 
 	[Signal]
 	public delegate void ColorsChangedEventHandler(int playerOneIndex, int playerTwoIndex);

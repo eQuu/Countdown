@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://br3ts7873swnd" path="res://camera/CameraTourWaypoint.cs" id="18_camwp"]
 [ext_resource type="Script" uid="uid://ckuhgdd0tck2" path="res://scripts/ui/MainMenuColorSelect.cs" id="19_colorselect"]
 [ext_resource type="Script" uid="uid://c8a1k3tnkbsv6" path="res://scripts/ui/MainMenuPromptLabel.cs" id="20_prompt"]
+[ext_resource type="Script" uid="uid://2nv8d2mhfqy2" path="res://scripts/ui/PlayerMainMenuAnimation.cs" id="21_pmm_anim"]
 
 [sub_resource type="Environment" id="Environment_vegko"]
 background_mode = 1
@@ -305,8 +306,21 @@ cull_mode = 2
 shading_mode = 0
 albedo_color = Color(0.18, 0.85, 0.28, 0.95)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_swatch_orange"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.48, 0.08, 0.95)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_swatch_purple"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.62, 0.22, 0.95, 0.95)
+
 [sub_resource type="SystemFont" id="SystemFont_prompt"]
 font_names = PackedStringArray("Georgia", "Times New Roman", "serif")
+subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_prompt"]
 font = SubResource("SystemFont_prompt")
@@ -562,9 +576,11 @@ transform = Transform3D(0.8584935, 0.18501373, -0.47828698, 0, 0.93265283, 0.360
 script = ExtResource("18_camwp")
 LookAtTarget = NodePath("../../LookTargets/Players")
 
-[node name="Player1" type="CharacterBody3D" parent="." unique_id=845121509]
+[node name="Player1" type="CharacterBody3D" parent="." unique_id=845121509 node_paths=PackedStringArray("_animationPlayer")]
 transform = Transform3D(2.7380939, 0, 1.2259051, 0, 3, 0, -1.2259051, 0, 2.7380939, -24.986351, 1.9209852, -12.632856)
 collision_layer = 2
+script = ExtResource("21_pmm_anim")
+_animationPlayer = NodePath("AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Player1" unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
@@ -582,26 +598,38 @@ mesh = SubResource("PlaneMesh_ring")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
 
 [node name="Blue" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100101]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.813173, 0.08, 0.813173)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8808, 0.08, 0.7394)
 material_override = SubResource("StandardMaterial3D_swatch_blue")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
 [node name="Red" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100102]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.297642, 0.08, 1.110815)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.575, 0.08, 0.9959)
 material_override = SubResource("StandardMaterial3D_swatch_red")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
 [node name="Yellow" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100103]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.297642, 0.08, 1.110815)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1997, 0.08, 1.1325)
 material_override = SubResource("StandardMaterial3D_swatch_yellow")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
 [node name="Green" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100104]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.813173, 0.08, 0.813173)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1997, 0.08, 1.1325)
 material_override = SubResource("StandardMaterial3D_swatch_green")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Orange" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.575, 0.08, 0.9959)
+material_override = SubResource("StandardMaterial3D_swatch_orange")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Purple" type="MeshInstance3D" parent="Player1/ColorSwatches" unique_id=5100106]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8808, 0.08, 0.7394)
+material_override = SubResource("StandardMaterial3D_swatch_purple")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
@@ -627,9 +655,11 @@ mesh = ExtResource("16_ojb7r")
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("16_ojb7r")
 
-[node name="Player2" type="CharacterBody3D" parent="." unique_id=31432409]
+[node name="Player2" type="CharacterBody3D" parent="." unique_id=31432409 node_paths=PackedStringArray("_animationPlayer")]
 transform = Transform3D(2.383277, 0, -1.8220842, 0, 3, 0, 1.8220842, 0, 2.383277, -13.145921, 1.9163194, -10.886813)
 collision_layer = 2
+script = ExtResource("21_pmm_anim")
+_animationPlayer = NodePath("AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Player2" unique_id=1025826881]
 libraries/ = SubResource("AnimationLibrary_gndvh")
@@ -647,26 +677,38 @@ mesh = SubResource("PlaneMesh_ring")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
 
 [node name="Blue" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200201]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.813173, 0.08, 0.813173)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8808, 0.08, 0.7394)
 material_override = SubResource("StandardMaterial3D_swatch_blue")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
 [node name="Red" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200202]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.297642, 0.08, 1.110815)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.575, 0.08, 0.9959)
 material_override = SubResource("StandardMaterial3D_swatch_red")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
 [node name="Yellow" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200203]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.297642, 0.08, 1.110815)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1997, 0.08, 1.1325)
 material_override = SubResource("StandardMaterial3D_swatch_yellow")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
 [node name="Green" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200204]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.813173, 0.08, 0.813173)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1997, 0.08, 1.1325)
 material_override = SubResource("StandardMaterial3D_swatch_green")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Orange" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200205]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.575, 0.08, 0.9959)
+material_override = SubResource("StandardMaterial3D_swatch_orange")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_swatch")
+
+[node name="Purple" type="MeshInstance3D" parent="Player2/ColorSwatches" unique_id=5200206]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8808, 0.08, 0.7394)
+material_override = SubResource("StandardMaterial3D_swatch_purple")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_swatch")
 
