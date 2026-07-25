@@ -124,7 +124,8 @@ public partial class LaserStation : Node3D
 	[Export] public float HitCooldownSeconds { get; set; } = 0.75f;
 	[Export] public float LaserWallHeight { get; set; } = 2.3f;
 	[Export] public float LaserWallThickness { get; set; } = 0.08f;
-	[Export] public float WallGroundEmbed { get; set; } = 0.12f;
+	[Export] public float WallGroundGap { get; set; } = 1.0f;
+	[Export] public float WallDownShift { get; set; } = 0.5f;
 	[Export(PropertyHint.Range, "0.05,1,0.01")]
 	public float WallFillAlpha { get; set; } = 0.22f;
 	[Export(PropertyHint.Range, "0.05,1,0.01")]
@@ -132,9 +133,12 @@ public partial class LaserStation : Node3D
 	[Export] public float WallGlowThicknessScale { get; set; } = 1.5f;
 	[Export] public float WallGlowHeightScale { get; set; } = 1.0f;
 	[Export] public float WallGlowEnergy { get; set; } = 5.0f;
+	[Export] public float EnergyIntensity { get; set; } = 12.0f;
+	[Export] public float EnergyScrollSpeed { get; set; } = -0.55f;
 	[Export] public bool EnableWallGlow { get; set; } = true;
 	[Export] public float ReachUpdateIntervalSeconds { get; set; } = 0.05f;
 	[Export] public float PlayerExceptionRefreshSeconds { get; set; } = 0.5f;
+	[Export] public float OverlapPollIntervalSeconds { get; set; } = 0.05f;
 
 	public LaserOwner CurrentOwner { get; private set; } = LaserOwner.Neutral;
 
@@ -182,10 +186,12 @@ public partial class LaserStation : Node3D
 
 	private StandardMaterial3D _stripeMaterial;
 	private ShaderMaterial _hubCircleMaterial;
-	private StandardMaterial3D _wallMaterial;
-	private StandardMaterial3D _wallGlowMaterial;
+	private ShaderMaterial _wallMaterial;
+	private ShaderMaterial _wallGlowMaterial;
 	private MeshInstance3D _hubCircle;
 	private Shader _hubCircleShader;
+	private Shader _laserWallEnergyShader;
+	private Texture2D _laserEnergyNoise;
 
 	private bool _captureLocked;
 	private bool _nodesReady;
@@ -209,6 +215,7 @@ public partial class LaserStation : Node3D
 	private readonly List<float> _lockedArmReach = new();
 	private readonly List<float> _cachedArmReach = new();
 	private readonly List<float> _lastAppliedWallLength = new();
+	private readonly List<float> _lastAppliedFullReach = new();
 	private readonly List<CollisionObject3D> _cachedPlayerBodies = new();
 
 	private readonly Dictionary<int, double> _playerHitCooldowns = new();
@@ -216,6 +223,8 @@ public partial class LaserStation : Node3D
 	private float _playerExceptionRefreshTimer;
 	private float _overlapPollTimer;
 	private bool _reachCacheValid;
+
+	private const float WallLengthUpdateEpsilon = 0.025f;
 
 	public override void _Ready()
 	{
@@ -257,11 +266,11 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
-		float dt = (float)delta;
 		UpdateHitCooldowns(delta);
 		UpdateExpansion(delta);
 		UpdatePlaceholderFade(delta);
 		RotateLaser(delta);
+		float dt = (float)delta;
 		RefreshPlayerExceptionsIfNeeded(dt);
 		UpdateLaserLength(dt);
 		ProcessLaserOverlaps(dt);
@@ -698,20 +707,23 @@ public partial class LaserStation : Node3D
 		TryHitBody(body);
 	}
 
-	private void ProcessLaserOverlaps(float delta)
+	private void ProcessLaserOverlaps(float delta = -1.0f)
 	{
 		if (!_nodesReady || !IsActive || CurrentOwner == LaserOwner.Neutral)
 		{
 			return;
 		}
 
-		_overlapPollTimer -= delta;
-		if (_overlapPollTimer > 0.0f)
+		if (delta >= 0.0f)
 		{
-			return;
-		}
+			_overlapPollTimer -= delta;
+			if (_overlapPollTimer > 0.0f)
+			{
+				return;
+			}
 
-		_overlapPollTimer = 0.05f;
+			_overlapPollTimer = Mathf.Max(0.01f, OverlapPollIntervalSeconds);
+		}
 
 		foreach (Area3D hitArea in _laserHitAreas)
 		{
@@ -1027,12 +1039,14 @@ public partial class LaserStation : Node3D
 		return Mathf.Max(factor, minFactor);
 	}
 
-	private void UpdateLaserLength(float delta = 0.0f)
+	private void UpdateLaserLength(float delta = -1.0f)
 	{
 		if (!_nodesReady || _laserRayCasts.Count == 0)
 		{
 			return;
 		}
+
+		EnsureReachCacheSize();
 
 		float maxLength = Mathf.Max(0.5f, MaxLaserLength);
 		bool showWalls = IsActive && CurrentOwner != LaserOwner.Neutral;
@@ -1045,49 +1059,73 @@ public partial class LaserStation : Node3D
 				ApplyPlaceholderLength(i, uniformPlaceholderLength);
 			}
 
-			_reachCacheValid = false;
 			return;
 		}
 
-		int armCount = _laserRayCasts.Count;
-		EnsureReachCacheSize(armCount);
-
-		bool needsFreshReach = !_reachCacheValid
-			|| _isExpanding
-			|| _isRetracting
-			|| _reachUpdateTimer <= 0.0f;
-
-		if (needsFreshReach)
-		{
-			float sharedMaxReach = 0.0f;
-			for (int i = 0; i < armCount; i++)
-			{
-				_cachedArmReach[i] = MeasureWorldReach(i, maxLength);
-				if (_cachedArmReach[i] > sharedMaxReach)
-				{
-					sharedMaxReach = _cachedArmReach[i];
-				}
-			}
-
-			_reachCacheValid = true;
-			_reachUpdateTimer = Mathf.Max(0.016f, ReachUpdateIntervalSeconds);
-		}
-		else
+		bool forceReach = delta < 0.0f || _isExpanding || _isRetracting || !_reachCacheValid;
+		if (!forceReach)
 		{
 			_reachUpdateTimer -= delta;
+			if (_reachUpdateTimer > 0.0f)
+			{
+				ApplyWallLengthsFromCachedReach(uniformPlaceholderLength);
+				return;
+			}
 		}
 
-		float sharedMax = GetMaxCachedReach(MinimumLaserLength);
-		float sharedStartLength = Mathf.Min(uniformPlaceholderLength, sharedMax);
+		_reachUpdateTimer = Mathf.Max(0.01f, ReachUpdateIntervalSeconds);
+
+		int armCount = _laserRayCasts.Count;
+		for (int i = 0; i < armCount; i++)
+		{
+			_cachedArmReach[i] = MeasureWorldReach(i, maxLength);
+		}
+
+		_reachCacheValid = true;
+		ApplyWallLengthsFromCachedReach(uniformPlaceholderLength);
+	}
+
+	private void EnsureReachCacheSize()
+	{
+		while (_cachedArmReach.Count < _laserRayCasts.Count)
+		{
+			_cachedArmReach.Add(0.0f);
+		}
+
+		while (_lastAppliedWallLength.Count < _laserRayCasts.Count)
+		{
+			_lastAppliedWallLength.Add(-1.0f);
+		}
+
+		while (_lastAppliedFullReach.Count < _laserRayCasts.Count)
+		{
+			_lastAppliedFullReach.Add(-1.0f);
+		}
+	}
+
+	private void ApplyWallLengthsFromCachedReach(float uniformPlaceholderLength)
+	{
+		int armCount = _laserRayCasts.Count;
+		float sharedMaxReach = 0.0f;
+		for (int i = 0; i < armCount; i++)
+		{
+			if (_cachedArmReach[i] > sharedMaxReach)
+			{
+				sharedMaxReach = _cachedArmReach[i];
+			}
+		}
+
+		sharedMaxReach = Mathf.Max(sharedMaxReach, MinimumLaserLength);
+		float sharedStartLength = Mathf.Min(uniformPlaceholderLength, sharedMaxReach);
 		sharedStartLength = Mathf.Max(0.05f, sharedStartLength);
 
 		float sharedExpandLength = Mathf.Lerp(
 			sharedStartLength,
-			sharedMax,
+			sharedMaxReach,
 			EaseOutCubic(_expandProgress)
 		);
 		float sharedRetractLength = Mathf.Lerp(
-			sharedMax,
+			sharedMaxReach,
 			sharedStartLength,
 			EaseInOutCubic(_retractProgress)
 		);
@@ -1113,48 +1151,6 @@ public partial class LaserStation : Node3D
 			wallLength = Mathf.Clamp(wallLength, 0.02f, fullReachLength);
 			ApplyCurrentLaserLength(i, wallLength, fullReachLength);
 		}
-	}
-
-	private void EnsureReachCacheSize(int armCount)
-	{
-		while (_cachedArmReach.Count < armCount)
-		{
-			_cachedArmReach.Add(MaxLaserLength);
-		}
-
-		while (_lastAppliedWallLength.Count < armCount)
-		{
-			_lastAppliedWallLength.Add(-1.0f);
-		}
-
-		if (_cachedArmReach.Count > armCount)
-		{
-			_cachedArmReach.RemoveRange(armCount, _cachedArmReach.Count - armCount);
-		}
-
-		if (_lastAppliedWallLength.Count > armCount)
-		{
-			_lastAppliedWallLength.RemoveRange(armCount, _lastAppliedWallLength.Count - armCount);
-		}
-	}
-
-	private float GetMaxCachedReach(float fallback)
-	{
-		if (_cachedArmReach.Count == 0)
-		{
-			return fallback;
-		}
-
-		float max = 0.0f;
-		foreach (float reach in _cachedArmReach)
-		{
-			if (reach > max)
-			{
-				max = reach;
-			}
-		}
-
-		return Mathf.Max(fallback, max);
 	}
 
 	private float GetMaxLockedReach(float fallback)
@@ -1215,12 +1211,27 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
+		EnsureReachCacheSize();
+
 		float clampedLength = Mathf.Min(
 			Mathf.Max(0.02f, length),
 			Mathf.Max(0.02f, fullReachLength)
 		);
-		float height = Mathf.Max(0.5f, LaserWallHeight);
+
+		if (
+			Mathf.Abs(_lastAppliedWallLength[armIndex] - clampedLength) < WallLengthUpdateEpsilon
+			&& Mathf.Abs(_lastAppliedFullReach[armIndex] - fullReachLength) < WallLengthUpdateEpsilon
+		)
+		{
+			return;
+		}
+
+		_lastAppliedWallLength[armIndex] = clampedLength;
+		_lastAppliedFullReach[armIndex] = fullReachLength;
+
+		float fullHeight = Mathf.Max(0.5f, LaserWallHeight);
 		float thickness = Mathf.Max(0.02f, LaserWallThickness);
+		GetWallVerticalLayout(fullHeight, out float height, out float centerY);
 		float hub = GetHubRadius() + thickness * 0.5f;
 		float safeReach = Mathf.Max(clampedLength, fullReachLength);
 		float halfLength = clampedLength * 0.5f;
@@ -1254,37 +1265,7 @@ public partial class LaserStation : Node3D
 		}
 
 		Vector3 size = new Vector3(clampedLength, height, thickness);
-		float centerY = height * 0.5f - Mathf.Max(0.0f, WallGroundEmbed);
 		Vector3 center = new Vector3(centerX, centerY, 0.0f);
-
-		bool lengthUnchanged = armIndex < _lastAppliedWallLength.Count
-			&& Mathf.Abs(_lastAppliedWallLength[armIndex] - clampedLength) < 0.025f
-			&& !_isExpanding
-			&& !_isRetracting;
-
-		if (lengthUnchanged)
-		{
-			if (_hitboxesWantedEnabled)
-			{
-				if (armIndex < _laserHitAreas.Count)
-				{
-					_laserHitAreas[armIndex].Position = center;
-				}
-
-				if (armIndex < _laserHitCollisions.Count
-					&& _laserHitCollisions[armIndex].Shape is BoxShape3D cachedHitShape)
-				{
-					cachedHitShape.Size = size;
-				}
-			}
-
-			return;
-		}
-
-		if (armIndex < _lastAppliedWallLength.Count)
-		{
-			_lastAppliedWallLength[armIndex] = clampedLength;
-		}
 
 		MeshInstance3D wall = _laserWalls[armIndex];
 		if (wall.Mesh is BoxMesh boxMesh)
@@ -1293,32 +1274,29 @@ public partial class LaserStation : Node3D
 		}
 
 		wall.Position = center;
+		wall.SetInstanceShaderParameter("mesh_size", size);
 
 		if (EnableWallGlow && armIndex < _laserWallGlows.Count)
 		{
 			float glowThickness = thickness * Mathf.Max(1.0f, WallGlowThicknessScale);
-			float glowHeight = height * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
+			float glowFullHeight = fullHeight * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
+			GetWallVerticalLayout(glowFullHeight, out float glowHeight, out float glowCenterY);
 			float glowLength = Mathf.Max(0.02f, clampedLength);
 			float glowHalf = glowLength * 0.5f;
 			float glowCenterX = anchorOutside
 				? hub + fullReachLength - glowHalf
 				: hub + glowHalf;
-			float glowCenterY = glowHeight * 0.5f - Mathf.Max(0.0f, WallGroundEmbed);
 			Vector3 glowSize = new Vector3(glowLength, glowHeight, glowThickness);
 			Vector3 glowCenter = new Vector3(glowCenterX, glowCenterY, 0.0f);
 
 			MeshInstance3D glow = _laserWallGlows[armIndex];
-			glow.Visible = true;
 			if (glow.Mesh is BoxMesh glowMesh)
 			{
 				glowMesh.Size = glowSize;
 			}
 
 			glow.Position = glowCenter;
-		}
-		else if (armIndex < _laserWallGlows.Count)
-		{
-			_laserWallGlows[armIndex].Visible = false;
+			glow.SetInstanceShaderParameter("mesh_size", glowSize);
 		}
 
 		if (!_hitboxesWantedEnabled)
@@ -1379,31 +1357,23 @@ public partial class LaserStation : Node3D
 		};
 		ApplyHubCircleAlpha();
 
-		_wallMaterial = new StandardMaterial3D
-		{
-			ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-			Roughness = 1.0f,
-			Metallic = 0.0f,
-			EmissionEnabled = true,
-			EmissionEnergyMultiplier = EmissionEnergy,
-			Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-			BlendMode = BaseMaterial3D.BlendModeEnum.Mix,
-			CullMode = BaseMaterial3D.CullModeEnum.Disabled,
-			AlbedoColor = new Color(1f, 1f, 1f, WallFillAlpha)
-		};
+		_laserWallEnergyShader ??= GD.Load<Shader>("res://resources/laser_station/laser_wall_energy.gdshader");
+		_laserEnergyNoise ??= GD.Load<Texture2D>("res://resources/laser_station/turbulence_noise.png");
 
-		_wallGlowMaterial = new StandardMaterial3D
+		_wallMaterial = new ShaderMaterial
 		{
-			ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-			Roughness = 1.0f,
-			EmissionEnabled = true,
-			EmissionEnergyMultiplier = WallGlowEnergy,
-			Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-			BlendMode = BaseMaterial3D.BlendModeEnum.Add,
-			CullMode = BaseMaterial3D.CullModeEnum.Disabled,
-			DisableReceiveShadows = true,
-			AlbedoColor = new Color(1f, 1f, 1f, WallGlowAlpha)
+			Shader = _laserWallEnergyShader
 		};
+		_wallGlowMaterial = new ShaderMaterial
+		{
+			Shader = _laserWallEnergyShader
+		};
+		if (_laserEnergyNoise != null)
+		{
+			_wallMaterial.SetShaderParameter("textureObj", _laserEnergyNoise);
+			_wallGlowMaterial.SetShaderParameter("textureObj", _laserEnergyNoise);
+		}
+		ApplyWallFadeVisuals();
 	}
 
 	private void EnsureHubCircle()
@@ -1511,25 +1481,56 @@ public partial class LaserStation : Node3D
 
 		float visibility = Mathf.Clamp(_wallAlpha, 0.0f, 1.0f);
 		bool lit = visibility > 0.02f && CurrentOwner != LaserOwner.Neutral;
+		float litFactor = lit ? 1.0f : 0.0f;
 
-		if (_wallMaterial != null)
+		ApplyEnergyWallMaterial(
+			_wallMaterial,
+			ownerColor,
+			EnergyIntensity,
+			WallFillAlpha * visibility,
+			litFactor,
+			0.2f,
+			1.0f
+		);
+
+		ApplyEnergyWallMaterial(
+			_wallGlowMaterial,
+			ownerColor.Lightened(0.25f),
+			EnergyIntensity * 0.65f + WallGlowEnergy * 0.35f,
+			WallGlowAlpha * visibility,
+			litFactor,
+			0.12f,
+			0.7f
+		);
+	}
+
+	private void ApplyEnergyWallMaterial(
+		ShaderMaterial material,
+		Color color,
+		float intensity,
+		float alpha,
+		float litFactor,
+		float wobble,
+		float speedScale
+	)
+	{
+		if (material == null)
 		{
-			float fillAlpha = WallFillAlpha * visibility;
-			_wallMaterial.AlbedoColor = new Color(ownerColor.R, ownerColor.G, ownerColor.B, fillAlpha);
-			_wallMaterial.Emission = ownerColor;
-			_wallMaterial.EmissionEnabled = lit;
-			_wallMaterial.EmissionEnergyMultiplier = EmissionEnergy * visibility;
+			return;
 		}
 
-		if (_wallGlowMaterial != null)
-		{
-			Color glowColor = ownerColor.Lightened(0.35f);
-			float glowAlpha = WallGlowAlpha * visibility;
-			_wallGlowMaterial.AlbedoColor = new Color(glowColor.R, glowColor.G, glowColor.B, glowAlpha);
-			_wallGlowMaterial.Emission = glowColor;
-			_wallGlowMaterial.EmissionEnabled = lit;
-			_wallGlowMaterial.EmissionEnergyMultiplier = WallGlowEnergy * visibility;
-		}
+		material.SetShaderParameter("ColorParameter", color);
+		material.SetShaderParameter("intesityColor", intensity);
+		material.SetShaderParameter("speed", EnergyScrollSpeed * speedScale);
+		material.SetShaderParameter("scale", new Vector2(2.0f, 1.4f));
+		material.SetShaderParameter("fill_alpha", alpha);
+		material.SetShaderParameter("lit_factor", litFactor);
+		material.SetShaderParameter("edge_width", 0.14f);
+		material.SetShaderParameter("edge_boost", 2.2f);
+		material.SetShaderParameter("corner_boost", 3.2f);
+		material.SetShaderParameter("tip_boost", 3.8f);
+		material.SetShaderParameter("wobble", wobble);
+		material.SetShaderParameter("speedWobble", 1.0f);
 	}
 
 	private void UpdateVisuals()
@@ -1550,10 +1551,6 @@ public partial class LaserStation : Node3D
 	private void RebuildPattern()
 	{
 		ClearArms();
-		_reachCacheValid = false;
-		_cachedArmReach.Clear();
-		_lastAppliedWallLength.Clear();
-		_playerExceptionRefreshTimer = 0.0f;
 
 		float[] angles = EnsurePatternConfig().GetArmAnglesDegrees(PatternIndex);
 		for (int i = 0; i < angles.Length; i++)
@@ -1588,6 +1585,11 @@ public partial class LaserStation : Node3D
 		_laserHitCollisions.Clear();
 		_laserRayCasts.Clear();
 		_lockedArmReach.Clear();
+		_cachedArmReach.Clear();
+		_lastAppliedWallLength.Clear();
+		_lastAppliedFullReach.Clear();
+		_reachCacheValid = false;
+		_reachUpdateTimer = 0.0f;
 
 		if (_laserPivot == null)
 		{
@@ -1685,6 +1687,11 @@ public partial class LaserStation : Node3D
 		ray.CollideWithAreas = false;
 		ray.CollideWithBodies = true;
 		ray.HitFromInside = false;
+		if (_cachedPlayerBodies.Count == 0)
+		{
+			RefreshCachedPlayerBodies();
+		}
+
 		ApplyCachedPlayerExceptions(ray);
 	}
 
@@ -1696,16 +1703,15 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
-		_playerExceptionRefreshTimer = Mathf.Max(0.2f, PlayerExceptionRefreshSeconds);
-		RebuildCachedPlayerBodies();
-
+		_playerExceptionRefreshTimer = Mathf.Max(0.1f, PlayerExceptionRefreshSeconds);
+		RefreshCachedPlayerBodies();
 		foreach (RayCast3D ray in _laserRayCasts)
 		{
 			ApplyCachedPlayerExceptions(ray);
 		}
 	}
 
-	private void RebuildCachedPlayerBodies()
+	private void RefreshCachedPlayerBodies()
 	{
 		_cachedPlayerBodies.Clear();
 		SceneTree tree = GetTree();
@@ -1714,31 +1720,12 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
-		Godot.Collections.Array<Node> players = tree.GetNodesInGroup("laser_players");
-		foreach (Node node in players)
+		foreach (Node node in tree.GetNodesInGroup("laser_players"))
 		{
-			if (node is CollisionObject3D body)
+			if (node is CollisionObject3D body && GodotObject.IsInstanceValid(body))
 			{
 				_cachedPlayerBodies.Add(body);
 			}
-		}
-
-		if (_cachedPlayerBodies.Count == 0)
-		{
-			CollectPlayerBodiesRecursive(tree.Root);
-		}
-	}
-
-	private void CollectPlayerBodiesRecursive(Node node)
-	{
-		if (node is ILaserPlayer && node is CollisionObject3D body)
-		{
-			_cachedPlayerBodies.Add(body);
-		}
-
-		foreach (Node child in node.GetChildren())
-		{
-			CollectPlayerBodiesRecursive(child);
 		}
 	}
 
@@ -1757,16 +1744,6 @@ public partial class LaserStation : Node3D
 				ray.AddException(body);
 			}
 		}
-	}
-
-	private void AddPlayerExceptions(RayCast3D ray)
-	{
-		if (_cachedPlayerBodies.Count == 0)
-		{
-			RebuildCachedPlayerBodies();
-		}
-
-		ApplyCachedPlayerExceptions(ray);
 	}
 
 	private bool IsWorldReachCollider(GodotObject collider)
@@ -1817,16 +1794,26 @@ public partial class LaserStation : Node3D
 		};
 	}
 
+	private void GetWallVerticalLayout(float topHeight, out float meshHeight, out float centerY)
+	{
+		float down = Mathf.Max(0.0f, WallDownShift);
+		float top = Mathf.Max(0.5f, topHeight) - down;
+		float gap = Mathf.Max(0.0f, WallGroundGap - down);
+		gap = Mathf.Clamp(gap, 0.0f, Mathf.Max(0.0f, top - 0.15f));
+		meshHeight = Mathf.Max(0.15f, top - gap);
+		centerY = gap + meshHeight * 0.5f;
+	}
+
 	private MeshInstance3D CreateLaserWall()
 	{
-		float height = Mathf.Max(0.5f, LaserWallHeight);
+		float fullHeight = Mathf.Max(0.5f, LaserWallHeight);
+		GetWallVerticalLayout(fullHeight, out float height, out float centerY);
 		float thickness = Mathf.Max(0.02f, LaserWallThickness);
 		float startFactor = EnableExpandOnActivate
 			? GetExpandStartFactor()
 			: 1.0f;
 		float length = Mathf.Max(MinimumLaserLength, MaxLaserLength * startFactor);
 		float start = GetHubRadius();
-		float centerY = height * 0.5f - Mathf.Max(0.0f, WallGroundEmbed);
 
 		return new MeshInstance3D
 		{
@@ -1844,14 +1831,14 @@ public partial class LaserStation : Node3D
 
 	private MeshInstance3D CreateLaserWallGlow()
 	{
-		float height = Mathf.Max(0.5f, LaserWallHeight) * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
+		float fullHeight = Mathf.Max(0.5f, LaserWallHeight) * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
+		GetWallVerticalLayout(fullHeight, out float height, out float centerY);
 		float thickness = Mathf.Max(0.02f, LaserWallThickness) * Mathf.Max(1.0f, WallGlowThicknessScale);
 		float startFactor = EnableExpandOnActivate
 			? GetExpandStartFactor()
 			: 1.0f;
 		float length = Mathf.Max(MinimumLaserLength, MaxLaserLength * startFactor);
 		float start = GetHubRadius();
-		float centerY = height * 0.5f - Mathf.Max(0.0f, WallGroundEmbed);
 
 		return new MeshInstance3D
 		{
@@ -1896,7 +1883,7 @@ public partial class LaserStation : Node3D
 		ApplyHitboxesEnabledState();
 		ApplyModeVisuals();
 		UpdateLaserLength();
-		ProcessLaserOverlaps(0.0f);
+		ProcessLaserOverlaps();
 	}
 
 	private bool ResolveCoreNodes()
