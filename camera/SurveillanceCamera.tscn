@@ -37,7 +37,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_x4c77"]
 resource_name = "headbang"
-length = 0.39999999999999997
+length = 0.4
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -77,6 +77,44 @@ _data = {
 &"scanning": SubResource("Animation_wi8xj")
 }
 
+[sub_resource type="Animation" id="Animation_lytpb"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PivotCameraHead/CameraHead/RedOmniLight3D:omni_range")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [2.0]
+}
+
+[sub_resource type="Animation" id="Animation_u40ra"]
+resource_name = "blinking_light"
+length = 1.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PivotCameraHead/CameraHead/RedOmniLight3D:omni_range")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [2.0, 8.0, 2.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6vymo"]
+_data = {
+&"RESET": SubResource("Animation_lytpb"),
+&"blinking_light": SubResource("Animation_u40ra")
+}
+
 [node name="SurveillanceCamera" type="Node3D" unique_id=1531644149 node_paths=PackedStringArray("_animationPlayer")]
 script = ExtResource("1_wi8xj")
 _animationPlayer = NodePath("AnimationPlayer")
@@ -84,12 +122,22 @@ _animationPlayer = NodePath("AnimationPlayer")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=352501192]
 libraries/ = SubResource("AnimationLibrary_x4c77")
 
+[node name="RedLightAnimationPlayer" type="AnimationPlayer" parent="." unique_id=267773438]
+libraries/ = SubResource("AnimationLibrary_6vymo")
+autoplay = &"blinking_light"
+
 [node name="PivotCameraHead" type="Node3D" parent="." unique_id=1359216742]
-transform = Transform3D(0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, 0, 0, 0, 1, -1, 2.5, 0)
+transform = Transform3D(0.93969256, 0.3420201, 0, -0.3420201, 0.93969256, 0, 0, 0, 1, -1, 2.5, 0)
 
 [node name="CameraHead" type="MeshInstance3D" parent="PivotCameraHead" unique_id=2032980416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -2.5, 0)
 mesh = ExtResource("1_7y4bm")
+
+[node name="RedOmniLight3D" type="OmniLight3D" parent="PivotCameraHead/CameraHead" unique_id=1457686452]
+transform = Transform3D(0.9396927, -0.34202012, 0, 0.34202012, 0.9396927, 0, 0, 0, 1, -0.45460874, 3.436385, -0.4527849)
+light_color = Color(0.6, 0, 0, 1)
+light_energy = 2.0
+omni_range = 2.0
 
 [node name="PivotCameraBody" type="Node3D" parent="." unique_id=1225359458]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
