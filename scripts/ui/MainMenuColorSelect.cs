@@ -1,9 +1,5 @@
 using Godot;
 
-/// <summary>
-/// Farbauswahl im Main Menu — gleiche Actions wie ingame:
-/// MoveLeft/Right = Farbe wählen, ActionPlayer oder Lock-Taste = bestätigen / freigeben.
-/// </summary>
 public partial class MainMenuColorSelect : Node3D
 {
 	[Export] public Node3D PlayerOneRoot { get; set; }
