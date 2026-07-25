@@ -131,10 +131,16 @@ public partial class LaserStation : Node3D
 	public float WallGlowAlpha { get; set; } = 0.3f;
 	[Export] public float WallGlowThicknessScale { get; set; } = 1.5f;
 	[Export] public float WallGlowHeightScale { get; set; } = 1.0f;
-	[Export] public float WallGlowEnergy { get; set; } = 5.0f;
-	[Export] public float EnergyIntensity { get; set; } = 12.0f;
+	[Export] public float WallGlowEnergy { get; set; } = 7.0f;
+	[Export] public float EnergyIntensity { get; set; } = 18.0f;
 	[Export] public float EnergyScrollSpeed { get; set; } = -0.55f;
 	[Export] public bool EnableWallGlow { get; set; } = true;
+	[Export] public bool EnableWallLight { get; set; } = true;
+	[Export] public float WallLightEnergy { get; set; } = 8.0f;
+	[Export] public float WallLightRange { get; set; } = 7.0f;
+	[Export] public float WallLightRangePerLength { get; set; } = 0.55f;
+	[Export] public float WallLightMinRange { get; set; } = 3.5f;
+	[Export] public float WallLightMaxRange { get; set; } = 18.0f;
 	[Export] public float ReachUpdateIntervalSeconds { get; set; } = 0.05f;
 	[Export] public float PlayerExceptionRefreshSeconds { get; set; } = 0.5f;
 	[Export] public float OverlapPollIntervalSeconds { get; set; } = 0.05f;
@@ -179,6 +185,7 @@ public partial class LaserStation : Node3D
 	private readonly List<MeshInstance3D> _placeholderMeshes = new();
 	private readonly List<MeshInstance3D> _laserWalls = new();
 	private readonly List<MeshInstance3D> _laserWallGlows = new();
+	private readonly List<OmniLight3D> _laserWallLights = new();
 	private readonly List<Area3D> _laserHitAreas = new();
 	private readonly List<CollisionShape3D> _laserHitCollisions = new();
 	private readonly List<RayCast3D> _laserRayCasts = new();
@@ -1269,6 +1276,7 @@ public partial class LaserStation : Node3D
 
 		wall.Position = center;
 		wall.SetInstanceShaderParameter("mesh_size", size);
+		UpdateWallLightTransform(armIndex, center, clampedLength);
 
 		if (EnableWallGlow && armIndex < _laserWallGlows.Count)
 		{
@@ -1450,6 +1458,8 @@ public partial class LaserStation : Node3D
 			glow.Visible = showWalls && EnableWallGlow;
 		}
 
+		UpdateWallLightVisuals();
+
 		if (_stripeMaterial != null)
 		{
 			_stripeMaterial.AlbedoColor = new Color(
@@ -1496,6 +1506,55 @@ public partial class LaserStation : Node3D
 			0.12f,
 			0.7f
 		);
+
+		UpdateWallLightVisuals();
+	}
+
+	private void UpdateWallLightVisuals()
+	{
+		bool showLights = EnableWallLight
+			&& IsActive
+			&& CurrentOwner != LaserOwner.Neutral
+			&& _wallAlpha > 0.02f;
+
+		Color ownerColor = CurrentOwner switch
+		{
+			LaserOwner.PlayerOne => PlayerOneColor,
+			LaserOwner.PlayerTwo => PlayerTwoColor,
+			_ => PlaceholderColor
+		};
+
+		float energy = WallLightEnergy * Mathf.Clamp(_wallAlpha, 0.0f, 1.0f);
+
+		foreach (OmniLight3D light in _laserWallLights)
+		{
+			if (light == null)
+			{
+				continue;
+			}
+
+			light.Visible = showLights;
+			light.LightColor = ownerColor;
+			light.LightEnergy = showLights ? energy : 0.0f;
+		}
+	}
+
+	private void UpdateWallLightTransform(int armIndex, Vector3 center, float wallLength)
+	{
+		if (!EnableWallLight || armIndex < 0 || armIndex >= _laserWallLights.Count)
+		{
+			return;
+		}
+
+		OmniLight3D light = _laserWallLights[armIndex];
+		if (light == null)
+		{
+			return;
+		}
+
+		light.Position = center;
+		float range = WallLightRange + wallLength * Mathf.Max(0.0f, WallLightRangePerLength);
+		light.OmniRange = Mathf.Clamp(range, WallLightMinRange, WallLightMaxRange);
 	}
 
 	private void ApplyEnergyWallMaterial(
@@ -1575,6 +1634,7 @@ public partial class LaserStation : Node3D
 		_placeholderMeshes.Clear();
 		_laserWalls.Clear();
 		_laserWallGlows.Clear();
+		_laserWallLights.Clear();
 		_laserHitAreas.Clear();
 		_laserHitCollisions.Clear();
 		_laserRayCasts.Clear();
@@ -1618,6 +1678,9 @@ public partial class LaserStation : Node3D
 		MeshInstance3D glow = CreateLaserWallGlow();
 		arm.AddChild(glow);
 
+		OmniLight3D wallLight = CreateLaserWallLight();
+		arm.AddChild(wallLight);
+
 		Area3D hitArea = new Area3D
 		{
 			Name = "LaserHitArea",
@@ -1646,6 +1709,7 @@ public partial class LaserStation : Node3D
 		_laserRayCasts.Add(ray);
 		_laserWalls.Add(wall);
 		_laserWallGlows.Add(glow);
+		_laserWallLights.Add(wallLight);
 		_laserHitAreas.Add(hitArea);
 		_laserHitCollisions.Add(hitCollision);
 	}
@@ -1844,6 +1908,31 @@ public partial class LaserStation : Node3D
 				Size = new Vector3(length, height, thickness)
 			},
 			MaterialOverride = _wallGlowMaterial,
+			Position = new Vector3(start + length * 0.5f, centerY, 0.0f)
+		};
+	}
+
+	private OmniLight3D CreateLaserWallLight()
+	{
+		float fullHeight = Mathf.Max(0.5f, LaserWallHeight);
+		GetWallVerticalLayout(fullHeight, out _, out float centerY);
+		float startFactor = EnableExpandOnActivate
+			? GetExpandStartFactor()
+			: 1.0f;
+		float length = Mathf.Max(MinimumLaserLength, MaxLaserLength * startFactor);
+		float start = GetHubRadius();
+		float range = WallLightRange + length * Mathf.Max(0.0f, WallLightRangePerLength);
+
+		return new OmniLight3D
+		{
+			Name = "LaserWallLight",
+			Visible = false,
+			LightColor = PlayerOneColor,
+			LightEnergy = WallLightEnergy,
+			LightSpecular = 0.15f,
+			OmniRange = Mathf.Clamp(range, WallLightMinRange, WallLightMaxRange),
+			OmniAttenuation = 1.2f,
+			ShadowEnabled = false,
 			Position = new Vector3(start + length * 0.5f, centerY, 0.0f)
 		};
 	}

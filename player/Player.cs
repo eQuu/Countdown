@@ -2,10 +2,19 @@ using Godot;
 
 public partial class Player : CharacterBody3D, ILaserPlayer
 {
+	[Signal]
+	public delegate void PlayerDiedEventHandler(int victimPlayerId, int attackingPlayerId);
+
 	[Export] private AnimationPlayer _animationPlayer;
 	[Export] private Label3D _lockedTimeLabel;
+	[Export] private CpuParticles3D _particlesSkin;
+	[Export] private CpuParticles3D _particlesShoes;
+	[Export] private Node3D _meshRoot;
+	[Export] private MeshInstance3D _indicatorRing;
 	[Export] public int PlayerId { get; set; } = 1;
 
+	[Export] public Color IndicatorColor { get; set; } = new Color(0.1f, 0.4f, 1.0f);
+	[Export] public float IndicatorRingSize { get; set; } = 1.35f;
 	[Export] public float WalkSpeed { get; set; } = 8.0f;
 	[Export] public float Acceleration { get; set; } = 40.0f;
 	[Export] public float Friction { get; set; } = 30.0f;
@@ -18,9 +27,11 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	[Export] public float Gravity { get; set; } = 20.0f;
 	[Export] public float LockedTimeLabelHeight { get; set; } = 1.35f;
 	[Export] public float LockedTimeLabelNorthOffset { get; set; } = 0.45f;
+	[Export] public float DefaultStunSeconds { get; set; } = 2.5f;
 
 	public bool IsInvulnerable { get; private set; }
 	public bool IsAlive { get; private set; } = true;
+	public bool IsStunned => _stunTimeLeft > 0.0f;
 	public Label3D LockedTimeLabel => _lockedTimeLabel;
 
 	private float _dashTimeLeft;
@@ -32,7 +43,9 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private bool _dashGrantsInvulnerability;
 	private float _respawnTimeLeft;
 	private float _invulnTimeLeft;
+	private float _stunTimeLeft;
 	private Vector3 _spawnPosition;
+	private ShaderMaterial _indicatorRingMaterial;
 
 	public override void _Ready()
 	{
@@ -40,6 +53,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		CollisionMask = 1;
 		AddToGroup("laser_players");
 		_spawnPosition = GlobalPosition;
+		ApplyDefaultIndicatorColorFromPlayerId();
+		SetupIndicatorRing();
 
 		if (_lockedTimeLabel != null)
 		{
@@ -59,7 +74,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		float dt = (float)delta;
 		UpdateStatusTimers(dt);
 
-		if (!IsAlive)
+		if (!IsAlive || IsStunned)
 		{
 			ApplyGravity(dt);
 			Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
@@ -78,17 +93,43 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			return;
 		}
 
+		_particlesSkin.Emitting = true;
+		_particlesShoes.Emitting = true;
+		_meshRoot.Visible = false;
+		SetIndicatorRingVisible(false);
 		IsAlive = false;
 		_dashTimeLeft = 0.0f;
 		_dashGrantsInvulnerability = false;
+		_stunTimeLeft = 0.0f;
 		_respawnTimeLeft = RespawnDelaySeconds;
 		Velocity = Vector3.Zero;
 		GD.Print($"Player {PlayerId} hit by laser of player {attackingPlayerId}");
+		EmitSignal(SignalName.PlayerDied, PlayerId, attackingPlayerId);
+	}
+
+	public void ApplyStun(float durationSeconds = -1.0f)
+	{
+		if (!IsAlive)
+		{
+			return;
+		}
+
+		float duration = durationSeconds > 0.0f ? durationSeconds : DefaultStunSeconds;
+		_stunTimeLeft = Mathf.Max(_stunTimeLeft, duration);
+		_dashTimeLeft = 0.0f;
+		_isDashing = false;
+		if (_dashGrantsInvulnerability && _invulnTimeLeft <= 0.0f)
+		{
+			IsInvulnerable = false;
+		}
+
+		_dashGrantsInvulnerability = false;
+		Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
 	}
 
 	public void StartVulnerableDash(Vector3 direction = default)
 	{
-		if (!IsAlive)
+		if (!IsAlive || IsStunned)
 		{
 			return;
 		}
@@ -98,7 +139,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 	public void StartInvulnerableDash(Vector3 direction = default)
 	{
-		if (!IsAlive)
+		if (!IsAlive || IsStunned)
 		{
 			return;
 		}
@@ -130,6 +171,11 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			}
 		}
 
+		if (_stunTimeLeft > 0.0f)
+		{
+			_stunTimeLeft = Mathf.Max(0.0f, _stunTimeLeft - delta);
+		}
+
 		if (!IsAlive)
 		{
 			_respawnTimeLeft -= delta;
@@ -144,11 +190,68 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	{
 		GlobalPosition = _spawnPosition;
 		Velocity = Vector3.Zero;
+		_meshRoot.Visible = true;
+		SetIndicatorRingVisible(true);
 		IsAlive = true;
 		IsInvulnerable = true;
 		_invulnTimeLeft = SpawnProtectionSeconds;
 		_dashTimeLeft = 0.0f;
 		_dashCooldownLeft = 0.0f;
+		_stunTimeLeft = 0.0f;
+	}
+
+	private void ApplyDefaultIndicatorColorFromPlayerId()
+	{
+		IndicatorColor = PlayerId switch
+		{
+			2 => new Color(1.0f, 0.15f, 0.1f),
+			_ => new Color(0.1f, 0.4f, 1.0f)
+		};
+	}
+
+	private void SetupIndicatorRing()
+	{
+		if (_indicatorRing == null)
+		{
+			return;
+		}
+
+		Shader shader = GD.Load<Shader>("res://resources/player/indicator_ring.gdshader");
+		_indicatorRingMaterial = new ShaderMaterial
+		{
+			Shader = shader
+		};
+		_indicatorRing.MaterialOverride = _indicatorRingMaterial;
+		_indicatorRing.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
+
+		if (_indicatorRing.Mesh is PlaneMesh planeMesh)
+		{
+			float size = Mathf.Max(0.4f, IndicatorRingSize);
+			planeMesh.Size = new Vector2(size, size);
+		}
+
+		ApplyIndicatorRingColor();
+		SetIndicatorRingVisible(true);
+	}
+
+	private void ApplyIndicatorRingColor()
+	{
+		if (_indicatorRingMaterial == null)
+		{
+			return;
+		}
+
+		_indicatorRingMaterial.SetShaderParameter("ring_color", IndicatorColor);
+	}
+
+	private void SetIndicatorRingVisible(bool visible)
+	{
+		if (_indicatorRing == null)
+		{
+			return;
+		}
+
+		_indicatorRing.Visible = visible;
 	}
 
 	private void HandleMovement(float delta)

@@ -4,6 +4,15 @@ using Countdown.Scripts.Game;
 
 public partial class GameManager : Node3D
 {
+	[Signal]
+	public delegate void ScoreChangedEventHandler(int playerOneScore, int playerTwoScore);
+
+	[Signal]
+	public delegate void MatchWonEventHandler(int winnerPlayerId, int playerOneScore, int playerTwoScore);
+
+	[Signal]
+	public delegate void ScoreLimitReachedEventHandler(int winnerPlayerId, int playerOneScore, int playerTwoScore);
+
 	[ExportCategory("Challenge")]
 	[Export] private CountdownChallengeManager _countdownChallenge;
 	[Export] public bool AutoStartChallenge { get; set; } = true;
@@ -12,6 +21,8 @@ public partial class GameManager : Node3D
 	[Export] public Label3D GlobalCountdownLabel { get; set; }
 	[Export] public Label3D PlayerOneValueLabel { get; set; }
 	[Export] public Label3D PlayerTwoValueLabel { get; set; }
+	[Export] public Label3D PlayerOneScoreLabel { get; set; }
+	[Export] public Label3D PlayerTwoScoreLabel { get; set; }
 
 	[ExportCategory("Players")]
 	[Export] public Player PlayerOne { get; set; }
@@ -20,19 +31,35 @@ public partial class GameManager : Node3D
 	[ExportCategory("Managers")]
 	[Export] public LightingManager LightingManager { get; set; }
 
+	[ExportCategory("Timeout Punishment")]
+	[Export] public float CeilingLightsDelaySeconds { get; set; } = 2.0f;
+	[Export] public float TimeoutStunSeconds { get; set; } = 2.5f;
+
+	[ExportCategory("Score")]
+	[Export] public int MaxScore { get; set; } = 20;
+	[Export] public Color PlayerOneScoreColor { get; set; } = new Color(0.1f, 0.4f, 1.0f);
+	[Export] public Color PlayerTwoScoreColor { get; set; } = new Color(1.0f, 0.15f, 0.1f);
+
 	public CountdownChallengeManager Challenge => _countdownChallenge;
+	public int PlayerOneScore { get; private set; }
+	public int PlayerTwoScore { get; private set; }
+	public bool IsMatchFinished { get; private set; }
+
+	private bool _playerSignalsConnected;
 
 	public override void _Ready()
 	{
 		ResolveChallengeManager();
 		ConnectChallengeSignals();
+		ScoreLimitReached += OnScoreLimitReached;
 		CallDeferred(MethodName.BeginChallengeAfterTreeReady);
-		LightingManager.DeactivateCeilingLights(); // Licht wird zum Spielstart ausgemacht
 	}
 
 	public override void _ExitTree()
 	{
 		DisconnectChallengeSignals();
+		DisconnectPlayerSignals();
+		ScoreLimitReached -= OnScoreLimitReached;
 	}
 
 	public void StartChallenge()
@@ -45,11 +72,25 @@ public partial class GameManager : Node3D
 		_countdownChallenge?.ResetChallenge();
 	}
 
+	public void ResetScores()
+	{
+		PlayerOneScore = 0;
+		PlayerTwoScore = 0;
+		IsMatchFinished = false;
+		UpdateScoreLabels();
+		EmitSignal(SignalName.ScoreChanged, PlayerOneScore, PlayerTwoScore);
+	}
+
 	private void BeginChallengeAfterTreeReady()
 	{
 		ResolvePlayerLabelsFromScene();
 		ResolvePlayersFromScene();
+		ResolveLightingManagerFromScene();
+		ResolveScoreLabelsFromScene();
 		WireChallengeLabels();
+		ConnectPlayerSignals();
+		UpdateScoreLabels();
+		LightingManager?.DeactivateCeilingLights();
 
 		if (_countdownChallenge == null)
 		{
@@ -86,10 +127,21 @@ public partial class GameManager : Node3D
 		GlobalCountdownLabel ??= GetNodeOrNull<Label3D>("GlobalCountdownLabel");
 	}
 
+	private void ResolveScoreLabelsFromScene()
+	{
+		PlayerOneScoreLabel ??= GetNodeOrNull<Label3D>("PlayerOneScoreLabel");
+		PlayerTwoScoreLabel ??= GetNodeOrNull<Label3D>("PlayerTwoScoreLabel");
+	}
+
 	private void ResolvePlayersFromScene()
 	{
 		PlayerOne ??= GetNodeOrNull<Player>("../Player1");
 		PlayerTwo ??= GetNodeOrNull<Player>("../Player2");
+	}
+
+	private void ResolveLightingManagerFromScene()
+	{
+		LightingManager ??= GetNodeOrNull<LightingManager>("../LightingManager");
 	}
 
 	private void WireChallengeLabels()
@@ -137,6 +189,132 @@ public partial class GameManager : Node3D
 		_countdownChallenge.BothPlayersTimedOut -= OnBothPlayersTimedOut;
 	}
 
+	private void ConnectPlayerSignals()
+	{
+		if (_playerSignalsConnected)
+		{
+			return;
+		}
+
+		if (PlayerOne != null)
+		{
+			PlayerOne.PlayerDied += OnPlayerDied;
+		}
+
+		if (PlayerTwo != null)
+		{
+			PlayerTwo.PlayerDied += OnPlayerDied;
+		}
+
+		_playerSignalsConnected = PlayerOne != null || PlayerTwo != null;
+	}
+
+	private void DisconnectPlayerSignals()
+	{
+		if (!_playerSignalsConnected)
+		{
+			return;
+		}
+
+		if (PlayerOne != null)
+		{
+			PlayerOne.PlayerDied -= OnPlayerDied;
+		}
+
+		if (PlayerTwo != null)
+		{
+			PlayerTwo.PlayerDied -= OnPlayerDied;
+		}
+
+		_playerSignalsConnected = false;
+	}
+
+	private void OnPlayerDied(int victimPlayerId, int attackingPlayerId)
+	{
+		if (IsMatchFinished)
+		{
+			return;
+		}
+
+		if (attackingPlayerId is not (1 or 2) || attackingPlayerId == victimPlayerId)
+		{
+			return;
+		}
+
+		AddScore(attackingPlayerId, 1);
+	}
+
+	private void AddScore(int playerId, int amount)
+	{
+		if (IsMatchFinished || amount <= 0)
+		{
+			return;
+		}
+
+		int maxScore = Mathf.Max(1, MaxScore);
+
+		if (playerId == 1)
+		{
+			PlayerOneScore = Mathf.Min(maxScore, PlayerOneScore + amount);
+		}
+		else if (playerId == 2)
+		{
+			PlayerTwoScore = Mathf.Min(maxScore, PlayerTwoScore + amount);
+		}
+		else
+		{
+			return;
+		}
+
+		UpdateScoreLabels();
+		EmitSignal(SignalName.ScoreChanged, PlayerOneScore, PlayerTwoScore);
+		GD.Print($"Score P1={PlayerOneScore} P2={PlayerTwoScore}");
+
+		if (PlayerOneScore >= maxScore)
+		{
+			FinishMatch(1);
+		}
+		else if (PlayerTwoScore >= maxScore)
+		{
+			FinishMatch(2);
+		}
+	}
+
+	private void FinishMatch(int winnerPlayerId)
+	{
+		if (IsMatchFinished)
+		{
+			return;
+		}
+
+		IsMatchFinished = true;
+		GD.Print($"Match won by player {winnerPlayerId}. Final score P1={PlayerOneScore} P2={PlayerTwoScore}");
+		EmitSignal(SignalName.MatchWon, winnerPlayerId, PlayerOneScore, PlayerTwoScore);
+		EmitSignal(SignalName.ScoreLimitReached, winnerPlayerId, PlayerOneScore, PlayerTwoScore);
+	}
+
+	private void OnScoreLimitReached(int winnerPlayerId, int playerOneScore, int playerTwoScore)
+	{
+		GD.Print(
+			$"Score limit {MaxScore} reached. Winner=Player {winnerPlayerId} ({playerOneScore}:{playerTwoScore})"
+		);
+	}
+
+	private void UpdateScoreLabels()
+	{
+		if (PlayerOneScoreLabel != null)
+		{
+			PlayerOneScoreLabel.Text = PlayerOneScore.ToString();
+			PlayerOneScoreLabel.Modulate = PlayerOneScoreColor;
+		}
+
+		if (PlayerTwoScoreLabel != null)
+		{
+			PlayerTwoScoreLabel.Text = PlayerTwoScore.ToString();
+			PlayerTwoScoreLabel.Modulate = PlayerTwoScoreColor;
+		}
+	}
+
 	private void OnCountdownEvaluated(
 		int winnerPlayerId,
 		float playerOneTime,
@@ -176,7 +354,29 @@ public partial class GameManager : Node3D
 		GD.Print(
 			$"Both players allowed the countdown to reach {timeoutValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}."
 		);
+		ResolveLightingManagerFromScene();
+		LightingManager?.ActivateCeilingLights();
 
-		LightingManager.ActivateCeilingLights();
+		PlayerOne?.ApplyStun(TimeoutStunSeconds);
+		PlayerTwo?.ApplyStun(TimeoutStunSeconds);
+
+		ScheduleCeilingLightsDeactivation();
+	}
+
+	private async void ScheduleCeilingLightsDeactivation()
+	{
+		float delay = Mathf.Max(0.0f, CeilingLightsDelaySeconds);
+		if (delay > 0.0f)
+		{
+			await ToSignal(GetTree().CreateTimer(delay), SceneTreeTimer.SignalName.Timeout);
+		}
+
+		if (!IsInstanceValid(this))
+		{
+			return;
+		}
+
+		ResolveLightingManagerFromScene();
+		LightingManager?.DeactivateCeilingLights();
 	}
 }

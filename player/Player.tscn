@@ -5,6 +5,7 @@
 [ext_resource type="Material" uid="uid://36mj44wixb1f" path="res://player/Shoe_Particle_Color.tres" id="2_x8kxw"]
 [ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="3_83hs8"]
 [ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="4_x8kxw"]
+[ext_resource type="Shader" uid="uid://diyjhqijywkiu" path="res://resources/player/indicator_ring.gdshader" id="5_ring"]
 
 [sub_resource type="Animation" id="Animation_83hs8"]
 length = 0.001
@@ -172,6 +173,19 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
 size = Vector3(0.5316162, 1.102396, 0.86826706)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ring"]
+render_priority = 0
+shader = ExtResource("5_ring")
+shader_parameter/ring_color = Color(0.1, 0.4, 1, 0.95)
+shader_parameter/inner_radius = 0.74
+shader_parameter/outer_softness = 0.1
+shader_parameter/inner_softness = 0.07
+shader_parameter/emission_boost = 2.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ring"]
+material = SubResource("ShaderMaterial_ring")
+size = Vector2(1.35, 1.35)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aqcbf"]
 albedo_color = Color(1, 0.8, 0.6, 1)
 
@@ -183,11 +197,15 @@ size = Vector3(0.1, 0.1, 0.1)
 material = ExtResource("2_x8kxw")
 size = Vector3(0.1, 0.1, 0.1)
 
-[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_lockedTimeLabel")]
+[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_lockedTimeLabel", "_particlesSkin", "_particlesShoes", "_meshRoot", "_indicatorRing")]
 collision_layer = 2
 script = ExtResource("1_8ak8y")
 _animationPlayer = NodePath("AnimationPlayer")
 _lockedTimeLabel = NodePath("LockedTimeLabel")
+_particlesSkin = NodePath("DeathEmitterSkin")
+_particlesShoes = NodePath("DeathEmitterShoes")
+_meshRoot = NodePath("MeshRoot")
+_indicatorRing = NodePath("IndicatorRing")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
@@ -195,6 +213,11 @@ libraries/ = SubResource("AnimationLibrary_gndvh")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1686967469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
 shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="IndicatorRing" type="MeshInstance3D" parent="." unique_id=443270399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ring")
 
 [node name="LockedTimeLabel" type="Label3D" parent="." unique_id=2070574854]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
