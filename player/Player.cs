@@ -4,7 +4,10 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 {
 	[Export] private AnimationPlayer _animationPlayer;
 	[Export] private Label3D _lockedTimeLabel;
-	[Export] public int PlayerId { get; set; } = 1;
+	[Export] private CpuParticles3D _particlesSkin;
+    [Export] private CpuParticles3D _particlesShoes;
+	[Export] private Node3D _meshRoot;
+    [Export] public int PlayerId { get; set; } = 1;
 
 	[Export] public float WalkSpeed { get; set; } = 8.0f;
 	[Export] public float Acceleration { get; set; } = 40.0f;
@@ -81,6 +84,9 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			return;
 		}
 
+		_particlesSkin.Emitting = true;
+		_particlesShoes.Emitting = true;
+		_meshRoot.Visible = false;
 		IsAlive = false;
 		_dashTimeLeft = 0.0f;
 		_dashGrantsInvulnerability = false;
@@ -173,7 +179,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	{
 		GlobalPosition = _spawnPosition;
 		Velocity = Vector3.Zero;
-		IsAlive = true;
+        _meshRoot.Visible = true;
+        IsAlive = true;
 		IsInvulnerable = true;
 		_invulnTimeLeft = SpawnProtectionSeconds;
 		_dashTimeLeft = 0.0f;
