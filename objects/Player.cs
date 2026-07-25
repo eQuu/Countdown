@@ -12,6 +12,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	[Export] public float DashDuration { get; set; } = 0.2f;
 	[Export] public float DashCooldown { get; set; } = 1.5f;
 	[Export] public float PersonalCountdownSeconds { get; set; } = 10.0f;
+	[Export] public float HoldStillSeconds { get; set; } = 1.25f;
 	[Export] public float CountdownStunSeconds { get; set; } = 2.0f;
 	[Export] public float RespawnDelaySeconds { get; set; } = 1.5f;
 	[Export] public float SpawnProtectionSeconds { get; set; } = 1.0f;
@@ -26,6 +27,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private string _currentAnim = string.Empty;
 	private float _personalCountdown;
 	private float _stunTimeLeft;
+	private float _holdStillTimeLeft;
+	private bool _isHoldingStill;
 	private float _respawnTimeLeft;
 	private float _invulnTimeLeft;
 	private Vector3 _spawnPosition;
@@ -64,6 +67,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 		IsAlive = false;
 		_dashTimeLeft = 0.0f;
+		_isHoldingStill = false;
+		_holdStillTimeLeft = 0.0f;
 		_respawnTimeLeft = RespawnDelaySeconds;
 		Velocity = Vector3.Zero;
 		GD.Print($"Player {PlayerId} hit by laser of player {attackingPlayerId}");
@@ -72,6 +77,8 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	public void ResetPersonalCountdown()
 	{
 		_personalCountdown = PersonalCountdownSeconds;
+		_isHoldingStill = false;
+		_holdStillTimeLeft = 0.0f;
 	}
 
 	private void UpdateStatusTimers(float delta)
@@ -102,19 +109,38 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 			if (_stunTimeLeft <= 0.0f)
 			{
 				_stunTimeLeft = 0.0f;
-				_personalCountdown = PersonalCountdownSeconds;
+				ResetPersonalCountdown();
 			}
+			return;
+		}
+
+		if (_isHoldingStill)
+		{
 			return;
 		}
 
 		_personalCountdown -= delta;
 		if (_personalCountdown <= 0.0f)
 		{
-			_personalCountdown = 0.0f;
-			_stunTimeLeft = CountdownStunSeconds;
-			_dashTimeLeft = 0.0f;
-			Velocity = Vector3.Zero;
+			BeginHoldStill();
 		}
+	}
+
+	private void BeginHoldStill()
+	{
+		_personalCountdown = 0.0f;
+		_isHoldingStill = true;
+		_holdStillTimeLeft = Mathf.Max(0.05f, HoldStillSeconds);
+		_dashTimeLeft = 0.0f;
+	}
+
+	private void BeginStun()
+	{
+		_isHoldingStill = false;
+		_holdStillTimeLeft = 0.0f;
+		_stunTimeLeft = CountdownStunSeconds;
+		_dashTimeLeft = 0.0f;
+		Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
 	}
 
 	private void Respawn()
@@ -127,7 +153,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_dashTimeLeft = 0.0f;
 		_dashCooldownLeft = 0.0f;
 		_stunTimeLeft = 0.0f;
-		_personalCountdown = PersonalCountdownSeconds;
+		ResetPersonalCountdown();
 	}
 
 	private void HandleMovement(float delta)
@@ -142,6 +168,12 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		if (input != Vector2.Zero)
 		{
 			input = input.Normalized();
+		}
+
+		if (_isHoldingStill)
+		{
+			UpdateHoldStill(input, delta);
+			return;
 		}
 
 		UpdateDashTimers(delta);
@@ -163,6 +195,32 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 		UpdateFacing(input);
 		UpdateAnimation(input);
+	}
+
+	private void UpdateHoldStill(Vector2 input, float delta)
+	{
+		bool dashPressed = Input.IsActionJustPressed("ActionPlayer" + PlayerId);
+		if (input != Vector2.Zero || dashPressed || _dashTimeLeft > 0.0f)
+		{
+			BeginStun();
+			ApplyGravity(delta);
+			Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
+			MoveAndSlide();
+			UpdateAnimation(Vector2.Zero);
+			return;
+		}
+
+		_holdStillTimeLeft -= delta;
+		if (_holdStillTimeLeft <= 0.0f)
+		{
+			ResetPersonalCountdown();
+		}
+
+		ApplyGravity(delta);
+		Vector3 horizontal = ApplyWalkVelocity(Vector2.Zero, delta);
+		Velocity = new Vector3(horizontal.X, Velocity.Y, horizontal.Z);
+		MoveAndSlide();
+		UpdateAnimation(Vector2.Zero);
 	}
 
 	private void ApplyGravity(float delta)
@@ -225,7 +283,9 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private Vector3 ApplyWalkVelocity(Vector2 input, float delta)
 	{
 		Vector3 current = new Vector3(Velocity.X, 0.0f, Velocity.Z);
-		Vector3 target = input != Vector2.Zero ? new Vector3(input.X, 0.0f, input.Y) * WalkSpeed : Vector3.Zero;
+		Vector3 target = input != Vector2.Zero
+			? new Vector3(input.X, 0.0f, input.Y) * WalkSpeed
+			: Vector3.Zero;
 
 		float rate = input != Vector2.Zero ? Acceleration : Friction;
 		return current.MoveToward(target, rate * delta);

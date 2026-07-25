@@ -78,12 +78,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -8)
 [node name="LaserStation" parent="LaserStationSpawns/L2" unique_id=1618191649 instance=ExtResource("2_station")]
 
 [node name="L3" type="Marker3D" parent="LaserStationSpawns" unique_id=120513418]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.665651, 0.1, 0)
 
 [node name="LaserStation" parent="LaserStationSpawns/L3" unique_id=15862273 instance=ExtResource("2_station")]
 
 [node name="L4" type="Marker3D" parent="LaserStationSpawns" unique_id=1436387019]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.869581, 0.1, 0)
 
 [node name="LaserStation" parent="LaserStationSpawns/L4" unique_id=2112653926 instance=ExtResource("2_station")]
 

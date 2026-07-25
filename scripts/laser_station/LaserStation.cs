@@ -39,7 +39,7 @@ public partial class LaserStation : Node3D
 	[Export] public bool RotateClockwise { get; set; } = true;
 	[Export] public float MaxLaserLength { get; set; } = 12.0f;
 	[Export] public float MinimumLaserLength { get; set; } = 0.1f;
-	[Export] public float WallDistanceOffset { get; set; } = 0.22f;
+	[Export] public float WallDistanceOffset { get; set; } = 0.32f;
 	[Export] public float StripeWidth { get; set; } = 0.18f;
 	[Export(PropertyHint.Layers3DPhysics)]
 	public uint WorldCollisionMask { get; set; } = 1;
@@ -49,6 +49,10 @@ public partial class LaserStation : Node3D
 	[Export] public float HubRadius { get; set; } = 0.75f;
 	[Export] public bool ScaleCaptureAreaWithHub { get; set; } = true;
 	[Export] public float CaptureRadiusPadding { get; set; } = 0.9f;
+	[Export] public float HubCircleInset { get; set; } = 0.22f;
+	[Export] public Color HubCircleColor { get; set; } = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+	[Export(PropertyHint.Range, "0.05,1,0.01")]
+	public float HubCircleSoftEdge { get; set; } = 0.6f;
 
 	[ExportCategory("Expansion")]
 	[Export] public bool EnableExpandOnActivate { get; set; } = true;
@@ -118,16 +122,16 @@ public partial class LaserStation : Node3D
 
 	[ExportCategory("Combat")]
 	[Export] public float HitCooldownSeconds { get; set; } = 0.75f;
-	[Export] public float LaserWallHeight { get; set; } = 3.1f;
-	[Export] public float LaserWallThickness { get; set; } = 0.02f;
-	[Export] public float WallGroundEmbed { get; set; } = 0.18f;
+	[Export] public float LaserWallHeight { get; set; } = 2.3f;
+	[Export] public float LaserWallThickness { get; set; } = 0.08f;
+	[Export] public float WallGroundEmbed { get; set; } = 0.12f;
 	[Export(PropertyHint.Range, "0.05,1,0.01")]
 	public float WallFillAlpha { get; set; } = 0.22f;
 	[Export(PropertyHint.Range, "0.05,1,0.01")]
 	public float WallGlowAlpha { get; set; } = 0.3f;
-	[Export] public float WallGlowThicknessScale { get; set; } = 4.0f;
-	[Export] public float WallGlowHeightScale { get; set; } = 1.08f;
-	[Export] public float WallGlowEnergy { get; set; } = 7.5f;
+	[Export] public float WallGlowThicknessScale { get; set; } = 1.5f;
+	[Export] public float WallGlowHeightScale { get; set; } = 1.0f;
+	[Export] public float WallGlowEnergy { get; set; } = 5.0f;
 
 	public LaserOwner CurrentOwner { get; private set; } = LaserOwner.Neutral;
 
@@ -174,8 +178,11 @@ public partial class LaserStation : Node3D
 	private readonly List<RayCast3D> _laserRayCasts = new();
 
 	private StandardMaterial3D _stripeMaterial;
+	private ShaderMaterial _hubCircleMaterial;
 	private StandardMaterial3D _wallMaterial;
 	private StandardMaterial3D _wallGlowMaterial;
+	private MeshInstance3D _hubCircle;
+	private Shader _hubCircleShader;
 
 	private bool _captureLocked;
 	private bool _nodesReady;
@@ -212,6 +219,7 @@ public partial class LaserStation : Node3D
 		ConfigureCaptureTimer();
 		EnsureLifetimeTimer();
 		CreateMaterials();
+		EnsureHubCircle();
 		ApplyHubLayout();
 
 		if (RandomizeOnReady)
@@ -1136,7 +1144,7 @@ public partial class LaserStation : Node3D
 		);
 		float height = Mathf.Max(0.5f, LaserWallHeight);
 		float thickness = Mathf.Max(0.02f, LaserWallThickness);
-		float hub = GetHubRadius();
+		float hub = GetHubRadius() + thickness * 0.5f;
 		float safeReach = Mathf.Max(clampedLength, fullReachLength);
 		float halfLength = clampedLength * 0.5f;
 
@@ -1182,9 +1190,9 @@ public partial class LaserStation : Node3D
 
 		if (armIndex < _laserWallGlows.Count)
 		{
-			float glowThickness = thickness * Mathf.Max(1.2f, WallGlowThicknessScale);
-			float glowHeight = height * Mathf.Max(1.0f, WallGlowHeightScale);
-			float glowLength = Mathf.Max(0.02f, clampedLength * 0.98f);
+			float glowThickness = thickness * Mathf.Max(1.0f, WallGlowThicknessScale);
+			float glowHeight = height * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
+			float glowLength = Mathf.Max(0.02f, clampedLength);
 			float glowHalf = glowLength * 0.5f;
 			float glowCenterX = anchorOutside
 				? hub + fullReachLength - glowHalf
@@ -1253,6 +1261,13 @@ public partial class LaserStation : Node3D
 			CullMode = BaseMaterial3D.CullModeEnum.Disabled
 		};
 
+		_hubCircleShader ??= GD.Load<Shader>("res://resources/laser_station/hub_circle.gdshader");
+		_hubCircleMaterial = new ShaderMaterial
+		{
+			Shader = _hubCircleShader
+		};
+		ApplyHubCircleAlpha();
+
 		_wallMaterial = new StandardMaterial3D
 		{
 			ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
@@ -1280,6 +1295,36 @@ public partial class LaserStation : Node3D
 		};
 	}
 
+	private void EnsureHubCircle()
+	{
+		if (_hubCircle != null)
+		{
+			_hubCircle.MaterialOverride = _hubCircleMaterial;
+			return;
+		}
+
+		float diameter = GetHubCircleRadius() * 2.0f;
+		_hubCircle = new MeshInstance3D
+		{
+			Name = "HubCircle",
+			CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+			Mesh = new PlaneMesh
+			{
+				Size = new Vector2(diameter, diameter)
+			},
+			MaterialOverride = _hubCircleMaterial,
+			Position = new Vector3(0.0f, 0.03f, 0.0f)
+		};
+		AddChild(_hubCircle);
+	}
+
+	private float GetHubCircleRadius()
+	{
+		float hub = GetHubRadius();
+		float inset = Mathf.Max(0.05f, HubCircleInset);
+		return Mathf.Max(0.12f, hub - inset);
+	}
+
 	private void ApplyHubLayout()
 	{
 		float radius = GetHubRadius();
@@ -1294,6 +1339,12 @@ public partial class LaserStation : Node3D
 		{
 			captureShape.Radius = radius + Mathf.Max(0.1f, CaptureRadiusPadding);
 		}
+
+		if (_hubCircle?.Mesh is PlaneMesh planeMesh)
+		{
+			float diameter = GetHubCircleRadius() * 2.0f;
+			planeMesh.Size = new Vector2(diameter, diameter);
+		}
 	}
 
 	private void ApplyModeVisuals()
@@ -1307,6 +1358,11 @@ public partial class LaserStation : Node3D
 		foreach (Node3D floorMarks in _floorMarkRoots)
 		{
 			floorMarks.Visible = showPlaceholders;
+		}
+
+		if (_hubCircle != null)
+		{
+			_hubCircle.Visible = showPlaceholders;
 		}
 
 		foreach (MeshInstance3D wall in _laserWalls)
@@ -1329,6 +1385,7 @@ public partial class LaserStation : Node3D
 			);
 		}
 
+		ApplyHubCircleAlpha();
 		ApplyWallFadeVisuals();
 	}
 
@@ -1616,8 +1673,8 @@ public partial class LaserStation : Node3D
 
 	private MeshInstance3D CreateLaserWallGlow()
 	{
-		float height = Mathf.Max(0.5f, LaserWallHeight) * Mathf.Max(1.0f, WallGlowHeightScale);
-		float thickness = Mathf.Max(0.02f, LaserWallThickness) * Mathf.Max(1.2f, WallGlowThicknessScale);
+		float height = Mathf.Max(0.5f, LaserWallHeight) * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
+		float thickness = Mathf.Max(0.02f, LaserWallThickness) * Mathf.Max(1.0f, WallGlowThicknessScale);
 		float startFactor = EnableExpandOnActivate
 			? GetExpandStartFactor()
 			: 1.0f;
@@ -1980,6 +2037,19 @@ public partial class LaserStation : Node3D
 			PlaceholderColor.B,
 			_placeholderAlpha
 		);
+		ApplyHubCircleAlpha();
+	}
+
+	private void ApplyHubCircleAlpha()
+	{
+		if (_hubCircleMaterial == null)
+		{
+			return;
+		}
+
+		_hubCircleMaterial.SetShaderParameter("circle_color", HubCircleColor);
+		_hubCircleMaterial.SetShaderParameter("soft_edge", HubCircleSoftEdge);
+		_hubCircleMaterial.SetShaderParameter("alpha_mul", _placeholderAlpha);
 	}
 
 	private void OnLifetimeTimeout()
