@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://csvrqxxmh6fgu"]
+
+[ext_resource type="Script" uid="uid://cooqqeghu54dq" path="res://player/Player.cs" id="1_8ak8y"]
+[ext_resource type="ArrayMesh" uid="uid://c7kwiukx1b3j3" path="res://player/burglar_body.vox" id="2_gndvh"]
+[ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="3_83hs8"]
+[ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="4_x8kxw"]
+
+[sub_resource type="Animation" id="Animation_8ak8y"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_gndvh"]
+resource_name = "walk"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
+_data = {
+&"idle": SubResource("Animation_8ak8y"),
+&"walk": SubResource("Animation_gndvh")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8ak8y"]
+size = Vector3(0.5316162, 1.102396, 0.86826706)
+
+[node name="Player" type="CharacterBody3D" unique_id=845121509 node_paths=PackedStringArray("_animationPlayer")]
+collision_layer = 2
+script = ExtResource("1_8ak8y")
+_animationPlayer = NodePath("AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1844725914]
+libraries/ = SubResource("AnimationLibrary_gndvh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1686967469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+shape = SubResource("BoxShape3D_8ak8y")
+
+[node name="MeshRoot" type="Node3D" parent="." unique_id=1487964443]
+
+[node name="BurglarBody" type="MeshInstance3D" parent="MeshRoot" unique_id=1733556175]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0, -0.6, 0)
+mesh = ExtResource("2_gndvh")
+
+[node name="BurglarHandL" type="MeshInstance3D" parent="MeshRoot" unique_id=1702706192]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
+mesh = ExtResource("4_x8kxw")
+
+[node name="BurglarHandR" type="MeshInstance3D" parent="MeshRoot" unique_id=573512098]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.608, 0, 0)
+mesh = ExtResource("4_x8kxw")
+
+[node name="BurglarBootL" type="MeshInstance3D" parent="MeshRoot" unique_id=112262616]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.3, -0.6, 0)
+mesh = ExtResource("3_83hs8")
+
+[node name="BurglarBootR" type="MeshInstance3D" parent="MeshRoot" unique_id=1879685013]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.309, -0.6, 0)
+mesh = ExtResource("3_83hs8")

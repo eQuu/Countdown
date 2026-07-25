@@ -24,6 +24,10 @@ window/stretch/aspect="expand"
 
 project/assembly_name="Countdown"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/MagicaVoxel_Importer_with_Extensions/plugin.cfg")
+
 [input]
 
 MoveUpPlayer1={

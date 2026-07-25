@@ -1,10 +1,8 @@
 [gd_scene format=3 uid="uid://bxu3gvf1e5lfq"]
 
-[ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://objects/Player.tscn" id="1_0bpjf"]
 [ext_resource type="Material" uid="uid://draoasm7bblal" path="res://floor/materials/FloorMaterial2.tres" id="1_kgmhh"]
+[ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://player/Player.tscn" id="1_0bpjf"]
 [ext_resource type="PackedScene" uid="uid://crygc3hghlciq" path="res://scenes/laser_station/laser_station.tscn" id="2_station"]
-[ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_wnhdf"]
-[ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_kgmhh"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -14,16 +12,19 @@ ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
 sky_material = SubResource("ProceduralSkyMaterial_u1gpl")
 
 [sub_resource type="Environment" id="Environment_62bee"]
-background_mode = 1
+background_mode = 2
 sky = SubResource("Sky_0bpjf")
 glow_enabled = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
-material = ExtResource("1_kgmhh")
-size = Vector3(74, 0.2, 34)
+size = Vector3(60, 0.2, 60)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.18, 0.2, 0.22, 1)
+roughness = 0.85
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(80, 0.2, 40)
+size = Vector3(60, 0.2, 60)
 
 [sub_resource type="BoxMesh" id="BoxMesh_testwall"]
 size = Vector3(0.4, 3, 8)
@@ -49,87 +50,10 @@ collision_mask = 0
 
 [node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=739351530]
 mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
 
 [node name="Collision" type="CollisionShape3D" parent="Floor" unique_id=236958698]
 shape = SubResource("BoxShape3D_floor")
-
-[node name="Walls" type="Node3D" parent="." unique_id=1149750170]
-
-[node name="Top" type="Node3D" parent="Walls" unique_id=5621477]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.6)
-
-[node name="BaroqueCornerLeft" parent="Walls/Top" unique_id=740356097 instance=ExtResource("3_kgmhh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0, 4.6)
-
-[node name="Baroque-3" parent="Walls/Top" unique_id=319781714 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
-
-[node name="Baroque-2" parent="Walls/Top" unique_id=153168308 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
-
-[node name="Baroque-1" parent="Walls/Top" unique_id=577558575 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
-
-[node name="Baroque0" parent="Walls/Top" unique_id=863330998 instance=ExtResource("2_wnhdf")]
-
-[node name="Baroque1" parent="Walls/Top" unique_id=1078418118 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
-
-[node name="Baroque2" parent="Walls/Top" unique_id=1919738396 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
-
-[node name="Baroque3" parent="Walls/Top" unique_id=735082542 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
-
-[node name="BaroqueCornerRight" parent="Walls/Top" unique_id=1556466994 instance=ExtResource("3_kgmhh")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 32, 0, 4.6)
-
-[node name="Bottom" type="Node3D" parent="Walls" unique_id=699816547]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 16.6)
-
-[node name="BaroqueCornerLeft" parent="Walls/Bottom" unique_id=1240465413 instance=ExtResource("3_kgmhh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0, 4.6)
-
-[node name="Baroque-3" parent="Walls/Bottom" unique_id=56482795 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
-
-[node name="Baroque-2" parent="Walls/Bottom" unique_id=2112685835 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
-
-[node name="Baroque-1" parent="Walls/Bottom" unique_id=492933755 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
-
-[node name="Baroque0" parent="Walls/Bottom" unique_id=1552614278 instance=ExtResource("2_wnhdf")]
-
-[node name="Baroque1" parent="Walls/Bottom" unique_id=1948445847 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
-
-[node name="Baroque2" parent="Walls/Bottom" unique_id=1240979761 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
-
-[node name="Baroque3" parent="Walls/Bottom" unique_id=1163989301 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
-
-[node name="BaroqueCornerRight" parent="Walls/Bottom" unique_id=1044144399 instance=ExtResource("3_kgmhh")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 32, 0, 4.6)
-
-[node name="Left" type="Node3D" parent="Walls" unique_id=520588830]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.6, 0, 0)
-
-[node name="Baroque-1" parent="Walls/Left" unique_id=374004759 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 4)
-
-[node name="Baroque1" parent="Walls/Left" unique_id=152128537 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
-
-[node name="Right" type="Node3D" parent="Walls" unique_id=752237861]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 36.6, 0, 0)
-
-[node name="Baroque-1" parent="Walls/Right" unique_id=1680578857 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 4)
-
-[node name="Baroque1" parent="Walls/Right" unique_id=852394868 instance=ExtResource("2_wnhdf")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -4)
 
 [node name="TestWall" type="StaticBody3D" parent="." unique_id=1395480251]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 0)
@@ -182,3 +106,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 1, -0.424)
 
 [node name="Player2" parent="." unique_id=845121509 instance=ExtResource("1_0bpjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.76446, 1, -0.424)
+PlayerId = 2
