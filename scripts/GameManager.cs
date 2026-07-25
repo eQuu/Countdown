@@ -37,7 +37,7 @@ public partial class GameManager : Node3D
 	[Export] public float TimeoutStunSeconds { get; set; } = 2.5f;
 
 	[ExportCategory("Score")]
-	[Export] public int MaxScore { get; set; } = 2;
+	[Export] public int MaxScore { get; set; } = 20;
 	[Export] public Color PlayerOneScoreColor { get; set; } = new Color(0.1f, 0.4f, 1.0f);
 	[Export] public Color PlayerTwoScoreColor { get; set; } = new Color(1.0f, 0.15f, 0.1f);
 
@@ -93,6 +93,7 @@ public partial class GameManager : Node3D
 		WireChallengeLabels();
 		ConnectPlayerSignals();
 		ApplyPlayerColorsFromStore();
+		ApplyMaxRoundsFromStore();
 		GameStore.Instance?.SetScores(PlayerOneScore, PlayerTwoScore);
 		UpdateScoreLabels();
 		LightingManager?.DeactivateCeilingLights();
@@ -354,6 +355,17 @@ public partial class GameManager : Node3D
 
 		PlayerOne?.SetIndicatorColor(PlayerOneScoreColor);
 		PlayerTwo?.SetIndicatorColor(PlayerTwoScoreColor);
+	}
+
+	private void ApplyMaxRoundsFromStore()
+	{
+		if (GameStore.Instance == null)
+		{
+			return;
+		}
+
+		MaxScore = GameStore.Instance.MaxRounds;
+		GD.Print($"GameManager: MaxScore set from store to {MaxScore}");
 	}
 
 	private void OnCountdownEvaluated(

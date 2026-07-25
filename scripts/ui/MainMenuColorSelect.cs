@@ -105,6 +105,11 @@ public partial class MainMenuColorSelect : Node3D
 			return;
 		}
 
+		if (MainMenuHelp.Instance != null && MainMenuHelp.Instance.IsOpen)
+		{
+			return;
+		}
+
 		if (@event.IsActionPressed(StartAction, allowEcho: false, exactMatch: false))
 		{
 			TryStartMatch();
@@ -118,6 +123,11 @@ public partial class MainMenuColorSelect : Node3D
 
 	private void TryStartMatch()
 	{
+		if (MainMenuHelp.Instance != null && MainMenuHelp.Instance.IsOpen)
+		{
+			return;
+		}
+
 		if (!_playerOne.Confirmed || !_playerTwo.Confirmed)
 		{
 			return;
@@ -135,6 +145,11 @@ public partial class MainMenuColorSelect : Node3D
 
 	public override void _Process(double delta)
 	{
+		if (MainMenuHelp.Instance != null && MainMenuHelp.Instance.IsOpen)
+		{
+			return;
+		}
+
 		float dt = (float)delta;
 		UpdateStickInput(_playerOne, OpponentBlockedIndex(_playerOne), dt, deviceId: 0);
 		UpdateStickInput(_playerTwo, OpponentBlockedIndex(_playerTwo), dt, deviceId: 1);

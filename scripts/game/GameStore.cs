@@ -45,6 +45,14 @@ public partial class GameStore : Node
 
 	public int WinnerPlayerId { get; private set; }
 
+	public static readonly int[] MaxRoundsOptions = [5, 10, 15, 20];
+	public const int DefaultMaxRounds = 20;
+
+	public int MaxRounds { get; private set; } = DefaultMaxRounds;
+
+	[Signal]
+	public delegate void MaxRoundsChangedEventHandler(int maxRounds);
+
 	public const string MainMenuScenePath = "res://main_menu.tscn";
 	public const string IngameScenePath = "res://ingame.tscn";
 	public const string GameOverScenePath = "res://game_over.tscn";
@@ -55,6 +63,7 @@ public partial class GameStore : Node
 		SyncColorKeys();
 		SyncScoreKeys();
 		SyncWinnerKey();
+		SyncMaxRoundsKey();
 	}
 
 	public override void _ExitTree()
@@ -210,6 +219,49 @@ public partial class GameStore : Node
 		SetWinner(0);
 	}
 
+	public void SetMaxRounds(int maxRounds)
+	{
+		int next = NormalizeMaxRounds(maxRounds);
+		if (MaxRounds == next)
+		{
+			return;
+		}
+
+		MaxRounds = next;
+		SyncMaxRoundsKey();
+		EmitSignal(SignalName.MaxRoundsChanged, MaxRounds);
+	}
+
+	public int CycleMaxRounds()
+	{
+		int index = 0;
+		for (int i = 0; i < MaxRoundsOptions.Length; i++)
+		{
+			if (MaxRoundsOptions[i] == MaxRounds)
+			{
+				index = i;
+				break;
+			}
+		}
+
+		int next = MaxRoundsOptions[(index + 1) % MaxRoundsOptions.Length];
+		SetMaxRounds(next);
+		return MaxRounds;
+	}
+
+	public static int NormalizeMaxRounds(int maxRounds)
+	{
+		foreach (int option in MaxRoundsOptions)
+		{
+			if (option == maxRounds)
+			{
+				return option;
+			}
+		}
+
+		return DefaultMaxRounds;
+	}
+
 	public void GoToMainMenu()
 	{
 		ResetScores();
@@ -322,5 +374,10 @@ public partial class GameStore : Node
 	private void SyncWinnerKey()
 	{
 		_values["winner_player_id"] = WinnerPlayerId;
+	}
+
+	private void SyncMaxRoundsKey()
+	{
+		_values["max_rounds"] = MaxRounds;
 	}
 }

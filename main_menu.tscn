@@ -21,6 +21,9 @@
 [ext_resource type="Script" uid="uid://ckuhgdd0tck2" path="res://scripts/ui/MainMenuColorSelect.cs" id="19_colorselect"]
 [ext_resource type="Script" uid="uid://c8a1k3tnkbsv6" path="res://scripts/ui/MainMenuPromptLabel.cs" id="20_prompt"]
 [ext_resource type="Script" uid="uid://2nv8d2mhfqy2" path="res://scripts/ui/PlayerMainMenuAnimation.cs" id="21_pmm_anim"]
+[ext_resource type="Script" uid="uid://b14t67jjud254" path="res://scripts/ui/MainMenuHelp.cs" id="22_help"]
+[ext_resource type="Script" uid="uid://c5p01yfdoreu" path="res://scripts/ui/PixelFramePanel.cs" id="23_pixel_frame"]
+[ext_resource type="Script" uid="uid://ccx6bpdiwro2u" path="res://scripts/ui/MainMenuMaxRounds.cs" id="24_max_rounds"]
 
 [sub_resource type="Environment" id="Environment_vegko"]
 background_mode = 1
@@ -762,3 +765,124 @@ label_settings = SubResource("LabelSettings_prompt")
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("20_prompt")
+
+[node name="MaxRoundsLabel" type="Label" parent="MenuUI" unique_id=1888223412]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = 52.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = SubResource("SystemFont_prompt")
+theme_override_font_sizes/font_size = 22
+text = "rounds: 20"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="HelpHintLabel" type="Label" parent="MenuUI" unique_id=1888223403]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -110.0
+offset_right = -40.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = SubResource("SystemFont_prompt")
+theme_override_font_sizes/font_size = 36
+text = "press select or F1 for help"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("20_prompt")
+
+[node name="HelpOverlay" type="Control" parent="MenuUI" unique_id=1888223404]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="MenuUI/HelpOverlay" unique_id=1888223405]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Frame" type="Panel" parent="MenuUI/HelpOverlay" unique_id=1888223406]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -420.0
+offset_top = -260.0
+offset_right = 420.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("23_pixel_frame")
+
+[node name="Margin" type="MarginContainer" parent="MenuUI/HelpOverlay/Frame" unique_id=1888223407]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 36
+
+[node name="VBox" type="VBoxContainer" parent="MenuUI/HelpOverlay/Frame/Margin" unique_id=1888223408]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="MenuUI/HelpOverlay/Frame/Margin/VBox" unique_id=1888223409]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = SubResource("SystemFont_prompt")
+theme_override_font_sizes/font_size = 40
+text = "HOW TO PLAY"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="MenuUI/HelpOverlay/Frame/Margin/VBox" unique_id=1888223410]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.9, 0.92, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = SubResource("SystemFont_prompt")
+theme_override_font_sizes/font_size = 22
+text = "1v1 arena game
+
+Press Select or F1 again to close"
+autowrap_mode = 3
+
+[node name="HelpController" type="Node" parent="MenuUI" unique_id=1888223411 node_paths=PackedStringArray("Overlay", "HintLabel")]
+script = ExtResource("22_help")
+Overlay = NodePath("../HelpOverlay")
+HintLabel = NodePath("../HelpHintLabel")
+
+[node name="MaxRoundsController" type="Node" parent="MenuUI" unique_id=1888223413 node_paths=PackedStringArray("ValueLabel")]
+script = ExtResource("24_max_rounds")
+ValueLabel = NodePath("../MaxRoundsLabel")
