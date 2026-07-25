@@ -20,7 +20,7 @@
 [ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="18_3xhsb"]
 [ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="19_7eg23"]
 [ext_resource type="Script" uid="uid://rxqc0io6tse7" path="res://PlayerCheerScript.cs" id="19_k7c8f"]
-[ext_resource type="Script" path="res://scripts/ui/MainMenuButton.cs" id="20_mainmenu_btn"]
+[ext_resource type="Script" uid="uid://dio0h15g10jk5" path="res://scripts/ui/GameOverReturnPrompt.cs" id="20_return_prompt"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -609,6 +609,17 @@ shader_parameter/emission_boost = 2.5
 material = SubResource("ShaderMaterial_y0fv6")
 size = Vector2(1.35, 1.35)
 
+[sub_resource type="SystemFont" id="SystemFont_prompt"]
+font_names = PackedStringArray("Georgia", "Times New Roman", "serif")
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font = SubResource("SystemFont_prompt")
+font_size = 40
+font_color = Color(0.95, 0.96, 0.98, 1)
+outline_size = 12
+outline_color = Color(0, 0, 0, 0.9)
+
 [node name="GameOver" type="Node3D" unique_id=198145086]
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=316426250]
@@ -618,7 +629,7 @@ autoplay = true
 parameters/looping = true
 
 [node name="LoserScoreLabel" type="Label3D" parent="." unique_id=1693886260]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 6, 15)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -28, 6, 15)
 pixel_size = 0.022
 modulate = Color(0.1, 0.4, 1, 1)
 outline_modulate = Color(0, 0, 0, 0.85)
@@ -908,10 +919,27 @@ mesh = ExtResource("19_7eg23")
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="Button" type="Button" parent="." unique_id=683192253]
-offset_left = 573.0
-offset_top = 523.0
-offset_right = 700.0
-offset_bottom = 587.0
-text = "Main Menu"
-script = ExtResource("20_mainmenu_btn")
+[node name="MenuUI" type="CanvasLayer" parent="." unique_id=683192253]
+layer = 100
+
+[node name="PromptLabel" type="Label" parent="MenuUI" unique_id=683192254]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -197.0
+offset_right = -40.0
+offset_bottom = -133.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = SubResource("SystemFont_prompt")
+theme_override_font_sizes/font_size = 40
+text = "back to main menu with start or space"
+label_settings = SubResource("LabelSettings_prompt")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("20_return_prompt")
