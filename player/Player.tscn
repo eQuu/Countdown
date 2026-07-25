@@ -5,14 +5,106 @@
 [ext_resource type="ArrayMesh" uid="uid://4h5hc764gso5" path="res://player/burglar_boot.vox" id="3_83hs8"]
 [ext_resource type="ArrayMesh" uid="uid://m38ej0emund6" path="res://player/burglar_hand.vox" id="4_x8kxw"]
 
+[sub_resource type="Animation" id="Animation_83hs8"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.608, 0, 0)
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_8ak8y"]
 resource_name = "idle"
 
 [sub_resource type="Animation" id="Animation_gndvh"]
 resource_name = "walk"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarBootL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.3, -0.6, 0, 0.25, 1, 0.3, -0.6, 0.5, 0.5, 1, 0.3, -0.6, 0, 0.75, 1, 0.3, -0.6, -0.5, 1, 1, 0.3, -0.6, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarBootR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.3, -0.6, 0, 0.25, 1, -0.3, -0.6, -0.5, 0.5, 1, -0.3, -0.6, 0, 0.75, 1, -0.3, -0.6, 0.5, 1, 1, -0.3, -0.6, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarHandL")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.25, 1, 0.6, 0, -0.5, 0.5, 1, 0.6, 0, 0, 0.75, 1, 0.6, 0, 0.5, 1, 1, 0.6, 0, 0)
+tracks/3/type = "position_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/BurglarHandR")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.6, 0, 0, 0.25, 1, -0.6, 0, 0.5, 0.5, 1, -0.6, 0, 0, 0.75, 1, -0.6, 0, -0.5, 1, 1, -0.6, 0, 0)
+tracks/4/type = "position_3d"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/BurglarBody")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.25, 1, 0, -0.5, 0, 0.5, 1, 0, -0.6, 0, 0.75, 1, 0, -0.5, 0, 1, 1, 0, -0.6, 0)
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/BurglarBody:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0, -1.3962634, 0), Vector3(0, -1.5707964, 0), Vector3(0, -1.7453293, 0), Vector3(0, -1.5707964, 0)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
 _data = {
+&"RESET": SubResource("Animation_83hs8"),
 &"idle": SubResource("Animation_8ak8y"),
 &"walk": SubResource("Animation_gndvh")
 }
@@ -35,11 +127,11 @@ shape = SubResource("BoxShape3D_8ak8y")
 [node name="MeshRoot" type="Node3D" parent="." unique_id=1487964443]
 
 [node name="BurglarBody" type="MeshInstance3D" parent="MeshRoot" unique_id=1733556175]
-transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0, -0.6, 0)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.5839681, 0)
 mesh = ExtResource("2_gndvh")
 
 [node name="BurglarHandL" type="MeshInstance3D" parent="MeshRoot" unique_id=1702706192]
-transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0.6, 0, 0)
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0, 0, 0)
 mesh = ExtResource("4_x8kxw")
 
 [node name="BurglarHandR" type="MeshInstance3D" parent="MeshRoot" unique_id=573512098]
@@ -51,5 +143,5 @@ transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-
 mesh = ExtResource("3_83hs8")
 
 [node name="BurglarBootR" type="MeshInstance3D" parent="MeshRoot" unique_id=1879685013]
-transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.309, -0.6, 0)
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 0, 0, 0)
 mesh = ExtResource("3_83hs8")
