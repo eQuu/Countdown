@@ -1,24 +1,41 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://b2rssp7v0lpu2"]
 
-[ext_resource type="Script" path="res://scripts/GameManager.cs" id="1_gamemanager"]
-[ext_resource type="Script" path="res://scripts/game/CountdownChallengeManager.cs" id="2_challenge"]
+[ext_resource type="Script" uid="uid://d2m1jtvqyuof5" path="res://scripts/GameManager.cs" id="1_gamemanager"]
+[ext_resource type="Script" uid="uid://b3qc7xcojb5hr" path="res://scripts/game/CountdownChallengeManager.cs" id="2_challenge"]
 
-[node name="GameManager" type="Node3D" node_paths=PackedStringArray("_countdownChallenge", "GlobalCountdownLabel")]
+[node name="GameManager" type="Node3D" unique_id=968510528 node_paths=PackedStringArray("_countdownChallenge", "GlobalCountdownLabel", "PlayerOneScoreLabel", "PlayerTwoScoreLabel")]
 script = ExtResource("1_gamemanager")
 _countdownChallenge = NodePath("CountdownChallengeManager")
 GlobalCountdownLabel = NodePath("GlobalCountdownLabel")
+PlayerOneScoreLabel = NodePath("PlayerOneScoreLabel")
+PlayerTwoScoreLabel = NodePath("PlayerTwoScoreLabel")
 
-[node name="GlobalCountdownLabel" type="Label3D" parent="."]
+[node name="GlobalCountdownLabel" type="Label3D" parent="." unique_id=1879368275]
 pixel_size = 0.02
+outline_modulate = Color(0, 0, 0, 0.85)
 text = "15"
 font_size = 128
 outline_size = 16
-outline_modulate = Color(0, 0, 0, 0.85)
-horizontal_alignment = 1
-vertical_alignment = 1
-cast_shadow = 0
 
-[node name="CountdownChallengeManager" type="Node" parent="." node_paths=PackedStringArray("GlobalCountdownLabel")]
+[node name="PlayerOneScoreLabel" type="Label3D" parent="." unique_id=632539700]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 0)
+pixel_size = 0.022
+modulate = Color(0.1, 0.4, 1, 1)
+outline_modulate = Color(0, 0, 0, 0.85)
+text = "0"
+font_size = 180
+outline_size = 20
+
+[node name="PlayerTwoScoreLabel" type="Label3D" parent="." unique_id=396134123]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 0)
+pixel_size = 0.022
+modulate = Color(1, 0.15, 0.1, 1)
+outline_modulate = Color(0, 0, 0, 0.85)
+text = "0"
+font_size = 180
+outline_size = 20
+
+[node name="CountdownChallengeManager" type="Node" parent="." unique_id=1113726622 node_paths=PackedStringArray("GlobalCountdownLabel")]
 script = ExtResource("2_challenge")
-AutoStart = false
 GlobalCountdownLabel = NodePath("../GlobalCountdownLabel")
+AutoStart = false

@@ -2,6 +2,9 @@ using Godot;
 
 public partial class Player : CharacterBody3D, ILaserPlayer
 {
+	[Signal]
+	public delegate void PlayerDiedEventHandler(int victimPlayerId, int attackingPlayerId);
+
 	[Export] private AnimationPlayer _animationPlayer;
 	[Export] private Label3D _lockedTimeLabel;
 	[Export] private CpuParticles3D _particlesSkin;
@@ -101,6 +104,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_respawnTimeLeft = RespawnDelaySeconds;
 		Velocity = Vector3.Zero;
 		GD.Print($"Player {PlayerId} hit by laser of player {attackingPlayerId}");
+		EmitSignal(SignalName.PlayerDied, PlayerId, attackingPlayerId);
 	}
 
 	public void ApplyStun(float durationSeconds = -1.0f)
