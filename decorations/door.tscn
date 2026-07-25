@@ -1,3 +1,37 @@
 [gd_scene format=3 uid="uid://c02rhkracheqr"]
 
+[ext_resource type="Material" uid="uid://bb4ahwyc0k4yn" path="res://decorations/materials/door/DoorMaterial.tres" id="1_ys6si"]
+[ext_resource type="Material" uid="uid://bgm83mbcxtiok" path="res://decorations/materials/door/HandleMaterial.tres" id="2_1ecw3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_bj4t2"]
+material = ExtResource("1_ys6si")
+size = Vector3(10, 20, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_bj4t2"]
+material = ExtResource("2_1ecw3")
+radius = 1.0
+height = 2.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bj4t2"]
+size = Vector3(4.2, 10, 1)
+
 [node name="Door" type="Node3D" unique_id=444444557]
+
+[node name="Scale" type="Node3D" parent="." unique_id=1207081826]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+
+[node name="Door" type="MeshInstance3D" parent="Scale" unique_id=88669414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+mesh = SubResource("BoxMesh_bj4t2")
+
+[node name="Handle" type="Node3D" parent="Scale" unique_id=1763433659]
+
+[node name="Sphere" type="MeshInstance3D" parent="Scale/Handle" unique_id=2107349179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 9, 0.5)
+mesh = SubResource("SphereMesh_bj4t2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=672946372]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=270109918]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+shape = SubResource("BoxShape3D_bj4t2")

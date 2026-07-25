@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://d1n8ab8h47eyr" path="res://sfx/countdownwarn.wav" id="4_ox1sw"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_pu7co"]
 [ext_resource type="AudioStream" uid="uid://breqf31ynofi4" path="res://sfx/kill.wav" id="4_pyieu"]
-[ext_resource type="PackedScene" uid="uid://b2rssp7v0lpu2" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
+[ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="5_gamemanager"]
 [ext_resource type="Texture2D" uid="uid://b6nvxa1nvjkcv" path="res://paintings/the_scream.jpg" id="6_8g0if"]
 [ext_resource type="PackedScene" uid="uid://dgiqoq372b7tc" path="res://decorations/large_painting.tscn" id="7_ic5ef"]
 [ext_resource type="Texture2D" uid="uid://ddx3t0l0ynyiu" path="res://paintings/smell.jpg" id="7_ooucj"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://b4f0jhca22hlp" path="res://paintings/die_katzenfamilie.jpg" id="8_phpej"]
 [ext_resource type="PackedScene" uid="uid://c5aha0ysfslje" path="res://decorations/beaver_statue.tscn" id="12_vj2cp"]
 [ext_resource type="PackedScene" uid="uid://cwjyhdaplmmwx" path="res://camera/SurveillanceCamera.tscn" id="14_vj2cp"]
+[ext_resource type="PackedScene" uid="uid://c02rhkracheqr" path="res://decorations/door.tscn" id="19_ox1sw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_u1gpl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -180,7 +181,19 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0
 
 [node name="LeftWall" type="Node3D" parent="Decorations" unique_id=118141339]
 
+[node name="LeftDoor" parent="Decorations/LeftWall" unique_id=444444557 instance=ExtResource("19_ox1sw")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -36, 0, 11)
+
+[node name="RightDoor" parent="Decorations/LeftWall" unique_id=1122981646 instance=ExtResource("19_ox1sw")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, 1, 0, -4.371139e-08, -36, 0, 7)
+
 [node name="RightWall" type="Node3D" parent="Decorations" unique_id=2056478776]
+
+[node name="LeftDoor" parent="Decorations/RightWall" unique_id=136418188 instance=ExtResource("19_ox1sw")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 36, 0, 7)
+
+[node name="RightDoor" parent="Decorations/RightWall" unique_id=626374979 instance=ExtResource("19_ox1sw")]
+transform = Transform3D(-4.371139e-08, -3.821371e-15, -1, -8.742278e-08, 1, 0, -1, -8.742278e-08, 4.371139e-08, 36, 0, 11)
 
 [node name="TopWall" type="Node3D" parent="Decorations" unique_id=1205001193]
 
