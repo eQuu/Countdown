@@ -873,9 +873,15 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = SubResource("SystemFont_prompt")
 theme_override_font_sizes/font_size = 22
-text = "1v1 arena game
+text = "During your museum heist both of you decided it is best to not share the loot and get rid of the other player. Since you are both skilled hackers, you can override the defense grids by moving into its center.
 
-Press Select or F1 again to close"
+The night guardian will look through the cameras every 15 seconds. You will have to cancel his access by pressing button 1 (Q / P) as close as possible to the timer hitting 0:00. If both of you fail to do so, the warden will turn on the light and you are forced to stand still.
+
+Use Button 0 (CTRL / O) to dash under the lasers.
+
+Change the number of rounds with SELECT (F2)
+
+Press SELECT or F1 again to close"
 autowrap_mode = 3
 
 [node name="HelpController" type="Node" parent="MenuUI" unique_id=1888223411 node_paths=PackedStringArray("Overlay", "HintLabel")]
