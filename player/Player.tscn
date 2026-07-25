@@ -57,6 +57,31 @@ tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = PackedFloat32Array(0, 1, 0, -0.6, 0)
 
+[sub_resource type="Animation" id="Animation_gskgj"]
+resource_name = "cheer"
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/BurglarHandL")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.6, 0, 0, 0.2, 1, 0.6, 0.3, 0, 0.4, 1, 0.6, 0, 0, 0.6, 1, 0.6, 0.3, 0, 0.8, 1, 0.6, 0, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/BurglarHandR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.6, -0.2, 0, 0.5, 1, -0.6, -0.25, 0, 1, 1, -0.6, -0.2, 0)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/BurglarBody")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0, -0.6, 0, 0.5, 1, 0, -0.55, 0, 1, 1, 0, -0.6, 0)
+
 [sub_resource type="Animation" id="Animation_x8kxw"]
 resource_name = "dash"
 loop_mode = 1
@@ -232,6 +257,7 @@ tracks/5/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gndvh"]
 _data = {
 &"RESET": SubResource("Animation_83hs8"),
+&"cheer": SubResource("Animation_gskgj"),
 &"dash": SubResource("Animation_x8kxw"),
 &"idle": SubResource("Animation_8ak8y"),
 &"stun": SubResource("Animation_aqcbf"),
