@@ -50,8 +50,9 @@ _ceilingLights = NodePath("../CeilingLights")
 _darkLights = NodePath("../DarkLights")
 _paintings = [NodePath("../Decorations/TopWall/LargePainting-2"), NodePath("../Decorations/TopWall/LargePainting-1"), NodePath("../Decorations/TopWall/LargePainting1"), NodePath("../Decorations/TopWall/LargePainting2")]
 
-[node name="GameManager" parent="." unique_id=11230437 instance=ExtResource("5_gamemanager")]
+[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("LightingManager") instance=ExtResource("5_gamemanager")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.08274126, 9.596172, -19.327)
+LightingManager = NodePath("../LightingManager")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
@@ -169,14 +170,12 @@ PaintingTexture = ExtResource("6_8g0if")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 5.2, -15.8)
 PaintingTexture = ExtResource("7_snqyf")
 
-[node name="LargePainting1" parent="Decorations/TopWall" unique_id=1329472020 node_paths=PackedStringArray("_spotLights") instance=ExtResource("7_ic5ef")]
+[node name="LargePainting1" parent="Decorations/TopWall" unique_id=1329472020 instance=ExtResource("7_ic5ef")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 5.2, -15.8)
-_spotLights = [NodePath("../LargePainting-1/Scale/LeftSpotLight3D"), NodePath("../LargePainting-1/Scale/MiddleSpotLight3D"), NodePath("../LargePainting-1/Scale/RightSpotLight3D")]
 PaintingTexture = ExtResource("8_phpej")
 
-[node name="LargePainting2" parent="Decorations/TopWall" unique_id=934946559 node_paths=PackedStringArray("_spotLights") instance=ExtResource("7_ic5ef")]
+[node name="LargePainting2" parent="Decorations/TopWall" unique_id=934946559 instance=ExtResource("7_ic5ef")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 5.2, -15.8)
-_spotLights = [NodePath("../LargePainting-1/Scale/LeftSpotLight3D"), NodePath("../LargePainting-1/Scale/MiddleSpotLight3D"), NodePath("../LargePainting-1/Scale/RightSpotLight3D")]
 PaintingTexture = ExtResource("7_ooucj")
 
 [node name="BottomWall" type="Node3D" parent="Decorations" unique_id=1937086962]
@@ -212,7 +211,6 @@ light_energy = 5.0
 omni_range = 50.0
 
 [node name="CeilingLights" type="Node3D" parent="." unique_id=868605658]
-visible = false
 
 [node name="SpotLight3D-1" type="SpotLight3D" parent="CeilingLights" unique_id=1035175167]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -28, 10, -8)

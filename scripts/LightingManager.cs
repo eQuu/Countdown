@@ -13,7 +13,7 @@ public partial class LightingManager : Node
     {
         if (_ceilingLights == null || _darkLights == null || _paintings == null) return;
 
-        foreach (var painting in _paintings) painting.Visible = false;
+        foreach (var painting in _paintings) painting.DeactivateLighting();
         _darkLights.Visible = false;
         _ceilingLights.Visible = true;
     }
@@ -24,6 +24,6 @@ public partial class LightingManager : Node
 
         _ceilingLights.Visible = false;
         _darkLights.Visible = true;
-        foreach (var painting in _paintings) painting.Visible = true;
+        foreach (var painting in _paintings) painting.ActivateLighting();
     }
 }

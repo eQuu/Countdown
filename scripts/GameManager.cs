@@ -1,3 +1,4 @@
+using Countdown.scripts;
 using Godot;
 using Countdown.Scripts.Game;
 
@@ -16,6 +17,9 @@ public partial class GameManager : Node3D
 	[Export] public Player PlayerOne { get; set; }
 	[Export] public Player PlayerTwo { get; set; }
 
+	[ExportCategory("Managers")]
+	[Export] public LightingManager LightingManager { get; set; }
+
 	public CountdownChallengeManager Challenge => _countdownChallenge;
 
 	public override void _Ready()
@@ -23,6 +27,7 @@ public partial class GameManager : Node3D
 		ResolveChallengeManager();
 		ConnectChallengeSignals();
 		CallDeferred(MethodName.BeginChallengeAfterTreeReady);
+		LightingManager.DeactivateCeilingLights(); // Licht wird zum Spielstart ausgemacht
 	}
 
 	public override void _ExitTree()
@@ -171,5 +176,7 @@ public partial class GameManager : Node3D
 		GD.Print(
 			$"Both players allowed the countdown to reach {timeoutValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}."
 		);
+
+		LightingManager.ActivateCeilingLights();
 	}
 }
