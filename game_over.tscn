@@ -568,6 +568,45 @@ _data = {
 &"walk": SubResource("Animation_7eg23")
 }
 
+[sub_resource type="Shader" id="Shader_k7c8f"]
+code = "shader_type spatial;
+render_mode unshaded, cull_disabled, depth_draw_never, blend_add, fog_disabled;
+
+uniform vec4 ring_color : source_color = vec4(0.1, 0.4, 1.0, 0.95);
+uniform float inner_radius : hint_range(0.0, 0.95) = 0.74;
+uniform float outer_softness : hint_range(0.01, 0.5) = 0.1;
+uniform float inner_softness : hint_range(0.01, 0.5) = 0.07;
+uniform float emission_boost : hint_range(0.0, 8.0) = 2.5;
+
+void fragment() {
+	vec2 centered = UV * 2.0 - 1.0;
+	float dist = length(centered);
+	float outer = 1.0 - smoothstep(1.0 - outer_softness, 1.0, dist);
+	float inner = smoothstep(inner_radius - inner_softness, inner_radius, dist);
+	float ring = outer * inner;
+	if (ring <= 0.001) {
+		discard;
+	}
+
+	ALBEDO = ring_color.rgb;
+	EMISSION = ring_color.rgb * emission_boost;
+	ALPHA = ring_color.a * ring;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y0fv6"]
+render_priority = 0
+shader = SubResource("Shader_k7c8f")
+shader_parameter/ring_color = Color(0.1, 0.4, 1, 0.95)
+shader_parameter/inner_radius = 0.74
+shader_parameter/outer_softness = 0.1
+shader_parameter/inner_softness = 0.07
+shader_parameter/emission_boost = 2.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jhou3"]
+material = SubResource("ShaderMaterial_y0fv6")
+size = Vector2(1.35, 1.35)
+
 [node name="GameOver" type="Node3D" unique_id=198145086]
 
 [node name="PlayerOneScoreLabel" type="Label3D" parent="." unique_id=1693886260]
@@ -750,9 +789,12 @@ light_energy = 4.0
 spot_range = 14.0
 spot_angle = 90.0
 
-[node name="LoserPlayer" type="CharacterBody3D" parent="." unique_id=845121509]
+[node name="LoserPlayer" type="CharacterBody3D" parent="." unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_indicatorRing")]
 transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -18.285748, 1, 13.66358)
 collision_layer = 2
+script = ExtResource("19_k7c8f")
+_animationPlayer = NodePath("AnimationPlayer")
+_indicatorRing = NodePath("IndicatorRing")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="LoserPlayer" unique_id=1844725914]
 libraries/ = SubResource("AnimationLibrary_gndvh")
@@ -800,11 +842,13 @@ mesh = ExtResource("19_7eg23")
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="WinnerPlayer" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_animationPlayer")]
+[node name="WinnerPlayer" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_animationPlayer", "_indicatorRing")]
 transform = Transform3D(-1.5356864, 0, 1.2812756, 0, 2, 0, -1.2812756, 0, -1.5356864, -29.20708, 1.8480008, 6.924017)
 collision_layer = 2
 script = ExtResource("19_k7c8f")
+IsWinner = true
 _animationPlayer = NodePath("AnimationPlayer")
+_indicatorRing = NodePath("IndicatorRing")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="WinnerPlayer" unique_id=1463083189]
 libraries/ = SubResource("AnimationLibrary_0o5rp")
@@ -816,7 +860,7 @@ shape = SubResource("BoxShape3D_8ak8y")
 [node name="IndicatorRing" type="MeshInstance3D" parent="WinnerPlayer" unique_id=1239172712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62794346, 0)
 cast_shadow = 0
-mesh = SubResource("PlaneMesh_ring")
+mesh = SubResource("PlaneMesh_jhou3")
 
 [node name="LockedTimeLabel" type="Label3D" parent="WinnerPlayer" unique_id=166350129]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
