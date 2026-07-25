@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bxu3gvf1e5lfq"]
 
 [ext_resource type="PackedScene" uid="uid://csvrqxxmh6fgu" path="res://player/Player.tscn" id="1_0bpjf"]
-[ext_resource type="Material" uid="uid://draoasm7bblal" path="res://floor/materials/FloorMaterial2.tres" id="1_kgmhh"]
+[ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_phpej"]
 [ext_resource type="PackedScene" uid="uid://crygc3hghlciq" path="res://scenes/laser_station/laser_station.tscn" id="2_station"]
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="2_wnhdf"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="3_kgmhh"]
@@ -25,7 +25,7 @@ sky = SubResource("Sky_0bpjf")
 glow_enabled = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
-material = ExtResource("1_kgmhh")
+material = ExtResource("1_phpej")
 size = Vector3(74, 0.2, 34)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
@@ -201,7 +201,6 @@ light_energy = 5.0
 omni_range = 50.0
 
 [node name="CeilingLights" type="Node3D" parent="." unique_id=868605658]
-visible = false
 
 [node name="SpotLight3D-1" type="SpotLight3D" parent="CeilingLights" unique_id=1035175167]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -28, 10, -8)
