@@ -182,7 +182,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -16.4)
 
 [node name="DarkLights" type="Node3D" parent="." unique_id=1812802562]
 
+[node name="OmniLight3DLeft" type="OmniLight3D" parent="DarkLights" unique_id=1885585873]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 12, 0)
+light_color = Color(0.5, 0.5, 0.5, 1)
+light_energy = 5.0
+omni_range = 50.0
+
+[node name="OmniLight3DMiddle" type="OmniLight3D" parent="DarkLights" unique_id=1386455224]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 0)
+light_color = Color(0.5, 0.5, 0.5, 1)
+light_energy = 5.0
+omni_range = 50.0
+
+[node name="OmniLight3DRight" type="OmniLight3D" parent="DarkLights" unique_id=1330095602]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 12, 0)
+light_color = Color(0.5, 0.5, 0.5, 1)
+light_energy = 5.0
+omni_range = 50.0
+
 [node name="CeilingLights" type="Node3D" parent="." unique_id=868605658]
+visible = false
 
 [node name="SpotLight3D-1" type="SpotLight3D" parent="CeilingLights" unique_id=1035175167]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -28, 10, -8)
