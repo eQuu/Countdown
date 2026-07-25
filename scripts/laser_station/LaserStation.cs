@@ -132,6 +132,9 @@ public partial class LaserStation : Node3D
 	[Export] public float WallGlowThicknessScale { get; set; } = 1.5f;
 	[Export] public float WallGlowHeightScale { get; set; } = 1.0f;
 	[Export] public float WallGlowEnergy { get; set; } = 5.0f;
+	[Export] public bool EnableWallGlow { get; set; } = true;
+	[Export] public float ReachUpdateIntervalSeconds { get; set; } = 0.05f;
+	[Export] public float PlayerExceptionRefreshSeconds { get; set; } = 0.5f;
 
 	public LaserOwner CurrentOwner { get; private set; } = LaserOwner.Neutral;
 
@@ -204,8 +207,15 @@ public partial class LaserStation : Node3D
 	private float _expandProgress;
 	private float _expandDuration = 1.0f;
 	private readonly List<float> _lockedArmReach = new();
+	private readonly List<float> _cachedArmReach = new();
+	private readonly List<float> _lastAppliedWallLength = new();
+	private readonly List<CollisionObject3D> _cachedPlayerBodies = new();
 
 	private readonly Dictionary<int, double> _playerHitCooldowns = new();
+	private float _reachUpdateTimer;
+	private float _playerExceptionRefreshTimer;
+	private float _overlapPollTimer;
+	private bool _reachCacheValid;
 
 	public override void _Ready()
 	{
@@ -247,12 +257,14 @@ public partial class LaserStation : Node3D
 			return;
 		}
 
+		float dt = (float)delta;
 		UpdateHitCooldowns(delta);
 		UpdateExpansion(delta);
 		UpdatePlaceholderFade(delta);
 		RotateLaser(delta);
-		UpdateLaserLength();
-		ProcessLaserOverlaps();
+		RefreshPlayerExceptionsIfNeeded(dt);
+		UpdateLaserLength(dt);
+		ProcessLaserOverlaps(dt);
 	}
 
 	public void SetPattern(int patternIndex)
@@ -686,12 +698,20 @@ public partial class LaserStation : Node3D
 		TryHitBody(body);
 	}
 
-	private void ProcessLaserOverlaps()
+	private void ProcessLaserOverlaps(float delta)
 	{
 		if (!_nodesReady || !IsActive || CurrentOwner == LaserOwner.Neutral)
 		{
 			return;
 		}
+
+		_overlapPollTimer -= delta;
+		if (_overlapPollTimer > 0.0f)
+		{
+			return;
+		}
+
+		_overlapPollTimer = 0.05f;
 
 		foreach (Area3D hitArea in _laserHitAreas)
 		{
@@ -1007,7 +1027,7 @@ public partial class LaserStation : Node3D
 		return Mathf.Max(factor, minFactor);
 	}
 
-	private void UpdateLaserLength()
+	private void UpdateLaserLength(float delta = 0.0f)
 	{
 		if (!_nodesReady || _laserRayCasts.Count == 0)
 		{
@@ -1025,40 +1045,56 @@ public partial class LaserStation : Node3D
 				ApplyPlaceholderLength(i, uniformPlaceholderLength);
 			}
 
+			_reachCacheValid = false;
 			return;
 		}
 
 		int armCount = _laserRayCasts.Count;
-		float[] reaches = new float[armCount];
-		float sharedMaxReach = 0.0f;
+		EnsureReachCacheSize(armCount);
 
-		for (int i = 0; i < armCount; i++)
+		bool needsFreshReach = !_reachCacheValid
+			|| _isExpanding
+			|| _isRetracting
+			|| _reachUpdateTimer <= 0.0f;
+
+		if (needsFreshReach)
 		{
-			reaches[i] = MeasureWorldReach(i, maxLength);
-			if (reaches[i] > sharedMaxReach)
+			float sharedMaxReach = 0.0f;
+			for (int i = 0; i < armCount; i++)
 			{
-				sharedMaxReach = reaches[i];
+				_cachedArmReach[i] = MeasureWorldReach(i, maxLength);
+				if (_cachedArmReach[i] > sharedMaxReach)
+				{
+					sharedMaxReach = _cachedArmReach[i];
+				}
 			}
+
+			_reachCacheValid = true;
+			_reachUpdateTimer = Mathf.Max(0.016f, ReachUpdateIntervalSeconds);
+		}
+		else
+		{
+			_reachUpdateTimer -= delta;
 		}
 
-		sharedMaxReach = Mathf.Max(sharedMaxReach, MinimumLaserLength);
-		float sharedStartLength = Mathf.Min(uniformPlaceholderLength, sharedMaxReach);
+		float sharedMax = GetMaxCachedReach(MinimumLaserLength);
+		float sharedStartLength = Mathf.Min(uniformPlaceholderLength, sharedMax);
 		sharedStartLength = Mathf.Max(0.05f, sharedStartLength);
 
 		float sharedExpandLength = Mathf.Lerp(
 			sharedStartLength,
-			sharedMaxReach,
+			sharedMax,
 			EaseOutCubic(_expandProgress)
 		);
 		float sharedRetractLength = Mathf.Lerp(
-			sharedMaxReach,
+			sharedMax,
 			sharedStartLength,
 			EaseInOutCubic(_retractProgress)
 		);
 
 		for (int i = 0; i < armCount; i++)
 		{
-			float fullReachLength = reaches[i];
+			float fullReachLength = _cachedArmReach[i];
 			float wallLength;
 
 			if (_isRetracting)
@@ -1077,6 +1113,48 @@ public partial class LaserStation : Node3D
 			wallLength = Mathf.Clamp(wallLength, 0.02f, fullReachLength);
 			ApplyCurrentLaserLength(i, wallLength, fullReachLength);
 		}
+	}
+
+	private void EnsureReachCacheSize(int armCount)
+	{
+		while (_cachedArmReach.Count < armCount)
+		{
+			_cachedArmReach.Add(MaxLaserLength);
+		}
+
+		while (_lastAppliedWallLength.Count < armCount)
+		{
+			_lastAppliedWallLength.Add(-1.0f);
+		}
+
+		if (_cachedArmReach.Count > armCount)
+		{
+			_cachedArmReach.RemoveRange(armCount, _cachedArmReach.Count - armCount);
+		}
+
+		if (_lastAppliedWallLength.Count > armCount)
+		{
+			_lastAppliedWallLength.RemoveRange(armCount, _lastAppliedWallLength.Count - armCount);
+		}
+	}
+
+	private float GetMaxCachedReach(float fallback)
+	{
+		if (_cachedArmReach.Count == 0)
+		{
+			return fallback;
+		}
+
+		float max = 0.0f;
+		foreach (float reach in _cachedArmReach)
+		{
+			if (reach > max)
+			{
+				max = reach;
+			}
+		}
+
+		return Mathf.Max(fallback, max);
 	}
 
 	private float GetMaxLockedReach(float fallback)
@@ -1106,7 +1184,6 @@ public partial class LaserStation : Node3D
 		}
 
 		RayCast3D ray = _laserRayCasts[armIndex];
-		ConfigureReachRay(ray);
 		ray.TargetPosition = new Vector3(maxLength, 0.0f, 0.0f);
 		ray.ForceRaycastUpdate();
 
@@ -1180,6 +1257,35 @@ public partial class LaserStation : Node3D
 		float centerY = height * 0.5f - Mathf.Max(0.0f, WallGroundEmbed);
 		Vector3 center = new Vector3(centerX, centerY, 0.0f);
 
+		bool lengthUnchanged = armIndex < _lastAppliedWallLength.Count
+			&& Mathf.Abs(_lastAppliedWallLength[armIndex] - clampedLength) < 0.025f
+			&& !_isExpanding
+			&& !_isRetracting;
+
+		if (lengthUnchanged)
+		{
+			if (_hitboxesWantedEnabled)
+			{
+				if (armIndex < _laserHitAreas.Count)
+				{
+					_laserHitAreas[armIndex].Position = center;
+				}
+
+				if (armIndex < _laserHitCollisions.Count
+					&& _laserHitCollisions[armIndex].Shape is BoxShape3D cachedHitShape)
+				{
+					cachedHitShape.Size = size;
+				}
+			}
+
+			return;
+		}
+
+		if (armIndex < _lastAppliedWallLength.Count)
+		{
+			_lastAppliedWallLength[armIndex] = clampedLength;
+		}
+
 		MeshInstance3D wall = _laserWalls[armIndex];
 		if (wall.Mesh is BoxMesh boxMesh)
 		{
@@ -1188,7 +1294,7 @@ public partial class LaserStation : Node3D
 
 		wall.Position = center;
 
-		if (armIndex < _laserWallGlows.Count)
+		if (EnableWallGlow && armIndex < _laserWallGlows.Count)
 		{
 			float glowThickness = thickness * Mathf.Max(1.0f, WallGlowThicknessScale);
 			float glowHeight = height * Mathf.Clamp(WallGlowHeightScale, 0.5f, 1.0f);
@@ -1202,12 +1308,17 @@ public partial class LaserStation : Node3D
 			Vector3 glowCenter = new Vector3(glowCenterX, glowCenterY, 0.0f);
 
 			MeshInstance3D glow = _laserWallGlows[armIndex];
+			glow.Visible = true;
 			if (glow.Mesh is BoxMesh glowMesh)
 			{
 				glowMesh.Size = glowSize;
 			}
 
 			glow.Position = glowCenter;
+		}
+		else if (armIndex < _laserWallGlows.Count)
+		{
+			_laserWallGlows[armIndex].Visible = false;
 		}
 
 		if (!_hitboxesWantedEnabled)
@@ -1372,7 +1483,7 @@ public partial class LaserStation : Node3D
 
 		foreach (MeshInstance3D glow in _laserWallGlows)
 		{
-			glow.Visible = showWalls;
+			glow.Visible = showWalls && EnableWallGlow;
 		}
 
 		if (_stripeMaterial != null)
@@ -1439,6 +1550,10 @@ public partial class LaserStation : Node3D
 	private void RebuildPattern()
 	{
 		ClearArms();
+		_reachCacheValid = false;
+		_cachedArmReach.Clear();
+		_lastAppliedWallLength.Clear();
+		_playerExceptionRefreshTimer = 0.0f;
 
 		float[] angles = EnsurePatternConfig().GetArmAnglesDegrees(PatternIndex);
 		for (int i = 0; i < angles.Length; i++)
@@ -1570,32 +1685,88 @@ public partial class LaserStation : Node3D
 		ray.CollideWithAreas = false;
 		ray.CollideWithBodies = true;
 		ray.HitFromInside = false;
-		ray.ClearExceptions();
-		AddPlayerExceptions(ray);
+		ApplyCachedPlayerExceptions(ray);
 	}
 
-	private void AddPlayerExceptions(RayCast3D ray)
+	private void RefreshPlayerExceptionsIfNeeded(float delta)
 	{
+		_playerExceptionRefreshTimer -= delta;
+		if (_playerExceptionRefreshTimer > 0.0f && _cachedPlayerBodies.Count > 0)
+		{
+			return;
+		}
+
+		_playerExceptionRefreshTimer = Mathf.Max(0.2f, PlayerExceptionRefreshSeconds);
+		RebuildCachedPlayerBodies();
+
+		foreach (RayCast3D ray in _laserRayCasts)
+		{
+			ApplyCachedPlayerExceptions(ray);
+		}
+	}
+
+	private void RebuildCachedPlayerBodies()
+	{
+		_cachedPlayerBodies.Clear();
 		SceneTree tree = GetTree();
 		if (tree == null)
 		{
 			return;
 		}
 
-		AddPlayerExceptionsRecursive(ray, tree.Root);
+		Godot.Collections.Array<Node> players = tree.GetNodesInGroup("laser_players");
+		foreach (Node node in players)
+		{
+			if (node is CollisionObject3D body)
+			{
+				_cachedPlayerBodies.Add(body);
+			}
+		}
+
+		if (_cachedPlayerBodies.Count == 0)
+		{
+			CollectPlayerBodiesRecursive(tree.Root);
+		}
 	}
 
-	private void AddPlayerExceptionsRecursive(RayCast3D ray, Node node)
+	private void CollectPlayerBodiesRecursive(Node node)
 	{
 		if (node is ILaserPlayer && node is CollisionObject3D body)
 		{
-			ray.AddException(body);
+			_cachedPlayerBodies.Add(body);
 		}
 
 		foreach (Node child in node.GetChildren())
 		{
-			AddPlayerExceptionsRecursive(ray, child);
+			CollectPlayerBodiesRecursive(child);
 		}
+	}
+
+	private void ApplyCachedPlayerExceptions(RayCast3D ray)
+	{
+		if (ray == null)
+		{
+			return;
+		}
+
+		ray.ClearExceptions();
+		foreach (CollisionObject3D body in _cachedPlayerBodies)
+		{
+			if (GodotObject.IsInstanceValid(body))
+			{
+				ray.AddException(body);
+			}
+		}
+	}
+
+	private void AddPlayerExceptions(RayCast3D ray)
+	{
+		if (_cachedPlayerBodies.Count == 0)
+		{
+			RebuildCachedPlayerBodies();
+		}
+
+		ApplyCachedPlayerExceptions(ray);
 	}
 
 	private bool IsWorldReachCollider(GodotObject collider)
@@ -1725,7 +1896,7 @@ public partial class LaserStation : Node3D
 		ApplyHitboxesEnabledState();
 		ApplyModeVisuals();
 		UpdateLaserLength();
-		ProcessLaserOverlaps();
+		ProcessLaserOverlaps(0.0f);
 	}
 
 	private bool ResolveCoreNodes()

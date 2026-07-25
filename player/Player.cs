@@ -37,6 +37,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	{
 		CollisionLayer = 2;
 		CollisionMask = 1;
+		AddToGroup("laser_players");
 		_spawnPosition = GlobalPosition;
 		_personalCountdown = PersonalCountdownSeconds;
 	}
