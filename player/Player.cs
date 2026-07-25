@@ -3,6 +3,7 @@ using Godot;
 public partial class Player : CharacterBody3D, ILaserPlayer
 {
 	[Export] private AnimationPlayer _animationPlayer;
+	[Export] private Label3D _countdownLabel;
 	[Export] public int PlayerId { get; set; } = 1;
 
 	[Export] public float WalkSpeed { get; set; } = 8.0f;
@@ -13,11 +14,14 @@ public partial class Player : CharacterBody3D, ILaserPlayer
     [Export] public float DashAnimationDuration { get; set; } = 1f;
     [Export] public float DashCooldown { get; set; } = 1.5f;
 	[Export] public float PersonalCountdownSeconds { get; set; } = 10.0f;
-	[Export] public float HoldStillSeconds { get; set; } = 1.25f;
+	[Export] public float HoldStillSeconds { get; set; } = 0.5f;
+	[Export] public float HoldStillInputDeadzone { get; set; } = 0.2f;
 	[Export] public float CountdownStunSeconds { get; set; } = 2.0f;
 	[Export] public float RespawnDelaySeconds { get; set; } = 1.5f;
 	[Export] public float SpawnProtectionSeconds { get; set; } = 1.0f;
 	[Export] public float Gravity { get; set; } = 20.0f;
+	[Export] public float CountdownLabelHeight { get; set; } = 1.35f;
+	[Export] public float CountdownLabelNorthOffset { get; set; } = 0.45f;
 
 	public bool IsInvulnerable { get; private set; }
 	public bool IsAlive { get; private set; } = true;
@@ -32,7 +36,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 	private float _holdStillTimeLeft;
 	private bool _isHoldingStill;
     private bool _isDashing;
-    private float _respawnTimeLeft;
+	private float _respawnTimeLeft;
 	private float _invulnTimeLeft;
 	private Vector3 _spawnPosition;
 
@@ -43,6 +47,18 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		AddToGroup("laser_players");
 		_spawnPosition = GlobalPosition;
 		_personalCountdown = PersonalCountdownSeconds;
+		if (_countdownLabel != null)
+		{
+			_countdownLabel.TopLevel = true;
+			_countdownLabel.Billboard = BaseMaterial3D.BillboardModeEnum.Enabled;
+		}
+
+		UpdateCountdownLabel();
+	}
+
+	public override void _Process(double delta)
+	{
+		UpdateCountdownLabel();
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -83,6 +99,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_personalCountdown = PersonalCountdownSeconds;
 		_isHoldingStill = false;
 		_holdStillTimeLeft = 0.0f;
+		_stunTimeLeft = 0.0f;
 	}
 
 	private void UpdateStatusTimers(float delta)
@@ -136,6 +153,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_isHoldingStill = true;
 		_holdStillTimeLeft = Mathf.Max(0.05f, HoldStillSeconds);
 		_dashTimeLeft = 0.0f;
+		_isDashing = false;
 	}
 
 	private void BeginStun()
@@ -144,6 +162,7 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_holdStillTimeLeft = 0.0f;
 		_stunTimeLeft = CountdownStunSeconds;
 		_dashTimeLeft = 0.0f;
+		_isDashing = false;
 		Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
 	}
 
@@ -203,8 +222,22 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 
 	private void UpdateHoldStill(Vector2 input, float delta)
 	{
+		float deadzone = Mathf.Clamp(HoldStillInputDeadzone, 0.05f, 0.9f);
 		bool dashPressed = Input.IsActionJustPressed("ActionPlayer" + PlayerId);
-		if (input != Vector2.Zero || dashPressed || _dashTimeLeft > 0.0f)
+		bool isMoving = input.Length() > deadzone || dashPressed;
+
+		if (!isMoving)
+		{
+			ResetPersonalCountdown();
+			ApplyGravity(delta);
+			Vector3 stopHorizontal = ApplyWalkVelocity(Vector2.Zero, delta);
+			Velocity = new Vector3(stopHorizontal.X, Velocity.Y, stopHorizontal.Z);
+			MoveAndSlide();
+			UpdateAnimation(Vector2.Zero);
+			return;
+		}
+
+		if (dashPressed)
 		{
 			BeginStun();
 			ApplyGravity(delta);
@@ -217,14 +250,20 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		_holdStillTimeLeft -= delta;
 		if (_holdStillTimeLeft <= 0.0f)
 		{
-			ResetPersonalCountdown();
+			BeginStun();
+			ApplyGravity(delta);
+			Velocity = new Vector3(0.0f, Velocity.Y, 0.0f);
+			MoveAndSlide();
+			UpdateAnimation(Vector2.Zero);
+			return;
 		}
 
 		ApplyGravity(delta);
-		Vector3 horizontal = ApplyWalkVelocity(Vector2.Zero, delta);
+		Vector3 horizontal = ApplyWalkVelocity(input, delta);
 		Velocity = new Vector3(horizontal.X, Velocity.Y, horizontal.Z);
 		MoveAndSlide();
-		UpdateAnimation(Vector2.Zero);
+		UpdateFacing(input);
+		UpdateAnimation(input);
 	}
 
 	private void ApplyGravity(float delta)
@@ -319,6 +358,46 @@ public partial class Player : CharacterBody3D, ILaserPlayer
 		Vector2 direction = input.Normalized();
 		Vector3 direction3 = new Vector3(direction.X, 0.0f, direction.Y);
 		LookAt(Transform.Origin - direction3);
+	}
+
+	private void UpdateCountdownLabel()
+	{
+		if (_countdownLabel == null)
+		{
+			return;
+		}
+
+		_countdownLabel.GlobalPosition = GlobalPosition
+			+ Vector3.Up * CountdownLabelHeight
+			+ Vector3.Forward * CountdownLabelNorthOffset;
+
+		if (!IsAlive)
+		{
+			_countdownLabel.Visible = false;
+			return;
+		}
+
+		_countdownLabel.Visible = true;
+
+		if (_stunTimeLeft > 0.0f)
+		{
+			_countdownLabel.Text = Mathf.CeilToInt(_stunTimeLeft).ToString();
+			_countdownLabel.Modulate = new Color(1.0f, 0.3f, 0.3f);
+			return;
+		}
+
+		if (_isHoldingStill)
+		{
+			_countdownLabel.Text = Mathf.Max(1, Mathf.CeilToInt(_holdStillTimeLeft)).ToString();
+			_countdownLabel.Modulate = new Color(1.0f, 0.85f, 0.15f);
+			return;
+		}
+
+		float seconds = Mathf.Max(0.0f, _personalCountdown);
+		_countdownLabel.Text = Mathf.CeilToInt(seconds).ToString();
+		_countdownLabel.Modulate = seconds <= PersonalCountdownSeconds * 0.3f
+			? new Color(1.0f, 0.55f, 0.15f)
+			: Colors.White;
 	}
 
 	private void UpdateAnimation(Vector2 input)
