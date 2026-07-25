@@ -609,7 +609,7 @@ size = Vector2(1.35, 1.35)
 
 [node name="GameOver" type="Node3D" unique_id=198145086]
 
-[node name="PlayerOneScoreLabel" type="Label3D" parent="." unique_id=1693886260]
+[node name="LoserScoreLabel" type="Label3D" parent="." unique_id=1693886260]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 6, 15)
 pixel_size = 0.022
 modulate = Color(0.1, 0.4, 1, 1)
@@ -618,7 +618,7 @@ text = "0"
 font_size = 180
 outline_size = 20
 
-[node name="PlayerTwoScoreLabel" type="Label3D" parent="." unique_id=337182902]
+[node name="WinnerScoreLabel" type="Label3D" parent="." unique_id=337182902]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -35, 6, 10.391)
 pixel_size = 0.022
 modulate = Color(0.1, 0.4, 1, 1)
@@ -789,10 +789,12 @@ light_energy = 4.0
 spot_range = 14.0
 spot_angle = 90.0
 
-[node name="LoserPlayer" type="CharacterBody3D" parent="." unique_id=845121509 node_paths=PackedStringArray("_animationPlayer", "_indicatorRing")]
+[node name="LoserPlayer" type="CharacterBody3D" parent="." unique_id=845121509 node_paths=PackedStringArray("_winnerLabel", "_loserLabel", "_animationPlayer", "_indicatorRing")]
 transform = Transform3D(-0.17431146, 1.9923894, 6.181724e-08, 5.619428e-08, 6.696973e-08, -2, -1.9923894, -0.17431146, -6.181724e-08, -18.285748, 1, 13.66358)
 collision_layer = 2
 script = ExtResource("19_k7c8f")
+_winnerLabel = NodePath("../WinnerScoreLabel")
+_loserLabel = NodePath("../LoserScoreLabel")
 _animationPlayer = NodePath("AnimationPlayer")
 _indicatorRing = NodePath("IndicatorRing")
 
@@ -842,10 +844,12 @@ mesh = ExtResource("19_7eg23")
 transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.3, -0.6, 0)
 mesh = ExtResource("19_7eg23")
 
-[node name="WinnerPlayer" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_animationPlayer", "_indicatorRing")]
+[node name="WinnerPlayer" type="CharacterBody3D" parent="." unique_id=590010644 node_paths=PackedStringArray("_winnerLabel", "_loserLabel", "_animationPlayer", "_indicatorRing")]
 transform = Transform3D(-1.5356864, 0, 1.2812756, 0, 2, 0, -1.2812756, 0, -1.5356864, -29.20708, 1.8480008, 6.924017)
 collision_layer = 2
 script = ExtResource("19_k7c8f")
+_winnerLabel = NodePath("../WinnerScoreLabel")
+_loserLabel = NodePath("../LoserScoreLabel")
 IsWinner = true
 _animationPlayer = NodePath("AnimationPlayer")
 _indicatorRing = NodePath("IndicatorRing")
