@@ -79,6 +79,7 @@ public partial class GameManager : Node3D
 		PlayerTwoScore = 0;
 		IsMatchFinished = false;
 		GameStore.Instance?.SetScores(0, 0);
+		GameStore.Instance?.ClearWinner();
 		UpdateScoreLabels();
 		EmitSignal(SignalName.ScoreChanged, PlayerOneScore, PlayerTwoScore);
 	}
@@ -299,6 +300,7 @@ public partial class GameManager : Node3D
 		}
 
 		IsMatchFinished = true;
+		GameStore.Instance?.SetWinner(winnerPlayerId);
 		GD.Print($"Match won by player {winnerPlayerId}. Final score P1={PlayerOneScore} P2={PlayerTwoScore}");
 		EmitSignal(SignalName.MatchWon, winnerPlayerId, PlayerOneScore, PlayerTwoScore);
 		EmitSignal(SignalName.ScoreLimitReached, winnerPlayerId, PlayerOneScore, PlayerTwoScore);

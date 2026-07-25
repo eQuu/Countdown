@@ -27,6 +27,9 @@ public partial class GameStore : Node
 	[Signal]
 	public delegate void ScoreChangedEventHandler(int playerOneScore, int playerTwoScore);
 
+	[Signal]
+	public delegate void WinnerChangedEventHandler(int winnerPlayerId);
+
 	private readonly Dictionary<string, Variant> _values = new();
 
 	public int PlayerOneColorIndex { get; private set; }
@@ -38,11 +41,15 @@ public partial class GameStore : Node
 	public int PlayerOneScore { get; private set; }
 	public int PlayerTwoScore { get; private set; }
 
+	/// <summary>1 oder 2 = Gewinner, 0 = noch keiner / Remis / zurückgesetzt.</summary>
+	public int WinnerPlayerId { get; private set; }
+
 	public override void _EnterTree()
 	{
 		Instance = this;
 		SyncColorKeys();
 		SyncScoreKeys();
+		SyncWinnerKey();
 	}
 
 	public override void _ExitTree()
@@ -177,6 +184,25 @@ public partial class GameStore : Node
 	public void ResetScores()
 	{
 		SetScores(0, 0);
+		ClearWinner();
+	}
+
+	public void SetWinner(int winnerPlayerId)
+	{
+		int clamped = winnerPlayerId is 1 or 2 ? winnerPlayerId : 0;
+		if (WinnerPlayerId == clamped)
+		{
+			return;
+		}
+
+		WinnerPlayerId = clamped;
+		SyncWinnerKey();
+		EmitSignal(SignalName.WinnerChanged, WinnerPlayerId);
+	}
+
+	public void ClearWinner()
+	{
+		SetWinner(0);
 	}
 
 	public bool Has(string key) => _values.ContainsKey(key);
@@ -222,11 +248,14 @@ public partial class GameStore : Node
 		PlayerTwoColorIndex = 1;
 		PlayerOneScore = 0;
 		PlayerTwoScore = 0;
+		WinnerPlayerId = 0;
 		SyncColorKeys();
 		SyncScoreKeys();
+		SyncWinnerKey();
 		EmitSignal(SignalName.StoreCleared);
 		EmitSignal(SignalName.ColorsChanged, PlayerOneColorIndex, PlayerTwoColorIndex);
 		EmitSignal(SignalName.ScoreChanged, PlayerOneScore, PlayerTwoScore);
+		EmitSignal(SignalName.WinnerChanged, WinnerPlayerId);
 	}
 
 	public IReadOnlyDictionary<string, Variant> All => _values;
@@ -254,5 +283,10 @@ public partial class GameStore : Node
 	{
 		_values["player_one_score"] = PlayerOneScore;
 		_values["player_two_score"] = PlayerTwoScore;
+	}
+
+	private void SyncWinnerKey()
+	{
+		_values["winner_player_id"] = WinnerPlayerId;
 	}
 }
