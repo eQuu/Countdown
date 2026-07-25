@@ -13,7 +13,7 @@ config_version=5
 config/name="Countdown"
 run/main_scene="uid://cjp4jtcm2kqrv"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="uid://bub5rjye4btdt"
 
 [autoload]
 
