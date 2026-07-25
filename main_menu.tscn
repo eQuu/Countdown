@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cjp4jtcm2kqrv"]
 
 [ext_resource type="Material" uid="uid://beyqcbahcenkm" path="res://floor/materials/FloorMaterial3.tres" id="1_j5v2v"]
+[ext_resource type="AudioStream" uid="uid://devq6n7lb33lw" path="res://music/MainmenuMusic.mp3" id="1_ojb7r"]
 [ext_resource type="PackedScene" uid="uid://dvpsj03q1c8ju" path="res://walls/baroque_corner.tscn" id="2_iotk1"]
 [ext_resource type="PackedScene" uid="uid://c506fn8j6w7pl" path="res://walls/baroque.tscn" id="3_w44g7"]
 [ext_resource type="PackedScene" uid="uid://btamqp6xtw5ty" path="res://decorations/pillar.tscn" id="4_cm266"]
@@ -316,6 +317,12 @@ outline_size = 12
 outline_color = Color(0, 0, 0, 0.9)
 
 [node name="MainMenu" type="Node3D" unique_id=2032108568]
+
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1934665611]
+stream = ExtResource("1_ojb7r")
+volume_db = -8.0
+autoplay = true
+parameters/looping = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=238303840]
 environment = SubResource("Environment_vegko")
