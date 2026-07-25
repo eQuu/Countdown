@@ -112,7 +112,6 @@ public partial class LaserStation : Node3D
 	[ExportCategory("Capture")]
 	[Export] public float CaptureCooldownSeconds { get; set; } = 0.25f;
 	[Export] public float CaptureLockoutSeconds { get; set; } = 2.5f;
-	[Export] public bool ResetPlayerTimerOnCapture { get; set; } = true;
 
 	[ExportCategory("Colors")]
 	[Export] public Color PlaceholderColor { get; set; } = Colors.White;
@@ -664,11 +663,6 @@ public partial class LaserStation : Node3D
 
 		SetOwner(newOwner);
 		PlayCaptureEffects();
-
-		if (ResetPlayerTimerOnCapture)
-		{
-			player.ResetPersonalCountdown();
-		}
 
 		_captureLocked = true;
 		float lockout = Mathf.Max(CaptureCooldownSeconds, CaptureLockoutSeconds);
