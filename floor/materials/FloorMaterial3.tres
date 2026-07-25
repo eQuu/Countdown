@@ -1,15 +1,10 @@
 [gd_resource type="StandardMaterial3D" format=3 uid="uid://beyqcbahcenkm"]
 
 [ext_resource type="Texture2D" uid="uid://dx8ffou7bk7ve" path="res://floor/textures/rubber_gym_tiles_sharp.png" id="1_6kcp7"]
-[ext_resource type="Texture2D" uid="uid://dl8s3dghupn45" path="res://floor/textures/Tiles052_1K-JPG_Displacement.jpg" id="2_0se1a"]
-[ext_resource type="Texture2D" uid="uid://8d20fc0bnhn5" path="res://floor/textures/Tiles052_1K-JPG_NormalDX.jpg" id="3_i4y6m"]
 [ext_resource type="Texture2D" uid="uid://cl08teqc1rts8" path="res://floor/textures/Tiles052_1K-JPG_Roughness.jpg" id="4_48mqc"]
 
 [resource]
 albedo_texture = ExtResource("1_6kcp7")
 roughness_texture = ExtResource("4_48mqc")
-normal_enabled = true
-normal_texture = ExtResource("3_i4y6m")
-heightmap_enabled = true
-heightmap_texture = ExtResource("2_0se1a")
-uv1_scale = Vector3(80, 32, 1)
+uv1_scale = Vector3(34, 6, 1)
+texture_filter = 0

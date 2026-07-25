@@ -43,12 +43,8 @@ size = Vector3(0.4, 3, 8)
 
 [node name="Ingame" type="Node3D" unique_id=1277312797]
 
-[node name="GameManager" parent="." unique_id=11230437 node_paths=PackedStringArray("PlayerOneValueLabel", "PlayerTwoValueLabel", "PlayerOne", "PlayerTwo") instance=ExtResource("5_gamemanager")]
+[node name="GameManager" parent="." unique_id=11230437 instance=ExtResource("5_gamemanager")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.08274126, 9.596172, -19.327)
-PlayerOneValueLabel = NodePath("../Player1/LockedTimeLabel")
-PlayerTwoValueLabel = NodePath("../Player2/LockedTimeLabel")
-PlayerOne = NodePath("../Player1")
-PlayerTwo = NodePath("../Player2")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2087598196]
 environment = SubResource("Environment_62bee")
